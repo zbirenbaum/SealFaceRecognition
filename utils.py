@@ -137,6 +137,7 @@ class Dataset():
         images = []
         labels = []
         for label, class_name in enumerate(class_names):
+            print(label)
             classdir = os.path.join(folder, class_name)
             if os.path.isdir(classdir):
                 images_class = os.listdir(classdir)

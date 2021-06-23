@@ -48,7 +48,7 @@ def train(config_file, counter):
     trainset.images = utils.preprocess(trainset.images, config, True)
 
     network = Network()
-    network.initialize(config, trainset.num_classes)
+    network.initialize(config, trainset.num_classes+1)
 
     # Initalization for running
     log_dir = utils.create_log_dir(config, config_file)

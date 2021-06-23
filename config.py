@@ -126,7 +126,7 @@ losses = {
     #'softmax': {},
     #'cosine': {'gamma': 'auto'},
     #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
-    # 'split': {'gamma': 'auto'}
-     'norm': {'alpha': 1e-5},
+    'split': {'gamma': 'auto'},
+    #'norm': {'alpha': 1e-5}
 }
 
