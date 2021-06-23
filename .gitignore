@@ -1,10 +1,8 @@
 env/
 .vscode
 __pycache__
+log/
 */.DS_Store
-/log
-/splits
-out*
 error*
 *.pyc
 photos/
