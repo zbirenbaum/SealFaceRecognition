@@ -23,10 +23,13 @@ def create_splits(directory, num_splits):
         random.shuffle(labels)
         create_testing_set(individuals, labels[:num_testing], i+1)
         create_training_set(individuals, labels[num_testing:], i+1)
+        
+    return individuals
 
 def create_training_set(individuals, labels, counter):
     fname = './splits/split{}/train_1.txt'.format(counter)
     with open(fname, 'w') as f:
+        f.write('Total_Number_Of_Classes ' + str(len(individuals)) + '\n')
         for key in labels:
             for v in individuals[key]:
                 f.write(v + ' ' + key + '\n')
@@ -40,14 +43,12 @@ def create_testing_set(individuals, labels, counter):
     for i in range(splits):
         gallery = open('./splits/split{}/fold_1/gal_{}.txt'.format(counter, i+1),'w')
         probe = open('./splits/split{}/fold_1/probe_{}.txt'.format(counter, i+1),'w')
-        # verification = open('./splits{}/fold_1/verification.txt'.format(counter,i+1),'w')
         for key in labels:
             value = individuals[key]
             if i >= len(value):
                 continue
             probe.write(value[i]+ ' ' + key + '\n')
             for j in range(len(value)):
-                # verification.write(value[j] + ' ' + key + '\n')
                 if j != i:
                     gallery.write(value[j] + ' ' + key + '\n')
             
@@ -66,7 +67,7 @@ def get_individuals(directory):
         path = os.path.join(prefix, item)
         if not os.path.isdir(path):
             continue
-        name = str(int(item))
+        name = str(int(item)-1)
         individuals[name] = []
         for file_name in os.listdir(path):
             if file_name.lower().endswith(extensions):

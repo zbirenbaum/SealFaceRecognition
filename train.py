@@ -46,9 +46,10 @@ def train(config_file, counter):
 
     trainset = utils.Dataset(splits_path + '/train_' + str(config.fold_number) + '.txt')
     trainset.images = utils.preprocess(trainset.images, config, True)
+    #print(trainset.labels)
 
     network = Network()
-    network.initialize(config, trainset.num_classes)
+    network.initialize(config, trainset.total_num_classes)
 
     # Initalization for running
     log_dir = utils.create_log_dir(config, config_file)

@@ -97,7 +97,8 @@ class DataClass():
 class Dataset():
 
     def __init__(self, path=None):
-        self.num_classes = None
+        self.total_num_classes = None
+        self.training_num_classes = None
         self.classes = None
         self.images = None
         self.labels = None
@@ -127,7 +128,7 @@ class Dataset():
         else:
             raise ValueError('Cannot initialize dataset from path: %s\n\
                 It should be either a folder, .txt or .hdf5 file' % path)
-        print('%d images of %d classes loaded' % (len(self.images), self.num_classes))
+        print('%d images of %d classes loaded' % (len(self.images), self.training_num_classes))
 
     def init_from_folder(self, folder):
         folder = os.path.expanduser(folder)
@@ -148,14 +149,16 @@ class Dataset():
         self.classes = np.array(classes, dtype=np.object)
         self.images = np.array(images, dtype=np.object)
         self.labels = np.array(labels, dtype=np.int32)
-        self.num_classes = len(classes)
+        self.training_num_classes = len(classes)
 
     def init_from_list(self, filename):
         with open(filename, 'r') as f:
             lines = f.readlines()
         lines = [line.strip().split(' ') for line in lines]
         assert len(lines)>0 and len(lines[0])==2, \
-            'List file must be in format: "fullpath(str) label(int)"'
+            'All lines except for the first line must be in format: "fullpath(str) label(int)"'
+        self.total_num_classes = int(lines[0][1]) #First line must be in the format: Total_Number_Of_Classes x
+        lines = lines[1:]
         images = [line[0] for line in lines]
         labels = [int(line[1]) for line in lines]
         self.images = np.array(images, dtype=np.object)
@@ -181,7 +184,7 @@ class Dataset():
         for label, indices in dict_classes.items():
             classes.append(DataClass(str(label), indices, label))
         self.classes = np.array(classes, dtype=np.object)
-        self.num_classes = len(classes)
+        self.training_num_classes = len(classes)
        
     ''' Not used '''
     def build_subset_from_classes(self, classes):
@@ -275,7 +278,7 @@ class Dataset():
         return image_batch, label_batch
 
     def get_batch_classes(self, batch_size, num_classes_per_batch):
-        # classes_batch = np.random.permutation(self.num_classes)[:num_classes_per_batch]
+        # classes_batch = np.random.permutation(self.training_num_classes)[:num_classes_per_batch]
         # classes_batch = self.sample_classes_by_weight(num_classes_per_batch)
 
         #indices_root = self.pop_index_queue(num_classes_per_batch)
