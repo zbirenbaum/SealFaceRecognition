@@ -49,11 +49,7 @@ def train(config_file, counter):
     #print(trainset.labels)
 
     network = Network()
-<<<<<<< HEAD
     network.initialize(config, trainset.total_num_classes)
-=======
-    network.initialize(config, trainset.num_classes+1)
->>>>>>> 8288a3c379663c190dd9d49ec6936cf823ecd0a1
 
     # Initalization for running
     log_dir = utils.create_log_dir(config, config_file)
