@@ -33,6 +33,7 @@ from argparse import ArgumentParser
 import utils
 import tflib
 from network import Network
+from multiprocessing import Process
 # from tensorflow.contrib.tensorboard.plugins import projector
 import evaluate
 import splits
@@ -127,6 +128,9 @@ def main():
         required=False, help='Flag to use existing splits for training and testing data')
     parser.add_argument('-n', '--number', dest='number', action='store', type=int,
         required=False, help='Number of times to run the training(default is 3)')
+    parser.add_argument('-p', '--parallel', dest='parallel', action='store', type=int,
+        required=False, help='Enable parallel training (y,n)')
+    
 
     settings = parser.parse_args()
     num_trainings = 3 if not settings.number else settings.number
@@ -138,11 +142,20 @@ def main():
         splitData = splits.create_splits(settings.directory, num_trainings)
     else:
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
-
-    for i in range(num_trainings):
-        print('Starting training #{}\n'.format(i+1))
-        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-        train(settings.config_file, i+1)
+    if(settings.parallel):
+        proc=[]
+        for i in range(num_trainings):
+            print('Starting MULTIPROCESS training #{}'.format(i+1))
+            p = Process(target = train, args = (settings.config_file, i+1))
+            p.start()
+            proc.append(p)
+        for p in proc:
+            p.join()
+    else:
+        for i in range(num_trainings):
+            print('Starting training #{}\n'.format(i+1))
+            print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
+            train(settings.config_file, i+1)
 
 if __name__ == '__main__':
     main()

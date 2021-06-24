@@ -38,7 +38,7 @@ preprocess_test = [
 ]
 
 # Number of GPUs
-num_gpus = 1
+num_gpus = 1 
 
 
 ####### NETWORK #######
