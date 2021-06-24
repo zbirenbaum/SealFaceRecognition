@@ -118,7 +118,7 @@ class Network:
                                                         model_version = config.model_version)
                                 prelogits = tf.identity(prelogits, name='prelogits')
                                 #Normalizes along dimension axis using an L2 norm
-                                embeddings = tf.nn.l2_normalize(prelogits, dim=1, name='embeddings')
+                                embeddings = tf.nn.l2_normalize(prelogits, axis=1, name='embeddings')
                                 if i == 0:
                                     self.outputs = tf.identity(embeddings, name='outputs')
 

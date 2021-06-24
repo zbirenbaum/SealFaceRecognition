@@ -6,12 +6,6 @@ import os
 
 ####### INPUT OUTPUT #######
 
-# me of the current model for output
-
-fold_number = 1
-
-name = 'seal_net_fold_' + str(fold_number)
-
 # The folder to save log and model
 log_base_dir = './log/'
 

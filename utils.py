@@ -50,9 +50,9 @@ def import_file(full_path_to_module, name='module.name'):
     
     return module_obj
 
-def create_log_dir(config, config_file):
+def create_log_dir(config, config_file, name):
     subdir = datetime.strftime(datetime.now(), '%Y%m%d-%H%M%S')
-    log_dir = os.path.join(os.path.expanduser(config.log_base_dir), config.name, subdir)
+    log_dir = os.path.join(os.path.expanduser(config.log_base_dir), name, subdir)
     if not os.path.isdir(log_dir):  # Create the log directory if it doesn't exist
         os.makedirs(log_dir)
     shutil.copyfile(config_file, os.path.join(log_dir,'config.py'))
@@ -128,7 +128,6 @@ class Dataset():
         else:
             raise ValueError('Cannot initialize dataset from path: %s\n\
                 It should be either a folder, .txt or .hdf5 file' % path)
-        print('%d images of %d classes loaded' % (len(self.images), self.training_num_classes))
 
     def init_from_folder(self, folder):
         folder = os.path.expanduser(folder)
@@ -453,10 +452,10 @@ def preprocess(images, config, is_training=False):
         images = []
         assert (config.channels==1 or config.channels==3)
         mode = 'RGB' if config.channels==3 else 'I'
-        print('Reading images ...')
+        print('Prepocessing images ...')
         for idx, image_path in enumerate(image_paths):
                 images.append(misc.imread(image_path, mode=mode))
-        print('Done reading images ... ')
+        print('Done preprocessing images ...\n')
             
         images = np.stack(images, axis=0)
 

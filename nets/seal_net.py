@@ -117,11 +117,7 @@ def se_module(input_net, ratio=16, reuse = None, scope = None):
 
         return output_net
 
-
-# activation = parametric_relu
 activation = lambda x: tf.keras.layers.PReLU(shared_axes=[1,2]).apply(x)
-# activation = tf.nn.softplus
-# activation = tf.nn.relu
 
 def conv_module(net, num_res_layers, num_kernels, groups, reuse = None, scope = None):
     with tf.variable_scope(scope, 'conv', [net], reuse=reuse):
@@ -130,7 +126,6 @@ def conv_module(net, num_res_layers, num_kernels, groups, reuse = None, scope = 
         net = slim.max_pool2d(net, 3, stride=2, padding='SAME')
         shortcut = net
         for i in range(num_res_layers):
-            # num_kernels_sm = int(num_kernels / 2)
             net = convolution(net, num_kernels, kernel_size=1, groups=groups, shuffle=True,
                             stride=1, padding='SAME', scope='res_%d_1'%i, xargs=res_conv_args)
             net = convolution(net, num_kernels, kernel_size=3, groups=groups, shuffle=False,
@@ -151,10 +146,10 @@ def inference(images, keep_probability, phase_train=True, bottleneck_layer_size=
         with slim.arg_scope([slim.dropout],
                             keep_prob=keep_probability,
                             is_training=phase_train):
-            with tf.variable_scope('SphereNet', [images], reuse=reuse):
+            with tf.variable_scope('SealNet', [images], reuse=reuse):
                 with slim.arg_scope([slim.batch_norm, slim.dropout],
                                     is_training=phase_train):
-                    print('SphereNet input shape:', [dim.value for dim in images.shape])
+                    print('SealNet input shape:', [dim.value for dim in images.shape])
                     
                     model_version = '4' if model_version ==None else model_version
                     num_layers, num_kernels, groups = model_params[model_version]
@@ -175,15 +170,12 @@ def inference(images, keep_probability, phase_train=True, bottleneck_layer_size=
                     net = convolution(net, bottleneck_layer_size, kernel_size=[net.shape[1], net.shape[2]], groups=groups[4], shuffle=False,
                                     stride=1, padding='SAME', xargs=fc_args)
                     print('conv shape:', [dim.value for dim in net.shape])
-                    # net = slim.avg_pool2d(net, 7)
 
                     net = convolution(net, bottleneck_layer_size, kernel_size=[net.shape[1], net.shape[2]], groups=groups[4], shuffle=False,
                                     stride=1, padding='VALID', scope='bottleneck', xargs=fc_args)
                     print('final_conv shape:', [dim.value for dim in net.shape])
-                    #net = slim.dropout(net, keep_probability, is_training = phase_train)
                     net = slim.flatten(net)
 
-                    # net= slim.batch_norm(net, **batch_norm_params_last)
                     print('output_layer shape:', [dim.value for dim in net.shape])
 
                     with tf.device(None):

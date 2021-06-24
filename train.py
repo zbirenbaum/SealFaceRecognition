@@ -40,39 +40,37 @@ import shutil
 
 
 def train(config_file, counter):
-    # I/O
+    # I/O for config
     config = utils.import_file(config_file, 'config')
     splits_path = config.splits_path + '/split{}'.format(counter)
 
-    trainset = utils.Dataset(splits_path + '/train_' + str(config.fold_number) + '.txt')
+    # Get training set
+    trainset = utils.Dataset(splits_path + '/train.txt')
     trainset.images = utils.preprocess(trainset.images, config, True)
-    #print(trainset.labels)
 
+    # Creating the network (check network.py)
     network = Network()
     network.initialize(config, trainset.total_num_classes)
 
-    # Initalization for running
-    log_dir = utils.create_log_dir(config, config_file)
+    # Initalization log and summary for running
+    log_dir = utils.create_log_dir(config, config_file, 'SealNet_Fold{}'.format(counter))
     summary_writer = tf.summary.FileWriter(log_dir, network.graph)
     if config.restore_model:
         network.restore_model(config.restore_model, config.restore_scopes)
 
     # Load gallery and probe file_list
-    print('Loading images...')
+    print('Loading probe and gallery images...')
     probes = []
     gal = []
-    with open(splits_path + '/fold_' + str(config.fold_number) + '/probe_1.txt' ,'r') as f:
+    with open(splits_path + '/probe.txt' ,'r') as f:
         for line in f:
             probes.append(line.strip())
-
     probe_set = evaluate.ImageSet(probes, config)
-    #probe_set.extract_features(network, len(probes))
-    #
-    with open(splits_path + '/fold_'+ str(config.fold_number) + '/gal_1.txt', 'r') as f:
+
+    with open(splits_path  + '/gal.txt', 'r') as f:
         for line in f:
             gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
-    #gal_set.extract_features(network, len(gal))
 
     trainset.start_batch_queue(config, True)
 
@@ -95,7 +93,6 @@ def train(config_file, counter):
 
             # Display
             if step % config.summary_interval == 0:
-                # visualize.scatter2D(_prelogits[:,:2], _label_batch, _pgrads[0][:,:2])
                 duration = time.time() - start_time
                 start_time = time.time()
                 utils.display_info(epoch, step, duration, wl)
@@ -134,17 +131,17 @@ def main():
     settings = parser.parse_args()
     num_trainings = 3 if not settings.number else settings.number
     print('Running training {} times'.format(num_trainings))
+    splitData = []
     if not settings.splits:
-        print('Making new splits')
-        # clean splits directory
         if os.path.exists(os.path.expanduser('./splits')):
             shutil.rmtree(os.path.expanduser('./splits')) 
-        splits.create_splits(settings.directory, num_trainings)
+        splitData = splits.create_splits(settings.directory, num_trainings)
     else:
-        print('Using existing splits in the splits folder')
+        print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 
     for i in range(num_trainings):
-        print('Starting training #{}'.format(i+1))
+        print('Starting training #{}\n'.format(i+1))
+        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
         train(settings.config_file, i+1)
 
 if __name__ == '__main__':
