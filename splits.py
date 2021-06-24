@@ -27,11 +27,11 @@ def create_splits(directory, num_splits):
         os.makedirs(splits_dir)
     individuals = get_individuals(directory)
     labels = list(individuals.keys())
-    num_label_testing = len(labels)//4
+    num_label_testing = len(labels)//num_splits
     num_label_training = len(individuals) - num_label_testing
     
     splitData = []
-    for i in range(num_label_testing):
+    for i in range(num_splits):
         random.shuffle(labels)
         probeCount, galleryCount = create_testing_set(individuals, labels[:num_label_testing], i+1)
         trainingCount = create_training_set(individuals, labels[num_label_testing:], i+1)
@@ -80,7 +80,7 @@ def create_testing_set(individuals, labels, counter):
     Returns:
         (int, int): number of probe and gallery images
     """
-    splits_dir = os.path.join(os.path.expanduser('./splits/split{}/fold_1/'.format(counter)))
+    splits_dir = os.path.join(os.path.expanduser('./splits/split{}'.format(counter)))
     if not os.path.isdir(splits_dir):
         os.makedirs(splits_dir)
 

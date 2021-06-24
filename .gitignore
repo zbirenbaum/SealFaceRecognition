@@ -6,3 +6,5 @@ log/*/
 error*
 *.pyc
 photos/
+splits/
+log/
