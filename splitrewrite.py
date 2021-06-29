@@ -28,27 +28,29 @@ class DataSplitter():
     
     def opensetsplit(self):
         trainarr = []
-        self.trainidxarr = self.calcindices(trainarr, 0)  # array of arrays, each holds classes to train on for fold[idx+1]
+        self.trainidxarr = self.calcindices(trainarr, 0, self.numlabels)  # array of arrays, each holds classes to train on for fold[idx+1]
         print("index list for training (arr[n-1] = indexes of train labels for nth fold): " + str(self.trainidxarr))
         print("index list for testing (arr[n-1] = indexes of testing labels for nth fold): " + str(self.testidxarr))
 
     def closedsetsplit(self):  # same logic as open but need to create path to photos 1->n
         print("placeholder")
 
-    def calcindices(self, trainarr, counter):
+    def calcindices(self, trainarr, counter, numlabels):
         if counter < self.kfold:
-            testidx_min=self.numlabels-(self.testnum*(counter+1))
-            testidx_max=testidx_min+(self.testnum)
+            testidx_min=numlabels-int(math.ceil(numlabels/(self.kfold-counter)))
+            testidx_max=numlabels
             range_1 = list(range(0,testidx_min))
             range_2 = list(range(testidx_max,self.numlabels))
             if testidx_min < 0:
                 testidx_min=0
-            self.testidxarr.append(list(range(testidx_min, testidx_max)))
+            test_append = list(range(testidx_min, testidx_max))
+            self.testidxarr.append(test_append)
+            numlabels=numlabels-len(test_append)
+            print(str(numlabels))
             range_1.extend(range_2)
-            totalrange=range_1
-            toappend = totalrange
-            trainarr.append(toappend)
-            trainarr = self.calcindices(trainarr, counter+1)
+            train_append = range_1
+            trainarr.append(train_append)
+            trainarr = self.calcindices(trainarr, counter+1, numlabels)
         return trainarr
 
 
@@ -58,6 +60,6 @@ class DataSplitter():
             #trainarr.append(list(range(0,(self.numlabels-diff)).append(range(
  #       return self.trainindices(kfolds-1)
   #      return list(range(0,self.trainnum))
-dsplit=DataSplitter(3, list(range(1,10)), openset=True)
+dsplit=DataSplitter(4, list(range(1,11)), openset=True)
 dsplit.print_param()
 dsplit.opensetsplit()
