@@ -4,18 +4,28 @@ import math
 import databuilder as db
 
 class DataSplitter(object):
-    def __init__(self, kfold, photodir=None, openset=None, closedset=None):
+    """
+    Class for calling data initialization and generating splits for cross validation:
+        takes arguments: kfold (number of folds for cross validation), set_type ('open' or 'closed'), photo directory (default: photos)
+    """
+    def __init__(self, kfold, set_type, photodir=None):
         self.datalabels=[]
         self.kfold=kfold
         if photodir is None:
             photodir="photos"
-        if openset:
+        if set_type == 'open':
             self.set_type = "openset"
-        elif closedset:
+        elif set_type == 'closed':
             self.set_type = "closedset"
+        else:
+            print("set set_type parameter to either \'open\' or \'closed\'")
+            return
         self.set_params(photodir)
 
     def set_params(self, photodir):
+        """
+        initializes the attributes to be used by the class, called automatically from init, do not call manually
+        """
         self.dbobj = db.DataBuilder(photodir)
         self.full_dataset = self.dbobj.get_photos()
         self.datalabels = sorted(self.full_dataset.get_labels(), key=int)
@@ -32,6 +42,9 @@ class DataSplitter(object):
         return
 
     def setsplit(self):
+        """
+        gets the dataset information from the databuilder object and splits the sets according to indexing from calcindices
+        """
         kfold = self.kfold
         numlabels = self.numlabels
         if self.set_type == "openset":
@@ -43,6 +56,7 @@ class DataSplitter(object):
                     )
         return
 
+    """the following two methods are useless and only called by test scripts to verify proper functionality"""
     def printindexbyfold(self):
         counter = 1
         for trainidxlist, testidxlist in zip(self.trainidxarr, self.testidxarr):
@@ -63,6 +77,9 @@ class DataSplitter(object):
         return
 
 def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None):
+    """
+    calculates the index of labels to be used for training and testing in each fold
+    """
     if maxnumlabels is None:
         maxnumlabels=numlabels  # only happens on first call
     if counter < kfold:
@@ -82,13 +99,12 @@ def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None)
     return trainarr, testarr
 
 def split_bylabel(trainidxarr, testidxarr, full_dataset):
+    """generates list indexed by fold of the paths and filenames of the relevant photos for training and testing"""
     fullset = full_dataset
     trainphotos = []
     trainpaths = []
-    training = [trainphotos, trainpaths]
     testphotos = []
     testpaths = []
-    testing = [testphotos, testpaths]
     counter = 0
     for trainidxlist, testidxlist in zip(trainidxarr, testidxarr):
         trainphotos.append([])
@@ -103,5 +119,3 @@ def split_bylabel(trainidxarr, testidxarr, full_dataset):
             testpaths[counter].extend(fullset.get_paths_by_index(index))
         counter = counter+1
     return trainphotos, trainpaths, testphotos, testpaths
-
-
