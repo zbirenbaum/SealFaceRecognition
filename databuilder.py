@@ -1,9 +1,7 @@
 from __future__ import print_function
 from __future__ import division
 import os
-import pandas as pd
 from pathlib import Path
-import json
 
 class DataBuilder(object):
     def __init__(self, directory):
@@ -16,13 +14,6 @@ class DataBuilder(object):
     def get_photos(self):
         return self.photoarr
 
-    def get_photos_by_label(self, label):
-        return self.photoarr.get_photos_by_label(label)
-        #return self.lbdict[lable]['photos']
-
-    def get_photos_by_index(self, index):
-        return self.photoarr.get_photos_by_index(index)
-        #return self.lbdict[index+1]['photos']
 
 class PhotoObj(object):
     def __init__(self, path, filename, label):
@@ -50,6 +41,10 @@ class PhotoArray(object):
 
     def extend(self, toadd):
         self.photoarr.extend(toadd)
+        return
+
+    def get_labels(self):
+        return set([photo.getlabel() for photo in self.photoarr])
 
     def get_photos(self):
         return self.photoarr
@@ -59,8 +54,6 @@ class PhotoArray(object):
 
     def get_photo_paths(self):
         return [photo.getpath() for photo in self.photoarr]
-
-
 
     def get_photos_by_label(self, label):
         return [photo.getfilename() for photo in self.photoarr if photo.getlabel() == label]
