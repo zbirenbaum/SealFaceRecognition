@@ -1,6 +1,6 @@
 import dirhandler as dh
 import math
-
+import os
 class Dataset(object):
     """
     set_byfold[fold] = list(labeldicts)
@@ -61,15 +61,6 @@ def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None)
         trainarr, testarr = calcindices(trainarr, testarr, counter+1, numlabels, kfold, maxnumlabels)
     return trainarr, testarr
 
-
-def pretty(d, indent=0):
-   for key, value in d.items():
-      print('\t' * indent + str(key))
-      if isinstance(value, dict):
-         pretty(value, indent+1)
-      else:
-         print('\t' * (indent+1) + str(value))
-
 def originalindex(setbyfold, kfold):
     originallistbyfold=[]
     for i in range (0, kfold):
@@ -89,15 +80,47 @@ def label_photos(setbyfold, kfold):
         for labeldict in setbyfold[i]:
             photoslist.append(labeldict['photos'])
             for something in labeldict['photos']:
-                print(something)
+                print(something['photopath'] + " " + something['photolabel'])
+        photoslistbyfold.append(photoslist)
+    return photoslistbyfold
+
+def gen_set_photos_by_fold(setbyfold):
+    photoslistbyfold=[]
+    for fold in setbyfold:
+        photoslist = []
+        for labeldict in fold:
+            for photo in labeldict['photos']:
+                photoslist.append(photo['photopath'] + " " + photo['photolabel'])
         photoslistbyfold.append(photoslist)
     return photoslistbyfold
 
 
+def create_set(listtowrite, type, k):
+    splits_dir = os.path.join(os.path.expanduser('./splits/fold{}/'.format(k)))
+    if not os.path.isdir(splits_dir):
+        os.makedirs(splits_dir)
+
+
+    fname = './splits/fold{}/{}.txt'.format(k,type)
+    with open(fname, 'w') as f:
+        for photo in listtowrite:
+            f.write(photo + '\n')
+
+kfold = 5
+dset = Dataset("photos", kfold)
+to_write_training=gen_set_photos_by_fold(dset.training_by_fold)
+to_write_testing=gen_set_photos_by_fold(dset.testing_by_fold)
+
+for k in range(1,kfold+1):
+    create_set(to_write_training[k-1], "training", k)
+    create_set(to_write_testing[k-1], "testing", k)
 
 
 
-dset = Dataset("photos", 5)
+
+
+
+"""
 originaltrain = label_photos(dset.training_by_fold, 5)
 originaltest = label_photos(dset.testing_by_fold, 5)
 counter = 0
@@ -110,4 +133,6 @@ def print_train_test_ogindex(originaltrain, originaltest):
         print("FOLD: " + str(counter))
         print(str(ogtrain) + "\n" + str(ogtest))
         counter = counter+1
+
+"""
 
