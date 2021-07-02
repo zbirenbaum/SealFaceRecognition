@@ -35,9 +35,8 @@ import tflib
 from network import Network
 # from tensorflow.contrib.tensorboard.plugins import projector
 import evaluate
-import splits
 import shutil
-
+import splitrewrite
 
 def train(config_file, counter):
     # I/O for config
@@ -135,7 +134,8 @@ def main():
     if not settings.splits:
         if os.path.exists(os.path.expanduser('./splits')):
             shutil.rmtree(os.path.expanduser('./splits')) 
-        splitData = splits.create_splits(settings.directory, num_trainings)
+        #splitData = splits.create_splits(settings.directory, num_trainings)
+        splitData = splitrewrite.DataSplitter(settings.directory, num_trainings)
     else:
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 

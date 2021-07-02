@@ -1,6 +1,8 @@
 from __future__ import print_function
 from __future__ import division
 import math
+
+from matplotlib import test
 import databuilder as db
 
 class DataSplitter(object):
@@ -27,14 +29,14 @@ class DataSplitter(object):
         initializes the attributes to be used by the class, called automatically from init, do not call manually
         """
         self.dbobj = db.DataBuilder(photodir)
-        self.full_dataset = self.dbobj.get_photos()
-        self.datalabels = sorted(self.full_dataset.get_labels(), key=int)
+        self.full_dataset = self.dbobj.get_photoarray()
+        self.datalabels = set(self.full_dataset.get_photo_labels())
         self.numlabels = len(self.datalabels)
         self.testnum = int(math.ceil(self.numlabels/self.kfold))  # array of splits
         self.trainnum = self.numlabels-math.floor(self.numlabels/self.kfold)  # array of splits
         self.testidxarr=[]
         self.trainidxarr=[]
-        self.setsplit()
+        self.traindata, self.testdata = self.setsplit()
         return
 
     def print_param(self):
@@ -47,14 +49,32 @@ class DataSplitter(object):
         """
         kfold = self.kfold
         numlabels = self.numlabels
+        testphotos = []
+        trainphotos = []
         if self.set_type == "openset":
             self.trainidxarr, self.testidxarr = calcindices([], [], 0, numlabels, kfold)  # array of arrays, each holds classes to train on for fold[idx+1]
-            self.trainphotos, self.trainpaths, self.testphotos, self.testpaths = split_bylabel(
-                    self.trainidxarr,
-                    self.testidxarr,
-                    self.full_dataset
-                    )
-        return
+            counter =0
+            for trainingidx in self.trainidxarr:
+                trainphotos.append([])
+                for idx in trainingidx:
+                    trainphotos[counter].extend(self.dbobj.get_photoarray().get_photoobj_bylabel(self.dbobj.labels[idx]))
+                counter = counter +1
+            counter =0
+            for testingidx in self.testidxarr:
+                testphotos.append([])
+                for idx in testingidx:
+                    testphotos[counter].extend(self.dbobj.get_photoarray().get_photoobj_bylabel(self.dbobj.labels[idx]))
+                counter = counter +1
+
+
+#testphotoarr = self.dbobj.gen_testing(self.trainidxarr)
+               # print(self.dbobj.gen_from_index(idxarr).get_photo_names())
+            #self.trainphotos, self.trainpaths, self.testphotos, self.testpaths = split_bylabel(
+            #        self.trainidxarr,
+            #        self.testidxarr,
+            #        self.full_dataset
+            #        )
+        return trainphotos, testphotos
 
     """the following two methods are useless and only called by test scripts to verify proper functionality"""
     def printindexbyfold(self):
@@ -70,8 +90,8 @@ class DataSplitter(object):
         for trainidxlist, testidxlist in zip(self.trainidxarr, self.testidxarr):
             print("FOLD:" + str(counter))
             print("trainidxlist:\n" + str(trainidxlist))
-            print("train photos:\n" + str(self.trainphotos[counter-1]))
-            print("trainpaths:\n" + str(self.trainpaths[counter-1]))
+#            print("train photos:\n" + str(self.trainphotos[counter-1]))
+#            print("trainpaths:\n" + str(self.trainpaths[counter-1]))
             print("test indices:\n" + str(testidxlist) + "\n")
             counter = counter+1
         return
@@ -99,7 +119,7 @@ def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None)
     return trainarr, testarr
 
 def split_bylabel(trainidxarr, testidxarr, full_dataset):
-    """generates list indexed by fold of the paths and filenames of the relevant photos for training and testing"""
+    """generates list indexed by fold of PhotoArrays to provide the paths and filenames of the relevant photos for training and testing"""
     fullset = full_dataset
     trainphotos = []
     trainpaths = []
@@ -107,10 +127,10 @@ def split_bylabel(trainidxarr, testidxarr, full_dataset):
     testpaths = []
     counter = 0
     for trainidxlist, testidxlist in zip(trainidxarr, testidxarr):
-        trainphotos.append([])
-        trainpaths.append([])
-        testphotos.append([])
-        testpaths.append([])
+        trainphotos.append(db.PhotoArray())
+        trainpaths.append(db.PhotoArray())
+        testphotos.append(db.PhotoArray())
+        testpaths.append(db.PhotoArray())
         for index in trainidxlist:
             trainphotos[counter].extend(fullset.get_photos_by_index(index))
             trainpaths[counter].extend(fullset.get_paths_by_index(index))
