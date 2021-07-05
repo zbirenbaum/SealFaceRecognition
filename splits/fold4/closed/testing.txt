@@ -1,0 +1,14 @@
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/45/045_6.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/55/055_1.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/40/040_7.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/68/068_5.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/50/050_3.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/50/050_7.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/56/056_13.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/56/056_9.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/49/049_6.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/62/062_9.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/62/062_12.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/48/048_8.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/48/048_5.jpg
+/home/zach/development/research/facerecog/SealFaceRecognition/photos/71/071_3.jpg

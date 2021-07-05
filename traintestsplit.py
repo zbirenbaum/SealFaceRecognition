@@ -20,6 +20,17 @@ class Dataset(object):
                 self.testidxarr
                 )
 
+    def closedset(self):
+        fullset = self.fulldata
+        kfold = self.kfold
+        for set in fullset:
+            label = set['label']
+            photos = set['label']['photos']
+            num_photos = len(photos)
+            calcindices([],[],0,num_photos,kfold)
+
+            pass
+
 def get_fulldata(dir):
     fulldata = dh.generate_dataset(dir)
     return fulldata
@@ -83,7 +94,6 @@ def label_photos(setbyfold, kfold):
                 print(something['photopath'] + " " + something['photolabel'])
         photoslistbyfold.append(photoslist)
     return photoslistbyfold
-
 def gen_set_photos_by_fold(setbyfold):
     photoslistbyfold=[]
     for fold in setbyfold:
