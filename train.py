@@ -36,12 +36,12 @@ from network import Network
 # from tensorflow.contrib.tensorboard.plugins import projector
 import evaluate
 import shutil
-import splitrewrite
+import traintestsplit as ttsplit
 
 def train(config_file, counter):
     # I/O for config
     config = utils.import_file(config_file, 'config')
-    splits_path = config.splits_path + '/split{}'.format(counter)
+    splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
 
     # Get training set
     trainset = utils.Dataset(splits_path + '/train.txt')
@@ -61,12 +61,12 @@ def train(config_file, counter):
     print('Loading probe and gallery images...')
     probes = []
     gal = []
-    with open(splits_path + '/probe.txt' ,'r') as f:
+    with open(splits_path + '/test.txt' ,'r') as f:
         for line in f:
             probes.append(line.strip())
     probe_set = evaluate.ImageSet(probes, config)
 
-    with open(splits_path  + '/gal.txt', 'r') as f:
+    with open(splits_path  + '/train.txt', 'r') as f:
         for line in f:
             gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
@@ -126,22 +126,26 @@ def main():
         required=False, help='Flag to use existing splits for training and testing data')
     parser.add_argument('-n', '--number', dest='number', action='store', type=int,
         required=False, help='Number of times to run the training(default is 3)')
+    
 
     settings = parser.parse_args()
     num_trainings = 3 if not settings.number else settings.number
     print('Running training {} times'.format(num_trainings))
     splitData = []
+
+    ttsplit.Dataset(settings.directory, int(num_trainings))
     if not settings.splits:
         if os.path.exists(os.path.expanduser('./splits')):
             shutil.rmtree(os.path.expanduser('./splits')) 
         #splitData = splits.create_splits(settings.directory, num_trainings)
-        splitData = splitrewrite.DataSplitter(settings.directory, num_trainings)
+        #splitData = splitrewrite.DataSplitter(settings.directory, num_trainings)
     else:
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 
+    ttsplit.Dataset(settings.directory, kfold=int(num_trainings))
     for i in range(num_trainings):
         print('Starting training #{}\n'.format(i+1))
-        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
+#        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
         train(settings.config_file, i+1)
 
 if __name__ == '__main__':

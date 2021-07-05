@@ -22,6 +22,7 @@ summary_interval = 5
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
 splits_path = './splits'
 
+testing_type = 'closed'
 #Target image size for the input of network
 image_size = [112,112]
 
@@ -123,7 +124,7 @@ keep_prob = 1.0
 # can be updated
 # Scale for the logits
 losses = {
-    #'softmax': {},
+    'softmax': {},
     #'cosine': {'gamma': 'auto'},
     #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
     # 'split': {'gamma': 'auto'}

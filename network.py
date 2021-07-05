@@ -51,6 +51,7 @@ class Network:
         '''
             Initialize the graph from scratch according config.
         '''
+        print("NUM CLASSES: " + str(num_classes))
         #A default graph is registered, operations will be added to the graph
         with self.graph.as_default():
             #A default session is created, operations will be added to the session
@@ -124,7 +125,6 @@ class Network:
 
                                 # Build all loss functions
                                 losses = []
-
                                 # Orignal Softmax
                                 if 'softmax' in config.losses.keys():
                                     logits = slim.fully_connected(prelogits, num_classes, 
