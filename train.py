@@ -62,12 +62,20 @@ def train(config_file, counter):
     probes = []
     gal = []
     with open(splits_path + '/test.txt' ,'r') as f:
+        counter = 0
         for line in f:
+            if counter == 0:
+                counter = counter + 1
+                continue
             probes.append(line.strip())
     probe_set = evaluate.ImageSet(probes, config)
 
     with open(splits_path  + '/train.txt', 'r') as f:
+        counter = 0
         for line in f:
+            if counter == 0:
+                counter = counter + 1
+                continue
             gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 

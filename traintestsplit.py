@@ -1,6 +1,4 @@
-from pprint import pprint
-import pprintpp as pp
-import dirhandler2 as dh
+import dirhandler as dh
 import calcindices as ci
 import numpy as np
 import os
@@ -86,6 +84,5 @@ class Dataset(object):
  #       print('Testing:')
  #       print(fold[1])
 
-dset = Dataset('photos', 5)
 #print_fold_idx(dset.open_fold_idx)
 #print(dset.open_fold_idx)

@@ -9,7 +9,7 @@ def gen_dict(folderdir, exclude=None):
 
 def get_photos_in_dir(path):
     extensions = ('png', 'jpg', 'jpeg')
-    photolist = [str(path) + filename for filename in os.listdir(path) if filename.endswith(extensions)]
+    photolist = [str(path) + '/' + filename for filename in os.listdir(path) if filename.endswith(extensions)]
     return photolist
 
 
