@@ -15,7 +15,7 @@ summary_interval = 5
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
 splits_path = './splits'
-
+testing_type = 'closed'
 #Target image size for the input of network
 image_size = [112,112]
 
@@ -67,7 +67,7 @@ embedding_size = 512
 optimizer = "RMSPROP"
 
 # Number of samples per batch
-batch_size = 64
+batch_size = 128
 
 # Number of batches per epoch
 epoch_size = 20

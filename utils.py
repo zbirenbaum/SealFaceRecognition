@@ -157,7 +157,8 @@ class Dataset():
         lines = [line.strip().split(' ') for line in lines]
         assert len(lines)>0 and len(lines[0])==2, \
             'All lines except for the first line must be in format: "fullpath(str) label(int)"'
-        self.total_num_classes = int(lines[0][1]) #First line must be in the format: Total_Number_Of_Classes x
+        #self.total_num_classes = lines[0][1] #  this doesnt fucking work First line must be in the format: Total_Number_Of_Classes x
+        self.total_num_classes = int(lines[len(lines)-1][1])+1 #First line must be in the format: Total_Number_Of_Classes x
         lines = lines[1:]
         images = [line[0] for line in lines]
         labels = [int(line[1]) for line in lines]
