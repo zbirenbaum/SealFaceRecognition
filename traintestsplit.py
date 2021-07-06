@@ -56,15 +56,17 @@ class Dataset(object):
                 to_write_training = self.open_ttdict[fold]['training']
                 to_write_testing = self.open_ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
-                num_testing_classes = len(to_write_testing.keys())
+                num_testing_classes = num_training_classes#len(to_write_testing.keys()) + num_training_classes
             else:
                 return "ERROR"
 
             self.create_set(to_write_training, settype, 'train', fold, num_training_classes)
             self.create_set(to_write_testing, settype, 'test', fold, num_testing_classes)
         return
-
     
+
+
+
     def create_set(self, ttdict, settype, typett, fold, num_classes): 
         splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
         if not os.path.isdir(splits_dir):

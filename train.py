@@ -42,7 +42,7 @@ def train(config_file, counter):
     # I/O for config
     config = utils.import_file(config_file, 'config')
     splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
-
+    print(splits_path)
     # Get training set
     trainset = utils.Dataset(splits_path + '/train.txt')
     trainset.images = utils.preprocess(trainset.images, config, True)

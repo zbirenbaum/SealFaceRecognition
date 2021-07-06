@@ -67,7 +67,7 @@ embedding_size = 512
 optimizer = "RMSPROP"
 
 # Number of samples per batch
-batch_size = 4
+batch_size = 128
 
 # Number of batches per epoch
 epoch_size = 20
@@ -117,10 +117,10 @@ keep_prob = 1.0
 # can be updated
 # Scale for the logits
 losses = {
-    'softmax': {},
+    #'softmax': {},
     #'cosine': {'gamma': 'auto'}, 
     #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
     #'split': {'gamma': 'auto'},
-    #'norm': {'alpha': 1e-5}
+    'norm': {'alpha': 1e-5}
 }
 

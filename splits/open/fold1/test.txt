@@ -1,4 +1,4 @@
-Total_Number_Of_Classes 14
+Total_Number_Of_Classes 54
 /home/zach/development/research/facerecog/SealFaceRecognition/photos/53/053_4.jpg 64
 /home/zach/development/research/facerecog/SealFaceRecognition/photos/53/053_3.jpg 64
 /home/zach/development/research/facerecog/SealFaceRecognition/photos/53/053_1.jpg 64

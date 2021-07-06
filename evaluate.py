@@ -27,8 +27,9 @@ class ImageSet:
     def parse(self):
         lines = [line.strip().split(' ') for line in self.image_paths]
         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
+    
     def extract_features(self, model, batch_size):
-        self.features = model.extract_feature(self.images, 64)
+        self.features = model.extract_feature(self.images, batch_size)
 
 def identify(logdir, probe, gallery):
     
@@ -44,6 +45,7 @@ def identify(logdir, probe, gallery):
         
     score_matrix = facepy.metric.cosineSimilarity(probe.features, np.array(galFeaturesList))
     #score_matrix = facepy.metric.cosineSimilarity(probe.features, gallery.features)
+    print(score_matrix)
 #   
     # Get ranks for each probe image
     with open(logdir + '/result.txt','w') as f:
