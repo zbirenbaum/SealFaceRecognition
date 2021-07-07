@@ -117,7 +117,7 @@ keep_prob = 1.0
 # can be updated
 # Scale for the logits
 losses = {
-    #'softmax': {},
+    'softmax': {},
     #'cosine': {'gamma': 'auto'}, 
     #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
     #'split': {'gamma': 'auto'},
