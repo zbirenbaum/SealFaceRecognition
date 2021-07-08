@@ -548,3 +548,4 @@ def test_roc(features, labels, FARs):
     TARs, FARs, thresholds = facepy.evaluation.ROC(score_mat.flatten(), label_mat.flatten(), FARs=FARs)
 
     return TARs, FARs, thresholds
+
