@@ -61,7 +61,7 @@ def train(config_file, counter):
     print('Loading probe and gallery images...')
     probes = []
     gal = []
-    with open(splits_path + '/test.txt' ,'r') as f:
+    with open(splits_path + '/probe.txt' ,'r') as f:
         counter = 0
         for line in f:
             if counter == 0:

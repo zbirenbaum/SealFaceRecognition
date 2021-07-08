@@ -81,8 +81,8 @@ learning_rate_strategy = 'step'
 # learning rate schedule
 learning_rate_schedule = {
     0:      0.001,
-    400:      0.01,
-    480:    0.001,
+    #400:      0.01,
+    #480:    0.001,
     #5000:   0.001,
     #7000:   0.0001
 }

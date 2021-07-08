@@ -33,7 +33,7 @@ class Dataset(object):
                 photos_testing = list(photolist[photoidx_testing[fold-1]])
                 closeddict[fold]['training'][label] = photos_training
                 closeddict[fold]['testing'][label] = photos_testing
-                        
+
         return closeddict
 
     def gen_open_ttdict(self):
@@ -63,8 +63,24 @@ class Dataset(object):
 
             self.create_set(to_write_training, settype, 'train', fold, num_training_classes)
             self.create_set(to_write_testing, settype, 'test', fold, num_testing_classes)
+            self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
         return
-    
+
+
+
+    def create_probe(self, ttdict, settype, typett, fold, num_classes):
+        splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
+        if not os.path.isdir(splits_dir):
+            os.makedirs(splits_dir)
+        fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
+        with open(fname, 'w') as f:
+            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
+            for label in ttdict.keys():
+                for photopath in ttdict[label]:
+                    f.write(photopath + ' ' + str(label) + '\n')
+                    break
+        f.close()
+        return
 
 
 
@@ -80,8 +96,8 @@ class Dataset(object):
                     f.write(photopath + ' ' + str(label) + '\n')
         f.close()
         return
- 
-        #print(fold) 
+
+    #print(fold) 
  #       print('Training:')
  #       print(fold[0])
  #       print('Testing:')
