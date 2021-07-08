@@ -67,13 +67,13 @@ embedding_size = 512
 optimizer = "RMSPROP"
 
 # Number of samples per batch
-batch_size = 128
+batch_size = 32
 
 # Number of batches per epoch
 epoch_size = 20
 
 # Number of epochs
-num_epochs = 30
+num_epochs = 20
 
 #learning rate strategy
 learning_rate_strategy = 'step'
@@ -121,6 +121,6 @@ losses = {
     #'cosine': {'gamma': 'auto'}, 
     #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
     #'split': {'gamma': 'auto'},
-    #'norm': {'alpha': 1e-5}
+    'norm': {'alpha': 1e-5}
 }
 

@@ -1,65 +1,32 @@
+import numpy as np
 import os
-from pathlib import Path 
+from pathlib import Path
 
-
-
-def generate_dataset(dir, exclude=None):
+def gen_dict(folderdir, exclude=None):
     if exclude is None:
-        exclude = 0
-    return read_labels(dir, exclude)
+        exclude=0
+    return get_photo_directories(folderdir, exclude)
 
-def get_photos_in_dir(path, label, index):
+def get_photos_in_dir(path):
     extensions = ('png', 'jpg', 'jpeg')
-    dict = {
-            "label" : label,
-            "photos" : [],
-            "originalindex" : index
-            }
-    for filename in os.listdir(path):
-        if filename.endswith(extensions):
-            photopath = os.path.join(path, filename)
-            photoname = filename
-            photolabel = label
-            indict = {"photopath" : photopath,
-                    "photoname" : photoname,
-                    "photolabel" : photolabel
-                    }
-            dict['photos'].append(indict)
-    return dict
+    photolist = [str(path) + '/' + filename for filename in os.listdir(path) if filename.endswith(extensions)]
+    return photolist
 
 
-def get_label_directories(dir, exclude):
-    photodir = str(Path(dir).resolve())
+def get_photo_directories(folderdir, exclude):
+    photodir = str(Path(folderdir).resolve())
     assert(os.path.exists(str(photodir)))
-    excludelist = []
-    full_labels = [dir for dir in os.listdir(str(photodir)) if not dir.startswith(".")]
-    postexclude = []
-    photolist = []
+    folderlist = [dir for dir in os.listdir(str(photodir)) if not dir.startswith(".")]
+    mapdict = {}
     counter = 0
-    for label in full_labels:
-        photos = []
-        path = os.path.join(photodir, label)
-        if not os.path.isdir(path):
+    for folder in folderlist:
+        path_to_folder = os.path.join(photodir, folder)
+        if not os.path.isdir(path_to_folder):
             continue
-       
-        photos = get_photos_in_dir(path, label, counter)
-#        print(photos)
- #       print(photos['photos'])
- #       print(len(photos['photos']))
-        if len(photos['photos']) < exclude:
-            excludelist.append(label)
+        photos = list(get_photos_in_dir(path_to_folder))
+        if len(photos) < exclude:
             continue
         else:
-            postexclude.append(label)
-            photolist.append(photos)
+            mapdict[counter] = {'name': folder, 'photos': photos}
             counter = counter + 1
-
-    return photolist, postexclude
-
-def read_labels(dir, exclude):
-   dictlist, labels = get_label_directories(dir, exclude)
-#   print(labels)
-   return dictlist
-
-
-
+    return mapdict 

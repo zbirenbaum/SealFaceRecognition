@@ -42,7 +42,7 @@ def train(config_file, counter):
     # I/O for config
     config = utils.import_file(config_file, 'config')
     splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
-
+    print(splits_path)
     # Get training set
     trainset = utils.Dataset(splits_path + '/train.txt')
     trainset.images = utils.preprocess(trainset.images, config, True)
@@ -61,13 +61,21 @@ def train(config_file, counter):
     print('Loading probe and gallery images...')
     probes = []
     gal = []
-    with open(splits_path + '/test.txt' ,'r') as f:
+    with open(splits_path + '/probe.txt' ,'r') as f:
+        counter = 0
         for line in f:
+            if counter == 0:
+                counter = counter + 1
+                continue
             probes.append(line.strip())
     probe_set = evaluate.ImageSet(probes, config)
 
     with open(splits_path  + '/train.txt', 'r') as f:
+        counter = 0
         for line in f:
+            if counter == 0:
+                counter = counter + 1
+                continue
             gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
