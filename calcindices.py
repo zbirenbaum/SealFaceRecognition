@@ -1,3 +1,4 @@
+from __future__ import division
 import math
 
 def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None):

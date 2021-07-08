@@ -1,4 +1,4 @@
-Total_Number_Of_Classes 27
+Total_Number_Of_Classes 26
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal41/DSCN4904.jpeg 0
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal41/DSCN4898.jpeg 0
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal41/DSCN4922.jpeg 0
@@ -189,8 +189,3 @@ Total_Number_Of_Classes 27
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal31/DSCN4925.jpeg 25
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal31/DSCN4887.jpeg 25
 /home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal31/DSCN4894.jpeg 25
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN5031.jpeg 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN4996.jpeg 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN5027.jpeg 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN5017.jpeg 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN5015.jpeg 26

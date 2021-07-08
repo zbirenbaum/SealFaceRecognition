@@ -1,3 +1,4 @@
+from __future__ import division
 import dirhandler as dh
 import calcindices as ci
 import numpy as np
