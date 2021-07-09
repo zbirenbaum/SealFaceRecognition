@@ -64,7 +64,8 @@ embedding_size = 512
 
 #RMSPROP is a type of stochastic gradient descent with adaptive learning rates
 # Optimizer
-optimizer = "RMSPROP"
+#optimizer = "RMSPROP"
+optimizer = "ADAM"
 
 # Number of samples per batch
 batch_size = 64

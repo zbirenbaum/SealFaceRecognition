@@ -20,6 +20,7 @@ class DatasetBuilder(object):
         self.exclude = exclude
         self.data = dh.gen_dict(photodir, self.exclude)
         self.dsetbyfold = []
+        self.testsetbyfold = []
         if settype=='open':
             self.settype='open'
             self.ttdict = self.gen_open_ttdict()
@@ -31,11 +32,8 @@ class DatasetBuilder(object):
 
         if usedict == 1:
             for fold in range(1, kfold+1):
-                self.dsetbyfold.append([
-                    ut.Dataset(ddict=self.ttdict[fold]['training']),
-                    ut.Dataset(ddict=self.ttdict[fold]['testing'])
-                    ])
-     
+                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training'])) 
+                self.testsetbyfold.append(self.ttdict[fold]['testing'])
 
         return
 

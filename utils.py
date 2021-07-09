@@ -85,38 +85,22 @@ class Dataset():
         self.cluster_queue_idx = None
         self.batch_queue = None
         self.class_weights = None
+        self.set_list = None
 
         if path is not None:
             self.init_from_path(path)
         
         if ddict is not None:
-            self.init_from_dict(ddict)
+            self.images, self.labels, self.total_num_classes, self.set_list = init_from_dict(ddict)
+            self.images = np.array(self.images, dtype=np.object)
+            self.labels = np.array(self.labels, dtype=np.int32)
+            self.init_classes()
 
     def clear(self):
         del self.classes
         self.__init__()
 
     
-    def init_from_dict(self, ddict):
-        self.classes = []
-        imagelist = []
-        labels = []
-
-        self.total_num_classes = len(ddict.keys())
-        #print(ddict)
-        for key in ddict.keys():
-            for photopath in ddict[key]:
-                labels.append(key)
-                imagelist.append(str(photopath))
-        #classes = list(set(labels))
-        images=imagelist
-        #images = [image.strip() for image in imagelist]
-  #      print(images)
-        self.images = np.array(images, dtype=np.object)#.reshape(-1,1)
-        self.labels = np.array(labels, dtype=np.int32)
-        self.init_classes()
-        return
-
     def init_from_path(self, path):
         path = os.path.expanduser(path)
         self.init_from_list(path)
@@ -245,6 +229,24 @@ class Dataset():
     def pop_batch_queue(self):
         batch = self.batch_queue.get(block=True, timeout=60)#type: ignore
         return batch
+
+def init_from_dict(ddict):
+    imagelist = []
+    labels = []
+    set_list = []
+
+    total_num_classes = len(ddict.keys())
+    #print(ddict)
+    for key in ddict.keys():
+        for photopath in ddict[key]:
+            labels.append(key)
+            imagelist.append(str(photopath))
+            set_list.append(photopath + " " + str(key))
+    #classes = list(set(labels))
+    images=imagelist
+    #images = [image.strip() for image in imagelist]
+#      print(images)
+    return images, labels, total_num_classes, set_list
 
 
 

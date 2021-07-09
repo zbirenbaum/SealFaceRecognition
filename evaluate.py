@@ -46,12 +46,16 @@ def identify(logdir, probe, gallery):
         galFeaturesList.append(individualFeatures)
 
     score_matrix = facepy.metric.cosineSimilarity(probe.features, np.array(galFeaturesList))
+    if set(probe.labels).issubset(gallery.labels):
+        return identification_closed(logdir, probe, uq, score_matrix)
     #score_matrix = facepy.metric.cosineSimilarity(probe.features, gallery.features)
 #    print(score_matrix)
 #   
     #print("Gallery Labels: " + str(gallery.labels))
     #print("Probe Labels: " + str(probe.labels))
     # Get ranks for each probe image
+
+def identification_closed(logdir, probe, uq, score_matrix):
     with open(logdir + '/result.txt','w') as f:
         probelabelarr = []
         predlabelarr = []

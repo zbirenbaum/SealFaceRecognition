@@ -43,6 +43,7 @@ def train(config, config_file, counter, trainset=None, testset=None):
     # I/O for config
     splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
     print(splits_path)
+    gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
     # Get training set
     print(trainset.images)
 #    trainset = utils.Dataset(splits_path + '/train.txt')
@@ -60,25 +61,26 @@ def train(config, config_file, counter, trainset=None, testset=None):
         network.restore_model(config.restore_model, config.restore_scopes)
 
     # Load gallery and probe file_list
-    print('Loading probe and gallery images...')
-    probes = []
-    gal = []
-    with open(splits_path + '/probe.txt' ,'r') as f:
-        counter = 0
-        for line in f:
-            if counter == 0:
-                counter = counter + 1
-                continue
-            probes.append(line.strip())
+#    print('Loading probe and gallery images...')
+#    probes = []
+#    gal = []
+#    with open(splits_path + '/probe.txt' ,'r') as f:
+#        counter = 0
+#        for line in f:
+#            if counter == 0:
+#                counter = counter + 1
+#                continue
+#            probes.append(line.strip())
+    probes = utils.init_from_dict(testset)[3]
     probe_set = evaluate.ImageSet(probes, config)
 
-    with open(splits_path  + '/train.txt', 'r') as f:
-        counter = 0
-        for line in f:
-            if counter == 0:
-                counter = counter + 1
-                continue
-            gal.append(line.strip())
+#    with open(splits_path  + '/train.txt', 'r') as f:
+#        counter = 0
+#        for line in f:
+#            if counter == 0:
+#                counter = counter + 1
+#                continue
+#            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
     trainset.start_batch_queue(config, True)
@@ -155,10 +157,10 @@ def main():
     builder = ttsplit.DatasetBuilder(settings.directory, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
     for i in range(num_trainings):
         print('Starting training #{}\n'.format(i+1))
-        trainset = builder.dsetbyfold[i][0]
-        testset = builder.dsetbyfold[i][1]
+        trainset = builder.dsetbyfold[i]
+        testset = builder.testsetbyfold[i]
 #        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-        train(config, settings.config_file, i+1, trainset)
+        train(config, settings.config_file, i+1, trainset, testset)
 
 if __name__ == '__main__':
     main()
