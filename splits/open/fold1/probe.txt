@@ -1,8 +1,0 @@
-Total_Number_Of_Classes 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal50/DSCN4874.jpeg 32
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal14/DSCN5031.jpeg 26
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal12/DSCN4874.jpeg 27
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal39/DSCN4963.jpeg 28
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal35/DSCN4932.jpeg 29
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal13/DSCN4858.jpeg 30
-/home/zach/development/research/facerecog/SealFaceRecognition/2020data/Mitchell_Field_Singles_1_31Chips/Seal9/DSCN4963.jpeg 31

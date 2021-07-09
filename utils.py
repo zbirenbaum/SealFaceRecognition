@@ -1,43 +1,15 @@
-"""Utilities for training and testing
-"""
-# MIT License
-# 
-# Copyright (c) 2018 Debayan Deb
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-
 import sys
 import os
 import numpy as np
-from scipy import misc
 import imp
-import time
 import math
 import random
 from datetime import datetime
 import shutil
+from preprocess import preprocess
 # from threading import Thread
 # from Queue import Queue
 from multiprocessing import Process, Queue
-import h5py
-import facepy
-from sklearn.model_selection import KFold
 
 def import_file(full_path_to_module, name='module.name'):
     if full_path_to_module is None:
@@ -71,17 +43,20 @@ class DataClass():
         if exception is not None:
             indices_temp.remove(exception)
         indices = []
-        iterations = int(np.ceil(1.0*num_samples_per_class / len(indices_temp)))
+        iterations = int(np.ceil(1.0*num_samples_per_class / len(indices_temp)))#type: ignore
         # iterations = 1
-        for i in range(iterations):
-            sample_indices = np.random.permutation(indices_temp)
+
+        counter = 0
+        while counter < iterations:
+            sample_indices = np.random.permutation(indices_temp)#type: ignore
             indices.append(sample_indices)
+            counter = counter + 1
         indices = np.concatenate(indices, axis=0)[:num_samples_per_class]
         # indices = indices[:min(indices.size, num_samples_per_class)]
         return indices
 
     def build_clusters(self, cluster_size):
-        permut_indices = np.random.permutation(self.indices)
+        permut_indices = np.random.permutation(self.indices)#type: ignore
         cutoff = (permut_indices.size // cluster_size) * cluster_size
         clusters = np.reshape(permut_indices[:cutoff], [-1, cluster_size])
         clusters = list(clusters)
@@ -96,7 +71,9 @@ class DataClass():
 
 class Dataset():
 
-    def __init__(self, path=None):
+    def __init__(self, path=None, ddict=None):
+        self.traindict = None
+        self.testdict = None
         self.total_num_classes = None
         self.training_num_classes = None
         self.classes = None
@@ -111,45 +88,38 @@ class Dataset():
 
         if path is not None:
             self.init_from_path(path)
+        
+        if ddict is not None:
+            self.init_from_dict(ddict)
 
     def clear(self):
         del self.classes
         self.__init__()
 
+    
+    def init_from_dict(self, ddict):
+        self.classes = []
+        imagelist = []
+        labels = []
+
+        self.total_num_classes = len(ddict.keys())
+        #print(ddict)
+        for key in ddict.keys():
+            for photopath in ddict[key]:
+                labels.append(key)
+                imagelist.append(str(photopath))
+        #classes = list(set(labels))
+        images=imagelist
+        #images = [image.strip() for image in imagelist]
+  #      print(images)
+        self.images = np.array(images, dtype=np.object)#.reshape(-1,1)
+        self.labels = np.array(labels, dtype=np.int32)
+        self.init_classes()
+        return
+
     def init_from_path(self, path):
         path = os.path.expanduser(path)
-        _, ext = os.path.splitext(path)
-        if os.path.isdir(path):
-            self.init_from_folder(path)
-        elif ext == '.txt':
-            self.init_from_list(path)
-        elif ext == '.hdf5':
-            self.init_from_hdf5(path)
-        else:
-            raise ValueError('Cannot initialize dataset from path: %s\n\
-                It should be either a folder, .txt or .hdf5 file' % path)
-
-    def init_from_folder(self, folder):
-        folder = os.path.expanduser(folder)
-        class_names = os.listdir(folder)
-        class_names.sort()
-        classes = []
-        images = []
-        labels = []
-        for label, class_name in enumerate(class_names):
-            print(label)
-            classdir = os.path.join(folder, class_name)
-            if os.path.isdir(classdir):
-                images_class = os.listdir(classdir)
-                images_class = [os.path.join(classdir,img) for img in images_class]
-                indices_class = np.arange(len(images), len(images) + len(images_class))
-                classes.append(DataClass(class_name, indices_class, label))
-                images.extend(images_class)
-                labels.extend(len(images_class) * [label])
-        self.classes = np.array(classes, dtype=np.object)
-        self.images = np.array(images, dtype=np.object)
-        self.labels = np.array(labels, dtype=np.int32)
-        self.training_num_classes = len(classes)
+        self.init_from_list(path)
 
     def init_from_list(self, filename):
         with open(filename, 'r') as f:
@@ -157,29 +127,21 @@ class Dataset():
         lines = [line.strip().split(' ') for line in lines]
         assert len(lines)>0 and len(lines[0])==2, \
             'All lines except for the first line must be in format: "fullpath(str) label(int)"'
-        #self.total_num_classes = int(lines[0][1]) #First line must be in the format: Total_Number_Of_Classes x
-        #self.total_num_classes = int(lines[len(lines)-1][1])+1 #First line must be in the format: Total_Number_Of_Classes x
         self.total_num_classes = max(int(line[1]) for line in lines)
-        #print("Found" + str(self.total_num_classes) + " classes")
         lines = lines[1:] #start at index 1
         images = [line[0] for line in lines]
+        #print(images)
         labels = [int(line[1]) for line in lines]
         self.images = np.array(images, dtype=np.object)
         self.labels = np.array(labels, dtype=np.int32)
         self.init_classes()
 
 
-    def init_from_hdf5(self, filename):
-        with h5py.File(filename, 'r') as f:
-            self.images = np.array(f['images'])
-            self.labels = np.array(f['labels'])
-        self.init_classes()
-
 
     def init_classes(self):
         dict_classes = {}
         classes = []
-        for i, label in enumerate(self.labels):
+        for i, label in enumerate(self.labels):#type: ignore
             if not label in dict_classes:
                 dict_classes[label] = [i]
             else:
@@ -189,50 +151,10 @@ class Dataset():
         self.classes = np.array(classes, dtype=np.object)
         self.training_num_classes = len(classes)
        
-    ''' Not used '''
-    def build_subset_from_classes(self, classes):
-        images = []
-        labels = []
-        classes_new = []
-        for i, c in enumerate(classes):
-            n = len(c.indices)
-            images.extend(self.images[c.indices])
-            labels.extend([i] * n)
-        subset = Dataset()
-        subset.images = np.array(images, dtype=np.object)
-        subset.labels = np.array(labels, dtype=np.int32)
-        subset.init_classes()
-        subset.num_classes = len(classes)
-
-        print('built subset: %d images of %d classes' % (len(subset.images), subset.num_classes))
-        return subset
-
-    ''' Not used '''
-    def split_k_folds(self, k):
-        self.kf = KFold(n_splits = k)
-        self.train_idx = []
-        self.test_idx = []
-        for train, test in self.kf.split(self.classes):
-            self.train_idx.append(train)
-            self.test_idx.append(test)
-
-
-    ''' Not used '''
-    def get_fold(self, fold):
-        k = self.kf.get_n_splits(self.classes)
-        assert fold <= k
-        # Concatenate the classes in difference folds for trainset
-        #trainset_classes = [c for i in range(k) if i!=fold for c in self.k_folds_classes[i]]
-        #testset_classes = self.k_folds_classes[fold]
-        trainset = self.build_subset_from_classes(self.classes[self.train_idx[fold-1]])
-        testset = self.build_subset_from_classes(self.classes[self.test_idx[fold-1]])
-        return trainset, testset
-
-
     def init_index_queue(self, random=True):
-        size = self.images.shape[0]
+        size = self.images.shape[0] #type: ignore
         if random:
-            self.index_queue = np.random.permutation(size)
+            self.index_queue = np.random.permutation(size) #type: ignore
         else:
             self.index_queue = np.arange(size)
         self.queue_idx = 0
@@ -241,19 +163,19 @@ class Dataset():
         if self.index_queue is None:
             self.init_index_queue(random)
         result = []
-        while num >= len(self.index_queue) - self.queue_idx:
-            result.extend(self.index_queue[self.queue_idx:])
-            num -= len(self.index_queue) - self.queue_idx
+        while num >= len(self.index_queue) - self.queue_idx:#type: ignore
+            result.extend(self.index_queue[self.queue_idx:])#type: ignore
+            num -= len(self.index_queue) - self.queue_idx#type: ignore
             self.init_index_queue(random)
             self.queue_idx = 0
-        result.extend(self.index_queue[self.queue_idx : self.queue_idx+num])
+        result.extend(self.index_queue[self.queue_idx : self.queue_idx+num])#type: ignore
         self.queue_idx += num
         return result
 
     def init_cluster_queue(self, cluster_size):
         assert type(cluster_size) == int
         self.cluster_queue = []
-        for dataclass in self.classes:
+        for dataclass in self.classes:#type: ignore
             self.cluster_queue.extend(dataclass.build_clusters(cluster_size))
         random.shuffle(self.cluster_queue)
     
@@ -265,19 +187,19 @@ class Dataset():
         if self.cluster_queue is None:
             self.init_cluster_queue(cluster_size)
         result = []
-        while num_clusters >= len(self.cluster_queue) - self.cluster_queue_idx:
-            result.extend(self.cluster_queue[self.cluster_queue_idx:])
-            num_clusters -= len(self.cluster_queue) - self.cluster_queue_idx
+        while num_clusters >= len(self.cluster_queue) - self.cluster_queue_idx:#type: ignore
+            result.extend(self.cluster_queue[self.cluster_queue_idx:])#type: ignore
+            num_clusters -= len(self.cluster_queue) - self.cluster_queue_idx#type: ignore
             self.init_cluster_queue(cluster_size)
-        result.extend(self.cluster_queue[self.cluster_queue_idx : self.cluster_queue_idx+num_clusters])
+        result.extend(self.cluster_queue[self.cluster_queue_idx : self.cluster_queue_idx+num_clusters])#type: ignore
         self.cluster_queue_idx += num_clusters
         return result
 
     def get_batch(self, batch_size):
         indices_batch = self.pop_index_queue(batch_size, True)
 
-        image_batch = self.images[indices_batch]
-        label_batch = self.labels[indices_batch]
+        image_batch = self.images[indices_batch]#type: ignore
+        label_batch = self.labels[indices_batch]#type: ignore
         return image_batch, label_batch
 
     def get_batch_classes(self, batch_size, num_classes_per_batch):
@@ -297,38 +219,11 @@ class Dataset():
         #    indices_batch.append(self.classes[class_id].get_samples(num_samples_per_class, indices_root[i]))
            
         # indices_batch = np.concatenate(indices_batch, axis=0)
-        image_batch = self.images[indices_batch]
-        label_batch = self.labels[indices_batch]
+        image_batch = self.images[indices_batch]#type: ignore
+        label_batch = self.labels[indices_batch]#type: ignore
         return image_batch, label_batch
 
-
-    ''' Not used '''
-    def sample_classes_by_weight(self, num_classes_per_batch):
-        if self.class_weights is None:
-            self.class_weights = [len(dataclass.indices) for dataclass in self.classes]
-            self.class_weights = np.array(self.class_weights, dtype=np.float32)
-            self.class_weights = np.square(self.class_weights)
-            self.class_weights = self.class_weights / np.sum(self.class_weights)
-        p = self.class_weights
-        selected = []
-        for i in range(num_classes_per_batch):
-            # p[selected] = 0.0
-            # p = p / np.sum(p)
-            select = np.random.choice(p.size, p=p)
-            selected.append(select)
-        return selected
-
-    ''' Not used '''
-    def get_samples_per_class(self, num_samples_per_class):
-        indices = []
-        for data_class in self.classes:
-            indices.append(data_class.get_samples(num_samples_per_class))
-        indices = np.concatenate(indices, axis=0)
-        images = self.images[indices]
-        labels = self.labels[indices]
-        return images, labels
-
-    # Multithreading preprocessing images
+   # Multithreading preprocessing images
     def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1):
         self.batch_queue = Queue(maxsize=maxsize)
         def batch_queue_worker():
@@ -339,7 +234,7 @@ class Dataset():
                 else:
                     image_path_batch, label_batch = self.get_batch(config.batch_size)
                 image_batch = preprocess(image_path_batch, config, is_training)
-                self.batch_queue.put((image_batch, label_batch))
+                self.batch_queue.put((image_batch, label_batch))#type: ignore
 
         for i in range(num_threads):
             worker = Process(target=batch_queue_worker)
@@ -348,138 +243,13 @@ class Dataset():
     
     
     def pop_batch_queue(self):
-        batch = self.batch_queue.get(block=True, timeout=60)
+        batch = self.batch_queue.get(block=True, timeout=60)#type: ignore
         return batch
 
 
 
 # Calulate the shape for creating new array given (w,h)
-def get_new_shape(images, size):
-    w, h = tuple(size)
-    shape = list(images.shape)
-    shape[1] = h
-    shape[2] = w
-    shape = tuple(shape)
-    return shape
-
-def random_crop(images, size):
-    n, _h, _w = images.shape[:3]
-    w, h = tuple(size)
-    shape_new = get_new_shape(images, size)
-    assert (_h>=h and _w>=w)
-
-    images_new = np.ndarray(shape_new, dtype=images.dtype)
-
-    y = np.random.randint(low=0, high=_h-h+1, size=(n))
-    x = np.random.randint(low=0, high=_w-w+1, size=(n))
-
-    for i in range(n):
-        images_new[i] = images[i, y[i]:y[i]+h, x[i]:x[i]+w]
-
-    return images_new
-
-def center_crop(images, size):
-    n, _h, _w = images.shape[:3]
-    w, h = tuple(size)
-    assert (_h>=h and _w>=w)
-
-    y = int(round(0.5 * (_h - h)))
-    x = int(round(0.5 * (_w - w)))
-
-    images_new = images[:, y:y+h, x:x+w]
-
-    return images_new
-
-def random_flip(images):
-    images_new = images
-    flips = np.random.rand(images_new.shape[0])>=0.5
-    
-    for i in range(images_new.shape[0]):
-        if flips[i]:
-            images_new[i] = np.fliplr(images[i])
-
-    return images_new
-
-def resize(images, size):
-    n, _h, _w = images.shape[:3]
-    w, h = tuple(size)
-    shape_new = get_new_shape(images, size)
-
-    images_new = np.ndarray(shape_new, dtype=images.dtype)
-
-    for i in range(n):
-        images_new[i] = misc.imresize(images[i], (h,w))
-
-    return images_new
-
-''' Normalize images to ensure pixels have a uniform data distribution for faster convergence while training the network '''
-def standardize_images(images, standard):
-    channels = 3 if images[0].shape == (112,112,3) else 1
-    if standard=='mean_scale':
-        mean = 127.5
-        std = 128.0
-    elif standard=='scale':
-        mean = 0.0
-        std = 255.0
-    elif standard=='deb':
-        if channels == 3:
-            mean = np.mean(images,axis=(1,2,3)).reshape([-1,1,1,1])
-            std = np.std(images, axis=(1,2,3)).reshape([-1,1,1,1])
-        else:
-            mean = np.mean(images,axis=(1,2)).reshape([-1,1,1,1])
-            std = np.std(images, axis=(1,2)).reshape([-1,1,1,1])
-    images_new = images.astype(np.float32)
-    images_new = (images_new - mean) / std
-    return images_new
-
-''' Reduce overrepresented classes '''
-def random_downsample(images, min_ratio):
-    n, _h, _w = images.shape[:3]
-    images_new = images
-    ratios = min_ratio + (1-min_ratio) * np.random.rand(images_new.shape[0])
-
-    for i in range(images_new.shape[0]):
-        w = int(round(ratios[i] * _w))
-        h = int(round(ratios[i] * _h))
-        images_new[i,:h,:w] = misc.imresize(images[i], (h,w))
-        images_new[i] = misc.imresize(images_new[i,:h,:w], (_h,_w))
-        
-    return images_new
-
-
 ''' Run various functions as defined in the config preprocess '''
-def preprocess(images, config, is_training=False):
-    # Load images first if they are file paths
-    if type(images[0]) == str:
-        image_paths = images
-        images = []
-        assert (config.channels==1 or config.channels==3)
-        mode = 'RGB' if config.channels==3 else 'I'
-        print('Prepocessing images ...')
-        for idx, image_path in enumerate(image_paths):
-                images.append(misc.imread(image_path, mode=mode))
-        print('Done preprocessing images ...\n')
-            
-        images = np.stack(images, axis=0)
-
-    # Process images
-    f = {
-        'resize': resize,
-        'random_crop': random_crop,
-        'center_crop': center_crop,
-        'random_flip': random_flip,
-        'standardize': standardize_images,
-        'random_downsample': random_downsample,
-    }
-    proc_funcs = config.preprocess_train if is_training else config.preprocess_test
-
-    for name, args in proc_funcs:
-        images = f[name](images, *args)
-    if len(images.shape) == 3:
-        images = images[:,:,:,None]
-    return images
-
-
 def get_updated_learning_rate(global_step, config):
     if config.learning_rate_strategy == 'step':
         max_step = -1
@@ -497,7 +267,7 @@ def get_updated_learning_rate(global_step, config):
         step = math.floor(float(global_step) / interval) * interval
         assert step <= end_step
         learning_rate = initial * 0.5 * (math.cos(math.pi * step / end_step) + 1)
-    return learning_rate
+    return learning_rate#type: ignore
 
 ''' Used to show information while training the network '''
 def display_info(epoch, step, duration, watch_list):
@@ -509,44 +279,4 @@ def display_info(epoch, step, duration, watch_list):
             sys.stdout.write('   %s: %d' % (item[0], item[1]))
     sys.stdout.write('\n')
 
-''' Not used currently '''
-def get_pairwise_score_label(score_mat, label):
-    n = label.size
-    assert score_mat.shape[0]==score_mat.shape[1]==n
-    triu_indices = np.triu_indices(n, 1)
-    if len(label.shape)==1:
-        label = label[:, None]
-    label_mat = label==label.T
-    score_vec = score_mat[triu_indices]
-    label_vec = label_mat[triu_indices]
-    return score_vec, label_vec
 
-''' Not used currently '''
-def split_batches_and_exec(input, batch_size, batch_func):
-    '''Split the input into batches to execute given functions.
-
-    All results are assumed to be arrays and will be merged along axis 0.
-    '''
-    length = input.shape[0] if type(input)==np.ndarray else len(input)
-    
-    results = []
-    for start_idx in range(0, length, batch_size):
-        end_idx = min(length, start_idx + batch_size)
-        results.append(batch_func(input[start_idx:end_idx]))
-
-    result = np.concatenate(results, axis=0)
-
-    return result
-
-''' Not used currently '''
-def test_roc(features, labels, FARs):
-    n, d = features.shape
-    assert n % 2 == 0
-    features = np.reshape(features, [-1,2,d])
-    feat1, feat2 = features[:,0,:], features[:,1,:]
-    score_mat = - facepy.metric.euclidean(feat1, feat2)
-    label_mat = np.eye(n//2, dtype=np.bool)
-
-    TARs, FARs, thresholds = facepy.evaluation.ROC(score_mat.flatten(), label_mat.flatten(), FARs=FARs)
-
-    return TARs, FARs, thresholds

@@ -28,13 +28,13 @@ resize = (112,112)
 # Preprocessing for training
 preprocess_train = [
         ('resize', [(112,112)]),
-        ('random_flip', []),
-        ('standardize', ['deb'])
+        ('random_flip', [])
+ #       ('standardize', ['deb'])
 ]
 
 preprocess_test = [
         ('resize', [(112,112)]),
-        ('standardize', ['deb'])
+#        ('standardize', ['deb'])
 ]
 
 # Number of GPUs
@@ -67,10 +67,10 @@ embedding_size = 512
 optimizer = "RMSPROP"
 
 # Number of samples per batch
-batch_size = 32
+batch_size = 64
 
 # Number of batches per epoch
-epoch_size = 20
+epoch_size = 48
 
 # Number of epochs
 num_epochs = 20
@@ -81,7 +81,7 @@ learning_rate_strategy = 'step'
 # learning rate schedule
 learning_rate_schedule = {
     0:      0.001,
-    #400:      0.01,
+    100:      0.0001,
     #480:    0.001,
     #5000:   0.001,
     #7000:   0.0001

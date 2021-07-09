@@ -3,19 +3,54 @@ import dirhandler as dh
 import calcindices as ci
 import numpy as np
 import os
-class Dataset(object):
-    def __init__(self, photodir, kfold, exclude=None):
+import utils as ut
+
+
+def ignore(k):
+    k=k+0
+    return
+
+class DatasetBuilder(object):
+    def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None):
         self.photodir = photodir
         self.kfold = kfold
+        
         if exclude is None:
             exclude = kfold
         self.exclude = exclude
         self.data = dh.gen_dict(photodir, self.exclude)
-        self.open_ttdict = self.gen_open_ttdict()
-        self.closed_ttdict = self.gen_closed_ttdict()
-        self.write_ttdict('open')
-        self.write_ttdict('closed')
+        self.dsetbyfold = []
+        if settype=='open':
+            self.settype='open'
+            self.ttdict = self.gen_open_ttdict()
+            self.write_ttdict('open')
+        else:
+            self.settype='closed'
+            self.ttdict = self.gen_closed_ttdict()
+            self.write_ttdict('closed')
+
+        if usedict == 1:
+            for fold in range(1, kfold+1):
+                self.dsetbyfold.append([
+                    ut.Dataset(ddict=self.ttdict[fold]['training']),
+                    ut.Dataset(ddict=self.ttdict[fold]['testing'])
+                    ])
+     
+
         return
+
+    def gen_set_info(self):
+        total_classes = len(self.data.keys())
+        training_num_classes = []
+        if self.settype == 'open':
+            for fold in self.ttdict.keys():
+                training_num_classes.append(len(self.ttdict[fold]['training'].keys()))
+        else:
+            for k in range(self.kfold):
+                ignore(k)
+                training_num_classes.append(total_classes)
+        
+        return total_classes, training_num_classes
 
     def gen_closed_ttdict(self):
         closeddict = {}
@@ -49,13 +84,13 @@ class Dataset(object):
     def write_ttdict(self, settype):
         for fold in range(1, self.kfold+1):
             if settype == 'closed':
-                to_write_training = self.closed_ttdict[fold]['training']
-                to_write_testing = self.closed_ttdict[fold]['testing']
+                to_write_training = self.ttdict[fold]['training']
+                to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
             elif settype == 'open':
-                to_write_training = self.open_ttdict[fold]['training']
-                to_write_testing = self.open_ttdict[fold]['testing']
+                to_write_training = self.ttdict[fold]['training']
+                to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = num_training_classes#len(to_write_testing.keys()) + num_training_classes
             else:
@@ -96,12 +131,3 @@ class Dataset(object):
                     f.write(photopath + ' ' + str(label) + '\n')
         f.close()
         return
-
-    #print(fold) 
- #       print('Training:')
- #       print(fold[0])
- #       print('Testing:')
- #       print(fold[1])
-
-#print_fold_idx(dset.open_fold_idx)
-#print(dset.open_fold_idx)
