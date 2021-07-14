@@ -22,7 +22,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+import pandas as pd
 import os
 import sys
 import time
@@ -84,11 +84,12 @@ def train(config, config_file, counter, trainset=None, testset=None):
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
-    #config.batch_size = math.ceil(len(gal)/2)
-    #config.epoch_size = 2
+    config.batch_size = math.ceil(len(gal)/3)
+    config.epoch_size = 3
+    config.num_epochs = 40
     
-    config.batch_size = 1
-    config.epoch_size = math.ceil(len(gal))
+#    config.batch_size = 1
+#    config.epoch_size = math.ceil(len(gal))
     #batch_size = len(list(set(probe_set.labels)))
     #batch_size = config.batch_size
     #epoch_size = config.epoch_size
@@ -102,6 +103,7 @@ def train(config, config_file, counter, trainset=None, testset=None):
     global_step = 0
     start_time = time.time()
 #    learning_rate=.001
+    df = pd.DataFrame()
     for epoch in range(config.num_epochs):
         # Training
         for step in range(config.epoch_size):    #config.epoch_size):
@@ -125,7 +127,7 @@ def train(config, config_file, counter, trainset=None, testset=None):
         probe_set.extract_features(network, len(probes))
         gal_set.extract_features(network, len(gal))
 
-        rank1, rank5 = evaluate.identify(log_dir, probe_set, gal_set)
+        rank1, rank5, df = evaluate.identify(log_dir, probe_set, gal_set)
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
         
         # Output test result
@@ -136,6 +138,12 @@ def train(config, config_file, counter, trainset=None, testset=None):
 
         # Save the model
         network.save_model(log_dir, global_step)
+
+    resultsdf_file = 'log/result_fold_{}.csv'.format(counter)
+    df.to_csv(resultsdf_file, index=False)
+    #resultsdf_file = 'log/result_fold_{}.xml'.format(counter)
+    #df.to_xml(resultsdf_file)
+    
     results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
     shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
 

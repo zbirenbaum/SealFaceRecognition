@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def run(logdir):
+def run(logdir, df):
     num_groups = 1
     num_inner = 1
     
@@ -78,7 +78,7 @@ def run(logdir):
             rank5.append(r5 / float(count))
             print(rank1)
             print(rank5)
-            return rank1, rank5
+            return rank1, rank5, df
 #            meanr1 = sum(rank1)/len(rank1)
 #            meanr5 = sum(rank5)/len(rank5)
 

@@ -74,15 +74,14 @@ batch_size = 32
 epoch_size = 18
 
 # Number of epochs
-num_epochs = 1000
+num_epochs = 20
 
 #learning rate strategy
 learning_rate_strategy = 'step'
 
 # learning rate schedule
 learning_rate_schedule = {
-#        0: 0.005,
-        0: 0.001
+        0: 0.001,
         #1: 0.005,
         #5: 0.001,
         #10: 0.0005

@@ -112,7 +112,7 @@ def identification_closed(logdir, probe, uq, score_matrix):
         print('% Rank 1 Correct: {:.3f}'.format(df.Rank1Match.sum()/len(df.index)))
         print('Rank 5 Correct: ' + str(df.Rank5Match.sum()) + '/' + str(len(df.index)))
         print('% Rank 5 Correct: ' + str(df.Rank5Match.sum()/len(df.index)))
-    return summary.run(logdir)
+    return summary.run(logdir, df)
 
 
 ## Load Model
