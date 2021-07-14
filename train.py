@@ -38,6 +38,7 @@ import evaluate
 import shutil
 import traintestsplit as ttsplit
 from preprocess import preprocess
+import math
 
 def train(config, config_file, counter, trainset=None, testset=None):
     # I/O for config
@@ -83,21 +84,31 @@ def train(config, config_file, counter, trainset=None, testset=None):
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
+    #config.batch_size = math.ceil(len(gal)/2)
+    #config.epoch_size = 2
+    
+    config.batch_size = 1
+    config.epoch_size = math.ceil(len(gal))
+    #batch_size = len(list(set(probe_set.labels)))
+    #batch_size = config.batch_size
+    #epoch_size = config.epoch_size
     trainset.start_batch_queue(config, True)
-
     #
     # Main Loop
     #
-    print('\nStart Training\n# epochs: {}\nepoch_size: {}\nbatch_size: {}\n'.\
-        format(config.num_epochs, config.epoch_size, config.batch_size))
+    print('\nStart Training\n# epochs: {}\nepoch_size: {}\nbatch_size: {}\n'\
+            .format(config.num_epochs, config.epoch_size, config.batch_size)) #config.epoch_size, config.batch_size))
 
     global_step = 0
     start_time = time.time()
+#    learning_rate=.001
     for epoch in range(config.num_epochs):
         # Training
-        for step in range(config.epoch_size):
+        for step in range(config.epoch_size):    #config.epoch_size):
             # Prepare input
             learning_rate = utils.get_updated_learning_rate(global_step, config)
+#            learning_rate = utils.get_updated_learning_rate(global_step, config)
+#            learning_rate = network.learning_rate_placeholder
             image_batch, label_batch = trainset.pop_batch_queue()
 
             wl, sm, global_step = network.train(image_batch, label_batch, learning_rate, config.keep_prob)

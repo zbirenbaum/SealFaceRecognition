@@ -1,6 +1,6 @@
 from __future__ import division
 import dirhandler as dh
-import calcindices as ci
+import datasplitter as ds
 import numpy as np
 import os
 import utils as ut
@@ -60,7 +60,7 @@ class DatasetBuilder(object):
         for label in self.data.keys():
             labeldict = self.data[label]
             photolist = np.array(labeldict['photos'])
-            photoidx_training, photoidx_testing = ci.calcindices([],[],0,len(photolist), self.kfold)
+            photoidx_training, photoidx_testing = ds.calcindices([],[],0,len(photolist), self.kfold)
             for fold in range(1, self.kfold+1):
                 photos_training = list(photolist[photoidx_training[fold-1]])
                 photos_testing = list(photolist[photoidx_testing[fold-1]])
@@ -70,7 +70,7 @@ class DatasetBuilder(object):
         return closeddict
 
     def gen_open_ttdict(self):
-        self.open_training_idx, self.open_testing_idx = ci.calcindices([],[],0,len(self.data.keys()), self.kfold)
+        self.open_training_idx, self.open_testing_idx = ds.calcindices([],[],0,len(self.data.keys()), self.kfold)
         ttdict = {}
         for fold in range(1,self.kfold+1):
             ttdict[fold] = {

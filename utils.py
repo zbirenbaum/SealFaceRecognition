@@ -209,6 +209,8 @@ class Dataset():
 
    # Multithreading preprocessing images
     def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1):
+        #if config.batch_size is not None:
+            #batch_size = config.batch_size
         self.batch_queue = Queue(maxsize=maxsize)
         def batch_queue_worker():
             while True:

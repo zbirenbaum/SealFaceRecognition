@@ -224,7 +224,21 @@ class Network:
         step = self.sess.run(self.global_step)
 
         return wl, sm, step
-    
+
+
+    def train2(self, image_batch, label_batch, keep_prob):
+        feed_dict = {self.image_batch_placeholder: image_batch,
+                    self.label_batch_placeholder: label_batch,
+                    self.keep_prob_placeholder: keep_prob,
+                    self.phase_train_placeholder: True,}
+        _, wl, sm = self.sess.run([self.train_op, self.watch_list, self.summary_op], feed_dict = feed_dict)
+        step = self.sess.run(self.global_step)
+
+        return wl, sm, step
+ 
+
+
+
     def restore_model(self, model_dir, restore_scopes):
         with self.graph.as_default():
             trainable_variables = tf.trainable_variables()

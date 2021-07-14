@@ -5,6 +5,7 @@ Created on Thu Feb  1 13:17:56 2018
 @author: Debayan Deb
 """
 from __future__ import division
+from itertools import groupby
 from network import Network
 import sys
 import utils

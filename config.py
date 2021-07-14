@@ -10,7 +10,7 @@ import os
 log_base_dir = './log/'
 
 # The interval between writing summary
-summary_interval = 5
+summary_interval = 1
 
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
@@ -68,21 +68,28 @@ embedding_size = 512
 optimizer = "ADAM"
 
 # Number of samples per batch
-batch_size = 64
+batch_size = 32
 
 # Number of batches per epoch
-epoch_size = 48
+epoch_size = 18
 
 # Number of epochs
-num_epochs = 20
+num_epochs = 1000
 
 #learning rate strategy
 learning_rate_strategy = 'step'
 
 # learning rate schedule
 learning_rate_schedule = {
-    0:      0.001,
-    100:      0.0001,
+#        0: 0.005,
+        0: 0.001
+        #1: 0.005,
+        #5: 0.001,
+        #10: 0.0005
+
+        
+    #0:      0.001,
+    #100:      0.0001,
     #480:    0.001,
     #5000:   0.001,
     #7000:   0.0001

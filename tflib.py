@@ -103,7 +103,7 @@ def apply_gradient(update_gradient_vars, grads, optimizer, learning_rate, learni
         elif optimizer=='ADADELTA':
             opt = tf.train.AdadeltaOptimizer(scope_learning_rate, rho=0.9, epsilon=1e-6)
         elif optimizer=='ADAM':
-            opt = tf.train.AdamOptimizer(scope_learning_rate, beta1=0.9, beta2=0.999, epsilon=0.1)
+            opt = tf.train.AdamOptimizer(scope_learning_rate, beta1=0.9, beta2=0.999, epsilon=.1)
         elif optimizer=='RMSPROP':
             opt = tf.train.RMSPropOptimizer(scope_learning_rate, decay=0.9, momentum=0.9, epsilon=1.0)
         elif optimizer=='MOM':
