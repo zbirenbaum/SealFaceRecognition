@@ -24,30 +24,29 @@
 # SOFTWARE.
 import pandas as pd
 import os
-import sys
 import time
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
 from argparse import ArgumentParser
 import utils
-import tflib
 from network import Network
-# from tensorflow.contrib.tensorboard.plugins import projector
 import evaluate
 import shutil
 import traintestsplit as ttsplit
-from preprocess import preprocess
 import math
+from pdb import set_trace as bp
 
-def train(config, config_file, counter, trainset=None, testset=None):
+
+
+def train(config, config_file, counter, trainset, probes=None, testset=None):
     # I/O for config
     splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
     print(splits_path)
     gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
     # Get training set
     print(trainset.images)
-#    trainset = utils.Dataset(splits_path + '/train.txt')
+    trainset = utils.Dataset(splits_path + '/train.txt')
 #    print(trainset.images)
     trainset.images = utils.preprocess(trainset.images, config, True)
 
@@ -72,7 +71,7 @@ def train(config, config_file, counter, trainset=None, testset=None):
 #                counter = counter + 1
 #                continue
 #            probes.append(line.strip())
-    probes = utils.init_from_dict(testset)[3]
+    probes = utils.init_from_dict(probes)[3]
     probe_set = evaluate.ImageSet(probes, config)
 
 #    with open(splits_path  + '/train.txt', 'r') as f:
@@ -86,14 +85,13 @@ def train(config, config_file, counter, trainset=None, testset=None):
 
     config.batch_size = math.ceil(len(gal)/3)
     config.epoch_size = 3
-    config.num_epochs = 40
-    
+    config.num_epochs = 550
+    trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
     #batch_size = len(list(set(probe_set.labels)))
     #batch_size = config.batch_size
     #epoch_size = config.epoch_size
-    trainset.start_batch_queue(config, True)
     #
     # Main Loop
     #
@@ -174,12 +172,14 @@ def main():
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 
     builder = ttsplit.DatasetBuilder(settings.directory, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+    print(builder.dsetbyfold[0])
     for i in range(num_trainings):
         print('Starting training #{}\n'.format(i+1))
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
+        probe_set = builder.probesetbyfold[i]
 #        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-        train(config, settings.config_file, i+1, trainset, testset)
+        train(config, settings.config_file, i+1, trainset, probe_set, testset)
 
 if __name__ == '__main__':
     main()

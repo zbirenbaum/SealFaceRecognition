@@ -10,7 +10,7 @@ import os
 log_base_dir = './log/'
 
 # The interval between writing summary
-summary_interval = 1
+summary_interval = 50
 
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
@@ -103,8 +103,8 @@ learning_rate_multipliers = {
 template_batch = False
 
 # Restore model
+#restore_model = '/home/zach/development/research/facerecog/SealFaceRecognition/log/logdir'
 restore_model = False
-
 # Keywords to filter restore variables, set None for all
 restore_scopes = None
 
@@ -125,9 +125,9 @@ keep_prob = 1.0
 # Scale for the logits
 losses = {
     'softmax': {},
-    #'cosine': {'gamma': 'auto'}, 
-    #'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
-    #'split': {'gamma': 'auto'},
+    'cosine': {'gamma': 'auto'}, 
+    'angular': {'m': 4, 'lamb_min':5.0, 'lamb_max':1500.0},
+    'split': {'gamma': 'auto'},
     'norm': {'alpha': 1e-5}
 }
 

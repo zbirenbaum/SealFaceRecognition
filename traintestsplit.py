@@ -21,6 +21,8 @@ class DatasetBuilder(object):
         self.data = dh.gen_dict(photodir, self.exclude)
         self.dsetbyfold = []
         self.testsetbyfold = []
+        self.probesetbyfold = []
+        self.probeset = {} 
         if settype=='open':
             self.settype='open'
             self.ttdict = self.gen_open_ttdict()
@@ -34,7 +36,7 @@ class DatasetBuilder(object):
             for fold in range(1, kfold+1):
                 self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training'])) 
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
-
+                self.create_probe_dict(self.ttdict[fold]['testing'])
         return
 
     def gen_set_info(self):
@@ -102,6 +104,7 @@ class DatasetBuilder(object):
 
 
     def create_probe(self, ttdict, settype, typett, fold, num_classes):
+        probeset = {}
         splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
         if not os.path.isdir(splits_dir):
             os.makedirs(splits_dir)
@@ -110,10 +113,22 @@ class DatasetBuilder(object):
             f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
+                    probeset[label] = [photopath]
                     f.write(photopath + ' ' + str(label) + '\n')
                     break
         f.close()
+        self.probesetbyfold.append(probeset)
         return
+    
+    def create_probe_dict(self, ttdict):
+        probeset = {}
+        for label in ttdict.keys():
+            for photopath in ttdict[label]:
+                probeset[label] = [photopath]
+                break
+        self.probesetbyfold.append(probeset)
+        return
+
 
 
 

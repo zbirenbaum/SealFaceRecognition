@@ -246,6 +246,7 @@ def init_from_dict(ddict):
             set_list.append(photopath + " " + str(key))
     #classes = list(set(labels))
     images=imagelist
+    print(total_num_classes)
     #images = [image.strip() for image in imagelist]
 #      print(images)
     return images, labels, total_num_classes, set_list

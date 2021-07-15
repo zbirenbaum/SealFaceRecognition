@@ -88,7 +88,7 @@ class Network:
                     # A context manager for use when defining a Python op
                     # context manager pushes a name scope, which will make the name of all operations added within it have a prefix.
                     with tf.name_scope(scope_name):
-                        with tf.variable_scope('', reuse=i>0):
+                        with tf.variable_scope('', reuse=tf.AUTO_REUSE):#i>0):
                             #Specifies the device for ops created/executed in this context
                             with tf.device('/gpu:%d' % i):
                                 #identity returns a tensor with same shape and contents as input

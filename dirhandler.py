@@ -30,7 +30,7 @@ def gen_dict(folderdir, exclude=None):
     if exclude is None:
         exclude=1
     photodirpaths = get_photo_dirs(folderdir, exclude)
-    print(photodirpaths)
+#    print(photodirpaths)
     mapdict = {}
     counter = 0
     for path in photodirpaths:

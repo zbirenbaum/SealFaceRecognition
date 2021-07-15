@@ -5,4 +5,7 @@ __pycache__
 */.DS_Store
 error*
 *.pyc
-photos/
+photos/*
+log/*
+log_fullrun_backup/*
+splits/*

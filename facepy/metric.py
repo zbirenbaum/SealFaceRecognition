@@ -63,6 +63,8 @@ def euclidean_pair(x1, x2):
 
 # Compare between every row of x1 and x2
 def cosine_pair(x1, x2):
+    print(x1.shape)
+    print(x2.shape)
     assert x1.shape == x2.shape
     epsilon = 1e-10
     x1_norm = np.sqrt(np.sum(np.square(x1), axis=1, keepdims=True))

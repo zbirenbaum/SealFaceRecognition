@@ -130,7 +130,7 @@ def conv_module(net, num_res_layers, num_kernels, groups, reuse = None, scope = 
                             stride=1, padding='SAME', scope='res_%d_1'%i, xargs=res_conv_args)
             net = convolution(net, num_kernels, kernel_size=3, groups=groups, shuffle=False,
                             stride=1, padding='SAME', scope='res_%d_2'%i, xargs=res_conv_args)
-            print('| ---- block_%d' % i)
+            #print('| ---- block_%d' % i)
             net = se_module(net)
             net = net + shortcut
             shortcut = net
