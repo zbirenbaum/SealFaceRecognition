@@ -1,6 +1,6 @@
 git add .
-if [[ $2 ]]; then
-  git commit -m "$2"
+if $1; then
+  git commit -m "$1"
 else
   git commit -m "autopush"
 fi
