@@ -8,4 +8,7 @@ error*
 photos/*
 log/*
 log_fullrun_backup/*
-splits/*
+splits/
+unused/
+data/
+log/
