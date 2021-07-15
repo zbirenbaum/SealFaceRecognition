@@ -1,7 +1,9 @@
+#!/bin/bash
+
 git add .
 if [ "$1" ]; then
- echo  
-  git commit -m \""$@"\"
+#  git commit -m \""$@"\"
+  git commit -m "$(echo \""$@"\")"
 else
   git commit -m "autopush"
 fi
