@@ -71,7 +71,7 @@ class DataClass():
 
 class Dataset():
 
-    def __init__(self, path=None, ddict=None):
+    def __init__(self, ddict=None, path=None):
         self.traindict = None
         self.testdict = None
         self.total_num_classes = None
@@ -211,6 +211,7 @@ class Dataset():
     def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1):
         #if config.batch_size is not None:
             #batch_size = config.batch_size
+        print(self.images)
         self.batch_queue = Queue(maxsize=maxsize)
         def batch_queue_worker():
             while True:

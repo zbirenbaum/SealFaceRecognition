@@ -22,6 +22,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import sys
 import pandas as pd
 import os
 import time
@@ -29,11 +30,11 @@ import tensorflow as tf
 import tensorflow.contrib.slim as slim
 import numpy as np
 from argparse import ArgumentParser
-import datamanagement.utils as utils
+import utils
 from network import Network
 import evaluate
 import shutil
-import datamanagement.traintestsplit as ttsplit
+import traintestsplit as ttsplit
 import math
 from pdb import set_trace as bp
 
@@ -42,11 +43,12 @@ from pdb import set_trace as bp
 def train(config, config_file, counter, trainset, probes=None, testset=None):
     # I/O for config
     splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
-    print(splits_path)
+    #print(splits_path)
+    #trainset = trainset
     gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
     # Get training set
-    print(trainset.images)
-    trainset = utils.Dataset(splits_path + '/train.txt')
+    #print(trainset.images)
+    trainset = utils.Dataset(path=splits_path + '/train.txt')
 #    print(trainset.images)
     trainset.images = utils.preprocess(trainset.images, config, True)
 

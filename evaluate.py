@@ -7,7 +7,7 @@ Created on Thu Feb  1 13:17:56 2018
 from __future__ import division
 from network import Network
 import sys
-import datamanagement.utils as utils
+import utils
 import facepy.evaluation as fev
 import facepy
 import numpy as np

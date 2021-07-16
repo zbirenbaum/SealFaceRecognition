@@ -6,7 +6,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
 #sys.stderr = open(os.devnull, "w")  # silence stderr
 warnings.filterwarnings('ignore')
 from argparse import ArgumentParser
-import datamanagement.utils as utils
+import utils
 from network import Network
 import evaluate
 import datamanagement.traintestsplit as ttsplit

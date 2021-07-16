@@ -7,14 +7,14 @@ import os
 ####### INPUT OUTPUT #######
 
 # The folder to save log and model
-log_base_dir = '../log/'
+log_base_dir = './log/'
 
 # The interval between writing summary
 summary_interval = 5
 
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
-splits_path = '../splits'
+splits_path = './splits'
 testing_type = 'closed'
 #Target image size for the input of network
 image_size = [112,112]
@@ -29,12 +29,12 @@ resize = (112,112)
 preprocess_train = [
         ('resize', [(112,112)]),
         ('random_flip', []),
-        ('standardize', ['deb'])
+#        ('standardize', ['deb'])
 ]
 
 preprocess_test = [
         ('resize', [(112,112)]),
-        ('standardize', ['deb'])
+#        ('standardize', ['deb'])
 ]
 
 # Number of GPUs
@@ -47,13 +47,13 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/seal_net.py"
+network = "nets/seal_net_old.py"
 
 # Model version, only for some networks
 model_version = 'seal'
 
 # Number of dimensions in the embedding space
-embedding_size = 512
+embedding_size = 512 
 
 
 ####### TRAINING STRATEGY #######
