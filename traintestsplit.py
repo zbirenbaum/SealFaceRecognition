@@ -5,13 +5,24 @@ import numpy as np
 import os
 import utils as ut
 
+def create_probe_dict(ttdict):
+    probeset = {}
+    for label in ttdict.keys():
+        for photopath in ttdict[label]:
+            probeset[label] = [photopath]
+            break
+    return probeset
+
+def gen_probes_from_dir(probedir):
+    presplitprobes = create_probe_dict(dh.gen_dict(probedir, 0))
+    return presplitprobes
 
 def ignore(k):
     k=k+0
     return
 
 class DatasetBuilder(object):
-    def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None):
+    def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None, presplitdir=None):
         self.photodir = photodir
         self.kfold = kfold
         
@@ -36,7 +47,7 @@ class DatasetBuilder(object):
             for fold in range(1, kfold+1):
                 self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training'])) 
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
-                self.create_probe_dict(self.ttdict[fold]['testing'])
+                #self.create_probe_dict(self.ttdict[fold]['testing'])
         return
 
     def gen_set_info(self):

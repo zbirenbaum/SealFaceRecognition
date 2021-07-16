@@ -174,6 +174,7 @@ def load_model(sess, model_path, scope=None):
     a .meta file and checkpoint files.'''
     with sess.graph.as_default():
             model_path = os.path.expanduser(model_path)
+            print(model_path) 
             if (os.path.isfile(model_path)):
                 # Frozen grpah
                 print('Model filename: %s' % model_path)

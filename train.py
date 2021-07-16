@@ -85,9 +85,9 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
-    config.batch_size = math.ceil(len(gal)/3)
-    config.epoch_size = 3
-    config.num_epochs = 30
+    config.batch_size = math.ceil(len(gal)/16)
+    config.epoch_size = 16
+    config.num_epochs = 50
     trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
@@ -141,8 +141,6 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 
     resultsdf_file = 'log/result_fold_{}.csv'.format(counter)
     df.to_csv(resultsdf_file, index=False)
-    #resultsdf_file = 'log/result_fold_{}.xml'.format(counter)
-    #df.to_xml(resultsdf_file)
     
     results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
     shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
