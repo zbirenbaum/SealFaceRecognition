@@ -22,14 +22,14 @@ def ignore(k):
     return
 
 class DatasetBuilder(object):
-    def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None, presplitdir=None):
+    def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None, presplitdir=None, startat=0):
         self.photodir = photodir
         self.kfold = kfold
         
         if exclude is None:
             exclude = kfold
         self.exclude = exclude
-        self.data = dh.gen_dict(photodir, self.exclude)
+        self.data = dh.gen_dict(photodir, self.exclude, startat)
         self.dsetbyfold = []
         self.testsetbyfold = []
         self.probesetbyfold = []
@@ -47,7 +47,7 @@ class DatasetBuilder(object):
             for fold in range(1, kfold+1):
                 self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training'])) 
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
-                #self.create_probe_dict(self.ttdict[fold]['testing'])
+                self.create_probe_dict(self.ttdict[fold]['testing'])
         return
 
     def gen_set_info(self):
@@ -81,6 +81,15 @@ class DatasetBuilder(object):
                 closeddict[fold]['testing'][label] = photos_testing
 
         return closeddict
+
+    def gen_full_ttdict(self):
+        fulldict = {}
+        for label in self.data.keys():
+            labeldict = self.data[label]
+            photolist = np.array(labeldict['photos'])
+            fulldict[label] = photolist
+
+        return fulldict
 
     def gen_open_ttdict(self):
         self.open_training_idx, self.open_testing_idx = ds.calcindices([],[],0,len(self.data.keys()), self.kfold)
@@ -140,6 +149,16 @@ class DatasetBuilder(object):
         self.probesetbyfold.append(probeset)
         return
 
+    def create_split_probe_dict(self, dir):
+        ttdict = self.gen_full_ttdict(dir)
+        probeset = {}
+        for label in ttdict.keys():
+            for photopath in ttdict[label]:
+                probeset[label] = [photopath]
+                break
+        self.probesetbyfold.append(probeset)
+        return
+
 
 
 
@@ -155,3 +174,21 @@ class DatasetBuilder(object):
                     f.write(photopath + ' ' + str(label) + '\n')
         f.close()
         return
+
+def gen_full_dict(dir, startat):
+    fulldict = {}
+    data = dh.gen_dict(dir, startat=startat)
+    for label in data.keys():
+        labeldict = data[label]
+        photolist = np.array(labeldict['photos'])
+        fulldict[label] = photolist
+    return fulldict
+
+def create_split_probe_dict(dir, startat):
+    ttdict = gen_full_dict(dir, startat)
+    probeset = {}
+    for label in ttdict.keys():
+        for photopath in ttdict[label]:
+            probeset[label] = [photopath]
+            break
+    return probeset

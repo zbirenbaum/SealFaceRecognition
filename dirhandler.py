@@ -26,13 +26,15 @@ def get_photo_dirs(path, exclude):
                 continue
     return pathlist
 
-def gen_dict(folderdir, exclude=None):
+def gen_dict(folderdir, exclude=None, startat=None):
     if exclude is None:
         exclude=1
     photodirpaths = get_photo_dirs(folderdir, exclude)
 #    print(photodirpaths)
     mapdict = {}
     counter = 0
+    if startat is not None:
+        counter = int(startat)
     for path in photodirpaths:
         photos = get_photos_in_dir(path)
         mapdict[counter] = {'name': path, 'photos': photos}
@@ -41,4 +43,5 @@ def gen_dict(folderdir, exclude=None):
     return mapdict
 
 #print(gen_dict('2020data',5).keys())
-
+def gen_dict_label_photos(photodir):
+    return

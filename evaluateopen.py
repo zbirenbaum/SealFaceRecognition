@@ -2,9 +2,13 @@ import facepy
 import numpy as np
 from scipy import spatial
 import operator
+import pandas as pd
 
 def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
+def get_threshold():
+    #awful hardcode pls fix thx
+    return 0.55
 
 def identify(probe, gallery):
     galfeaturesdict = {} 
@@ -21,6 +25,11 @@ def identify(probe, gallery):
 
     evaldict = {}
     predarray= []
+    acceptlist = []
+    deniedlist = []
+
+
+    threshold = get_threshold()
     for i in range(len(probe.labels)):
         evaldict[i] = {'probelabel': probe.labels[i], 
                 'inset': probe.labels[i] in uq,
@@ -29,15 +38,32 @@ def identify(probe, gallery):
         for j in range(len(uq)):
             evaldict[i]['scores'][uq[j]] = 1-spatial.distance.cosine(probe.features[i], galfeaturesdict[j]['features'])
         predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
-        predarray.append(predictions)
-        print('Probelabel' + str(i) + 'Similarity Scores')
-        print('TOP 5 RANKED') 
-        counter = 0
-        for prediction in predarray[i]:
-            print(prediction)
-            if counter == 5:
-                break
-            counter = counter +1
+        predarray.append(predictions[0])
+        if predictions[0][1] < threshold:
+            deniedlist.append([probe.labels[i],
+                predictions[0][0], 
+                predictions[0][1],
+                evaldict[i]['inset'] == True])
+        else:
+            acceptlist.append([probe.labels[i],
+                predictions[0][0], 
+                predictions[0][1],
+                evaldict[i]['inset'] == False])
+
+
+        print(probe.labels[i] + " " + str(predictions[0]))
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept'])
+    print(accframe)
+    print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
+    print(dnframe)
+    print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
+#        counter = 0
+#        for prediction in predarray[i]:
+#            print(prediction)
+#            if counter == 5:
+#                break
+#            counter = counter +1
     return
 def closed(probe, galFeaturesList):        
     score_matrix = facepy.metric.cosineSimilarity(probe.features, np.array(galFeaturesList))

@@ -24,19 +24,19 @@ class ImageSet:
         self.features = None
     def parse(self):
         lines = [line.strip().split(' ') for line in self.image_paths]
-        for line in lines:
-            print(line[0])
-            print(line[1])
+        #for line in lines:
+            #print(line[0])
+            #print(line[1])
         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
     def extract_features(self, model, batch_size):
-        self.features = model.extract_feature(self.images, 128)
+        self.features = model.extract_feature(self.images, batch_size)
 
 def get_model_dirs(model_dir):
     modelslist = []
     for model in os.listdir(model_dir):
         modelslist.append(os.path.join(model_dir, model))
     if len(modelslist) == 0:
-        print('NO MODELS IN RESTORE DIR')
+        #print('NO MODELS IN RESTORE DIR')
         exit(1)
     return modelslist
 
@@ -53,24 +53,32 @@ def main():
     builder = ttsplit.DatasetBuilder(
             photodir='data/fulldataset/2019data',
             usedict=1,
-            settype=config.testing_type,
-            kfold=int(num_models)
+            settype='closed',
+            kfold=int(5)
             )
 
+    closedsetprobes = builder.probesetbyfold[0]
     model_name = modelslist[0]
     network.load_model(model_name)
 
     gal = builder.dsetbyfold[0].set_list
 
-    builder = ttsplit.DatasetBuilder(
+    openbuilder = ttsplit.DatasetBuilder(
             photodir='data/openset/Mitchell_Field_Singles_1_31Chips',
             usedict=1,
+            startat=len(closedsetprobes)-1,
             settype='closed',
             kfold=int(5)
             )
 
-    probes = builder.probesetbyfold[0]
-    probes = utils.init_from_dict(probes)[3]
+
+    opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
+    print(opensetprobes)
+
+#    print(opensetprobes.keys())
+    opensetprobes.update(closedsetprobes)
+    print(opensetprobes)
+    probes = utils.init_from_dict(opensetprobes)[3]
     probe_set = ImageSet(probes, config)
     gal_set = ImageSet(gal, config)
 
