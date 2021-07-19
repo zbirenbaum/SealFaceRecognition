@@ -86,7 +86,7 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
 
-    config.batch_size = math.ceil(len(gal)/16)
+    config.batch_size = int(math.ceil(len(gal)/16))
     config.epoch_size = 16
     config.num_epochs = 50
     trainset.start_batch_queue(config, True) 
