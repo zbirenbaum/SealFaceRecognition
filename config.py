@@ -103,9 +103,9 @@ learning_rate_multipliers = {
 template_batch = False
 
 # Restore model
-restore_model = '/home/zach/development/research/facerecog/' \
-        'SealFaceRecognition/testingmodel'
-#restore_model = False
+restore_model_path = '/home/zach/development/research/facerecog/' \
+#        'SealFaceRecognition/testingmodel'
+restore_model = False
 # Keywords to filter restore variables, set None for all
 restore_scopes = None
 

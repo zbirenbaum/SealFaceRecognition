@@ -42,13 +42,14 @@ from pdb import set_trace as bp
 
 def train(config, config_file, counter, trainset, probes=None, testset=None):
     # I/O for config
-    splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
+    #splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
     #print(splits_path)
     #trainset = trainset
     gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
     # Get training set
     #print(trainset.images)
-    trainset = utils.Dataset(path=splits_path + '/train.txt')
+    #trainset = utils.Dataset(path=splits_path + '/train.txt')
+    #print(trainset)
 #    print(trainset.images)
     trainset.images = utils.preprocess(trainset.images, config, True)
 

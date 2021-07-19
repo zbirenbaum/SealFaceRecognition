@@ -16,7 +16,6 @@ import traintestsplit as ttsplit
 
 
 class ImageSet:
-
     def __init__(self, image_paths, config):
         self.image_paths = image_paths
         self.config = config
@@ -24,9 +23,6 @@ class ImageSet:
         self.features = None
     def parse(self):
         lines = [line.strip().split(' ') for line in self.image_paths]
-        #for line in lines:
-            #print(line[0])
-            #print(line[1])
         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
     def extract_features(self, model, batch_size):
         self.features = model.extract_feature(self.images, batch_size)
@@ -36,7 +32,6 @@ def get_model_dirs(model_dir):
     for model in os.listdir(model_dir):
         modelslist.append(os.path.join(model_dir, model))
     if len(modelslist) == 0:
-        #print('NO MODELS IN RESTORE DIR')
         exit(1)
     return modelslist
 
@@ -63,21 +58,10 @@ def main():
 
     gal = builder.dsetbyfold[0].set_list
 
-    openbuilder = ttsplit.DatasetBuilder(
-            photodir='data/openset/Mitchell_Field_Singles_1_31Chips',
-            usedict=1,
-            startat=len(closedsetprobes)-1,
-            settype='closed',
-            kfold=int(5)
-            )
-
-
     opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
-    print(opensetprobes)
 
 #    print(opensetprobes.keys())
     opensetprobes.update(closedsetprobes)
-    print(opensetprobes)
     probes = utils.init_from_dict(opensetprobes)[3]
     probe_set = ImageSet(probes, config)
     gal_set = ImageSet(gal, config)
