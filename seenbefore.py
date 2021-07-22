@@ -5,11 +5,10 @@ Created on Thu Feb  1 13:17:56 2018
 """
 import os
 from network import Network
-import sys
+#import sys
 import utils
-import facepy.evaluation as fev
-import facepy
-import summary
+#import facepy
+#import summary
 from evaluateopen import identify
 import traintestsplit as ttsplit
 
@@ -38,13 +37,17 @@ def get_model_dirs(model_dir):
 
 def main():
 
-    model_dir = '/home/zach/development/research/facerecog/' \
-        'SealFaceRecognition/testingmodel/models/real'
+    #model_dir = '/home/zach/development/research/facerecog/' \
+    #     'SealFaceRecognition/testingmodel/models/real'
+
+    model_dir = '/home/zach/development/research/facerecog/SealFaceRecognition/log/19-07-2021-165850/SealNet_Fold1'
+
     network = Network()
     config_file = 'config.py'
     config = utils.import_file(config_file, 'config')
    
     modelslist = get_model_dirs(model_dir)  
+
     builder = ttsplit.DatasetBuilder(
             photodir='data/fulldataset/2019data',
             usedict=1,
@@ -54,11 +57,12 @@ def main():
 
     closedsetprobes = builder.probesetbyfold[0]
     model_name = modelslist[0]
+    print(model_name)
     network.load_model(model_name)
 
     gal = builder.dsetbyfold[0].set_list
 
-    opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
+    opensetprobes = ttsplit.create_split_probe_dict(dir='data/newdata/2020_data',startat=len(closedsetprobes))
 
 #    print(opensetprobes.keys())
     opensetprobes.update(closedsetprobes)
@@ -71,7 +75,7 @@ def main():
     gal_set.extract_features(network, len(gal))
     identify(probe_set, gal_set)
 if __name__ == "__main__":
-    num_models = 5 
+    num_models = 1 
      
     network = Network()
     main()

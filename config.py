@@ -2,12 +2,21 @@
 
 import sys
 import os
+from datetime import datetime
+
+# datetime object containing current date and time
+now = datetime.now()
+ 
+print("now =", now)
+
+# dd/mm/YY H:M:S
+dt_string = now.strftime("%d-%m-%Y-%H%M%S")
 
 
 ####### INPUT OUTPUT #######
 
 # The folder to save log and model
-log_base_dir = './log/'
+log_base_dir = './log/'+dt_string+'/'
 
 # The interval between writing summary
 summary_interval = 1
@@ -65,7 +74,8 @@ embedding_size = 512
 #RMSPROP is a type of stochastic gradient descent with adaptive learning rates
 # Optimizer
 #optimizer = "RMSPROP"
-optimizer = "ADAM"
+#optimizer = "ADAM"
+optimizer = "ADADELTA"
 
 # Number of samples per batch
 batch_size = 32
@@ -81,7 +91,7 @@ learning_rate_strategy = 'step'
 
 # learning rate schedule
 learning_rate_schedule = {
-        0: 0.001,
+        0: 0.01,
         #1: 0.005,
         #5: 0.001,
         #10: 0.0005

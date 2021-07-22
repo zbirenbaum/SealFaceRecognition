@@ -1,7 +1,8 @@
-import facepy
+#import facepy
 import numpy as np
 from scipy import spatial
 import operator
+import facepy.linalg
 import pandas as pd
 
 def _find(l, a):
@@ -43,17 +44,19 @@ def identify(probe, gallery):
             deniedlist.append([probe.labels[i],
                 predictions[0][0], 
                 predictions[0][1],
-                evaldict[i]['inset'] == True])
+                evaldict[i]['inset'] == True,
+                probe.image_paths[i]])
         else:
             acceptlist.append([probe.labels[i],
                 predictions[0][0], 
                 predictions[0][1],
-                evaldict[i]['inset'] == False])
+                evaldict[i]['inset'] == False,
+                probe.image_paths[i]])
 
 
         print(probe.labels[i] + " " + str(predictions[0]))
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept'])
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'Image Path'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Image Path'])
     print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
     print(dnframe)

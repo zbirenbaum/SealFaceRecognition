@@ -88,7 +88,7 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 
     config.batch_size = int(math.ceil(len(gal)/16))
     config.epoch_size = 16
-    config.num_epochs = 50
+    config.num_epochs = 300
     trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
