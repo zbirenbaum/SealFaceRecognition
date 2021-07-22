@@ -10,12 +10,12 @@ import os
 log_base_dir = './log/'
 
 # The interval between writing summary
-summary_interval = 1
+summary_interval = 4
 
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
 splits_path = './splits'
-testing_type = 'closed'
+testing_type = 'both'
 #Target image size for the input of network
 image_size = [112,112]
 
@@ -27,13 +27,13 @@ resize = (112,112)
 
 # Preprocessing for training
 preprocess_train = [
-        ('resize', [(112,112)]),
         ('random_flip', [])
 #        ('standardize', ['deb'])
+ #       ('resize', [(112,112)]),
 ]
 
 preprocess_test = [
-        ('resize', [(112,112)])
+#        ('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
@@ -47,7 +47,7 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/seal_net_old.py"
+network = "nets/seal_net_new.py"
 
 # Model version, only for some networks
 model_version = 'seal'
@@ -65,7 +65,8 @@ embedding_size = 512
 #RMSPROP is a type of stochastic gradient descent with adaptive learning rates
 # Optimizer
 #optimizer = "RMSPROP"
-optimizer = "ADAM"
+#optimizer = "ADAM"
+optimizer = "ADADELTA"
 
 # Number of samples per batch
 batch_size = 32
@@ -81,7 +82,7 @@ learning_rate_strategy = 'step'
 
 # learning rate schedule
 learning_rate_schedule = {
-        0: 0.001,
+        0: 0.01,
         #1: 0.005,
         #5: 0.001,
         #10: 0.0005
@@ -103,8 +104,7 @@ learning_rate_multipliers = {
 template_batch = False
 
 # Restore model
-restore_model_path = '/home/zach/development/research/facerecog/' \
-#        'SealFaceRecognition/testingmodel'
+restore_model_path = '/home/zach/development/research/facerecog/SealFaceRecognition/testingmodel'
 restore_model = False
 # Keywords to filter restore variables, set None for all
 restore_scopes = None

@@ -57,14 +57,22 @@ class DatasetBuilder(object):
             self.settype='open'
             self.ttdict = self.gen_open_ttdict()
             self.write_ttdict('open')
+        elif settype == 'both':
+            self.settype='both'
+            self.ttdict = self.gen_both()
+            self.write_ttdict('both')
+            for fold in range(1, kfold+1):
+                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training']))
+                self.probesetbyfold.append(self.ttdict[fold]['probes'])
+                self.testsetbyfold.append(self.ttdict[fold]['testing'])
         else:
             self.settype='closed'
             self.ttdict = self.gen_closed_ttdict()
             self.write_ttdict('closed')
 
-        if usedict == 1:
+        if usedict == 1 and settype != 'both':
             for fold in range(1, kfold+1):
-                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training'])) 
+                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training']))
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
                 self.probesetbyfold.append(create_probe_dict(self.ttdict[fold]['testing']))
         return
@@ -116,8 +124,35 @@ class DatasetBuilder(object):
         for fold in range(1,self.kfold+1):
             ttdict[fold] = {
                     'training': {key : self.data[key]['photos'] for key in self.open_training_idx[fold-1]},
-                    'testing': {key : self.data[key]['photos'] for key in self.open_testing_idx[fold-1]}
+                    'testing': {key : self.data[key]['photos'] for key in self.open_testing_idx[fold-1]},
                     }
+        return ttdict
+
+    def gen_both(self):
+        self.open_training_idx, self.open_testing_idx = ds.calcindices([],[],0,len(self.data.keys()), self.kfold)
+       # print(self.data.keys())
+        ttdict = {}
+        holdout_training = []
+        probes = {}
+        for fold in range(1,self.kfold+1):
+            ttdict[fold] = {'training': {}, 'testing': {}, 'probes': {}}
+            data = self.data
+            probes[fold] = {}
+            for key in self.open_training_idx[fold-1]:
+                try:
+                    holdout = data[key]['photos'][fold-1]
+                    ttdict[fold]['probes'][key] = [holdout]
+                    ttdict[fold]['testing'][key] = [holdout]
+                    #holdout_training.append((fold, key, holdout)) #tuple for adding in after the fact
+                except:
+                    exit()
+                tlist = []
+                for photo in data[key]['photos']:
+                    if photo != holdout:
+                        tlist.append(photo)
+                ttdict[fold]['training'][key] = tlist
+            for key in self.open_testing_idx[fold-1]:
+                ttdict[fold]['probes'][key] = data[key]['photos']
         return ttdict
 
     def write_ttdict(self, settype):
@@ -127,19 +162,43 @@ class DatasetBuilder(object):
                 to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
+                self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
             elif settype == 'open':
                 to_write_training = self.ttdict[fold]['training']
                 to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = num_training_classes#len(to_write_testing.keys()) + num_training_classes
+                self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
+            elif settype == 'both': 
+                to_write_training = self.ttdict[fold]['training']
+                to_write_testing = self.ttdict[fold]['testing']
+                to_write_probes = self.ttdict[fold]['probes']
+                num_training_classes = len(to_write_training.keys())
+                num_testing_classes = len(to_write_testing.keys())
+                self.create_set(to_write_probes, settype, 'probe', fold, num_testing_classes)
             else:
                 return "ERROR"
             self.create_set(to_write_training, settype, 'train', fold, num_training_classes)
             self.create_set(to_write_testing, settype, 'test', fold, num_testing_classes)
-            self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
         return
 
 
+    def create_probe_from_dict(self, ttdict, settype, typett, fold, num_classes):
+        probeset = {}
+        splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
+        if not os.path.isdir(splits_dir):
+            os.makedirs(splits_dir)
+        fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
+        with open(fname, 'w') as f:
+            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
+            for label in ttdict.keys():
+                for photopath in ttdict[label]:
+                    probeset[label] = [photopath]
+                    f.write(photopath + ' ' + str(label) + '\n')
+                    break
+        f.close()
+        self.probesetbyfold.append(probeset)
+        return
 
     def create_probe(self, ttdict, settype, typett, fold, num_classes):
         probeset = {}
@@ -171,3 +230,21 @@ class DatasetBuilder(object):
         f.close()
         return
 
+    def gen_sub_ttdict(data, kfold):
+        closeddict = {}
+        for fold in range (1, self.kfold+1):
+            closeddict[fold] = {
+                    'training':{},
+                    'testing':{}
+                    }
+        for label in data.keys():
+            labeldict = data[label]
+            photolist = np.array(labeldict['photos'])
+            photoidx_training, photoidx_testing = ds.calcindices([],[],0,len(photolist), kfold)
+            for fold in range(1, kfold+1):
+                photos_training = list(photolist[photoidx_training[fold-1]])
+                photos_testing = list(photolist[photoidx_testing[fold-1]])
+                closeddict[fold]['training'][label] = photos_training
+                closeddict[fold]['testing'][label] = photos_testing
+
+        return closeddict

@@ -74,7 +74,12 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #                counter = counter + 1
 #                continue
 #            probes.append(line.strip())
-    probes = utils.init_from_dict(probes)[3]
+
+    if config.testing_type == 'both':
+        probes = utils.init_from_dict(testset)[3]
+    else:
+        probes = utils.init_from_dict(probes)[3]
+    print(probes)
     probe_set = evaluate.ImageSet(probes, config)
 
 #    with open(splits_path  + '/train.txt', 'r') as f:
@@ -88,7 +93,7 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 
     config.batch_size = int(math.ceil(len(gal)/16))
     config.epoch_size = 16
-    config.num_epochs = 50
+    config.num_epochs = 200
     trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
@@ -179,6 +184,7 @@ def main():
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
         probe_set = builder.probesetbyfold[i]
+        print(probe_set)
 #        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
         train(config, settings.config_file, i+1, trainset, probe_set, testset)
 

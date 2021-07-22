@@ -38,34 +38,55 @@ def get_model_dirs(model_dir):
 
 def main():
 
-    model_dir = '/home/zach/development/research/facerecog/' \
-        'SealFaceRecognition/testingmodel/models/real'
+    model_dir = '/home/zach/development/research/facerecog/SealFaceRecognition/testingmodel/'
     network = Network()
     config_file = 'config.py'
     config = utils.import_file(config_file, 'config')
    
     modelslist = get_model_dirs(model_dir)  
-    builder = ttsplit.DatasetBuilder(
-            photodir='data/fulldataset/2019data',
-            usedict=1,
-            settype='closed',
-            kfold=int(5)
-            )
+#    builder = ttsplit.DatasetBuilder(
+#            photodir='data/fulldataset/2019data',
+#            usedict=1,
+#            settype='closed',
+#            kfold=int(5)
+#            )
 
-    closedsetprobes = builder.probesetbyfold[0]
-    model_name = modelslist[0]
-    network.load_model(model_name)
+#    closedsetprobes = builder.probesetbyfold[0]
 
-    gal = builder.dsetbyfold[0].set_list
+#    gal = builder.dsetbyfold[0].set_list
 
-    opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
+#    opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
 
 #    print(opensetprobes.keys())
-    opensetprobes.update(closedsetprobes)
-    probes = utils.init_from_dict(opensetprobes)[3]
-    probe_set = ImageSet(probes, config)
-    gal_set = ImageSet(gal, config)
+#    opensetprobes.update(closedsetprobes)
+#    probes = utils.init_from_dict(opensetprobes)[3]
+    gal = []
+    probes = []
 
+    with open("./splits/both/fold1/probe.txt" ,'r') as f:
+        counter = 0
+        for line in f:
+            if counter == 0:
+                counter = 1
+                continue
+            probes.append(line.strip())
+
+    probe_set = ImageSet(probes, config)
+    #probe_set.extract_features(network, len(probes))
+    #
+    with open("./splits/both/fold1/train.txt", 'r') as f:
+        counter = 0
+        for line in f:
+            if counter == 0:
+                counter = 1
+                continue
+            gal.append(line.strip())
+    gal_set = ImageSet(gal, config)
+    #probe_set = ImageSet(probes, config)
+    #gal_set = ImageSet(gal, config)
+
+    model_name = modelslist[0]
+    network.load_model(model_name)
 
     probe_set.extract_features(network, len(probes))
     gal_set.extract_features(network, len(gal))
