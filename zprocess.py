@@ -28,10 +28,10 @@ def normalize(img):
     return norm_img
 
 def rem_lighting(img):
-    #gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     smooth = cv2.medianBlur(img, 95)
     division = smooth
-    division = cv2.divide(img, smooth, scale=164)
+    division = cv2.divide(img, smooth, scale=192)
     return division
 
 def greyscale(img, path=False):
@@ -39,7 +39,7 @@ def greyscale(img, path=False):
         img = cv2.imread(img)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # blur
     smooth = cv2.GaussianBlur(gray, (95,95), 0)
-    division = cv2.divide(smooth, gray, scale=255) # divide gray by morphology image
+    division = cv2.divide(gray, smooth, scale=192) # divide gray by morphology image
     return division
 
 def normalize_images(rwlist, overwrite=False):
@@ -48,8 +48,9 @@ def normalize_images(rwlist, overwrite=False):
         rd = rw[0]
         wt = rw[1]
         img = cv2.imread(rd)
-        img=rem_lighting(img)
-        img = normalize(img)
+        #img=rem_lighting(img)
+        #img = normalize(img)
+        img = greyscale(img) 
         normalized_list.append(img)
         if(overwrite):
             cv2.imwrite(wt,img)
