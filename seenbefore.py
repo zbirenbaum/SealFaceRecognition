@@ -38,7 +38,7 @@ def get_model_dirs(model_dir):
 
 def main():
 
-    model_dir = '/home/zach/development/research/facerecog/SealFaceRecognition/testingmodel/'
+    model_dir = './testingmodel/'
     network = Network()
     config_file = 'config.py'
     config = utils.import_file(config_file, 'config')
