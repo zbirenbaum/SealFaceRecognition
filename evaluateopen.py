@@ -8,7 +8,7 @@ def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
 def get_threshold():
     #awful hardcode pls fix thx
-    return 0.55
+    return 0.6
 
 def identify(probe, gallery):
     galfeaturesdict = {} 
@@ -62,7 +62,7 @@ def identify(probe, gallery):
                 predictions[0][1],
                 evaldict[i]['inset'] == False])
     
-    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
+#    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
 
     print(probe.labels[i] + " " + str(predictions[0]))
