@@ -13,7 +13,7 @@ def preprocess(images, config, is_training=False):
                 images.append(misc.imread(image_path, mode=mode))
         print('Done preprocessing images ...\n')
             
-        images = np.stack(images, axis=0)
+        images = np.stack(images, axis=0) # a = b if true else 
 
     # Process images
     f = {
