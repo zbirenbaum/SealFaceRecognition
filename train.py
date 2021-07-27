@@ -41,16 +41,8 @@ from pdb import set_trace as bp
 
 
 def train(config, config_file, counter, trainset, probes=None, testset=None):
-    # I/O for config
-    #splits_path = config.splits_path + '/' + config.testing_type + '/fold{}'.format(counter)
-    #print(splits_path)
-    #trainset = trainset
+    trainset = utils.Dataset(ddict=trainset)
     gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
-    # Get training set
-    #print(trainset.images)
-    #trainset = utils.Dataset(path=splits_path + '/train.txt')
-    #print(trainset)
-#    print(trainset.images)
     trainset.images = utils.preprocess(trainset.images, config, True)
 
     # Creating the network (check network.py)
@@ -74,6 +66,7 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #                counter = counter + 1
 #                continue
 #            probes.append(line.strip())
+    probes = utils.init_from_dict(testset)[3]
 
     if config.testing_type == 'both':
         probes = utils.init_from_dict(testset)[3]
@@ -90,10 +83,9 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #                continue
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
-
-    config.batch_size = int(math.ceil(len(gal)/16))
-    config.epoch_size = 16
-    config.num_epochs = 200
+    if config.batch_size == 0:
+        config.batch_size = len(gal)
+    config.epoch_size = int(math.ceil(len(gal)/config.batch_size))
     trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
@@ -184,9 +176,9 @@ def main():
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
         probe_set = builder.probesetbyfold[i]
-        print(probe_set)
+#        print(probe_set)
 #        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-        train(config, settings.config_file, i+1, trainset, probe_set, testset)
+#        train(config, settings.config_file, i+1, trainset, probe_set, testset)
 
 if __name__ == '__main__':
     main()

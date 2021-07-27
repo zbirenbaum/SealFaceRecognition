@@ -8,7 +8,7 @@ def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
 def get_threshold():
     #awful hardcode pls fix thx
-    return 0.55
+    return 0.6
 
 def identify(probe, gallery):
     galfeaturesdict = {} 
@@ -27,7 +27,9 @@ def identify(probe, gallery):
     predarray= []
     acceptlist = []
     deniedlist = []
-
+    
+    score_vec = []
+    label_vec = []
 
     threshold = get_threshold()
     for i in range(len(probe.labels)):
@@ -37,7 +39,17 @@ def identify(probe, gallery):
                 }
         for j in range(len(uq)):
             evaldict[i]['scores'][uq[j]] = 1-spatial.distance.cosine(probe.features[i], galfeaturesdict[j]['features'])
+            
+        for gal, score in evaldict[i]['scores'].items():
+            score_vec.append(score)
+            if (probe.labels[i] == gal):
+                label_vec.append(True)
+            else:
+                label_vec.append(False)
+        
+        
         predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
+        
         predarray.append(predictions[0])
         if predictions[0][1] < threshold:
             deniedlist.append([probe.labels[i],
@@ -49,9 +61,11 @@ def identify(probe, gallery):
                 predictions[0][0], 
                 predictions[0][1],
                 evaldict[i]['inset'] == False])
+    
+#    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
 
-        print(probe.labels[i] + " " + str(predictions[0]))
+    print(probe.labels[i] + " " + str(predictions[0]))
     dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject'])
     accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept'])
     print(accframe)

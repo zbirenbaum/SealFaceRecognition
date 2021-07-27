@@ -20,20 +20,20 @@ testing_type = 'both'
 image_size = [112,112]
 
 # 3 channels means RGB, 1 channel for grayscale
-channels = 3
+channels = 1
 
 # Resize images before processing, assign as (w,h) or False
-resize = (112,112)
+resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        ('random_flip', [])
+        #('resize', [(112,112)]),
+        #('random_flip', [])
 #        ('standardize', ['deb'])
- #       ('resize', [(112,112)]),
 ]
 
 preprocess_test = [
-#        ('resize', [(112,112)])
+        #('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
@@ -47,7 +47,7 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/seal_net_new.py"
+network = "nets/seal_net_old.py"
 
 # Model version, only for some networks
 model_version = 'seal'
@@ -69,13 +69,13 @@ embedding_size = 512
 optimizer = "ADADELTA"
 
 # Number of samples per batch
-batch_size = 32
+batch_size = 1
 
 # Number of batches per epoch
-epoch_size = 18
+epoch_size = 0 #set in training
 
 # Number of epochs
-num_epochs = 20
+num_epochs = 1
 
 #learning rate strategy
 learning_rate_strategy = 'step'

@@ -30,11 +30,11 @@ import matplotlib.patches as patches
 import scipy.misc as misc
 
 
-def score_distribution(score_vec, label_vec, bins=100):
+def score_distribution(score_vec, label_vec, bins=5):
     score_pos = score_vec[label_vec]
     score_neg = score_vec[np.logical_not(label_vec)]
-    h1 = plt.hist(score_pos, normed=True, alpha=0.7, edgecolor='black', bins=bins)
-    h2 = plt.hist(score_neg, normed=True, alpha=0.7, edgecolor='black', bins=bins)
+    h1 = plt.hist(score_pos, density=True, alpha=0.7, edgecolor='black', bins=bins)
+    h2 = plt.hist(score_neg, density=True, alpha=0.7, edgecolor='red', bins=bins)
     # plt.legend([h1, h2], ['genuine', 'impostor'])
     plt.ylabel('frequency')
     plt.xlabel('similarity')
