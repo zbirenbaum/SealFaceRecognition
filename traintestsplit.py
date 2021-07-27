@@ -62,7 +62,7 @@ class DatasetBuilder(object):
             self.ttdict = self.gen_both()
             self.write_ttdict('both')
             for fold in range(1, kfold+1):
-                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training']))
+                self.dsetbyfold.append(self.ttdict[fold]['training'])
                 self.probesetbyfold.append(self.ttdict[fold]['probes'])
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
         else:
@@ -72,7 +72,7 @@ class DatasetBuilder(object):
 
         if usedict == 1 and settype != 'both':
             for fold in range(1, kfold+1):
-                self.dsetbyfold.append(ut.Dataset(ddict=self.ttdict[fold]['training']))
+                self.dsetbyfold.append(self.ttdict[fold]['training'])
                 self.testsetbyfold.append(self.ttdict[fold]['testing'])
                 self.probesetbyfold.append(create_probe_dict(self.ttdict[fold]['testing']))
         return
@@ -130,29 +130,19 @@ class DatasetBuilder(object):
 
     def gen_both(self):
         self.open_training_idx, self.open_testing_idx = ds.calcindices([],[],0,len(self.data.keys()), self.kfold)
-       # print(self.data.keys())
         ttdict = {}
-        holdout_training = []
-        probes = {}
         for fold in range(1,self.kfold+1):
             ttdict[fold] = {'training': {}, 'testing': {}, 'probes': {}}
-            data = self.data
-            probes[fold] = {}
             for key in self.open_training_idx[fold-1]:
-                try:
-                    holdout = data[key]['photos'][fold-1]
-                    ttdict[fold]['probes'][key] = [holdout]
-                    ttdict[fold]['testing'][key] = [holdout]
-                    #holdout_training.append((fold, key, holdout)) #tuple for adding in after the fact
-                except:
-                    exit()
-                tlist = []
-                for photo in data[key]['photos']:
-                    if photo != holdout:
-                        tlist.append(photo)
-                ttdict[fold]['training'][key] = tlist
+                photos = self.data[key]['photos'][:]
+                print(photos)
+                holdout = photos.pop(fold-1)
+                ttdict[fold]['training'][key] = photos
+                ttdict[fold]['probes'][key]  = [holdout]
+                ttdict[fold]['testing'][key] = [holdout]
             for key in self.open_testing_idx[fold-1]:
-                ttdict[fold]['probes'][key] = data[key]['photos']
+                photos = self.data[key]['photos'][:]
+                ttdict[fold]['probes'][key] = photos
         return ttdict
 
     def write_ttdict(self, settype):
@@ -171,8 +161,9 @@ class DatasetBuilder(object):
                 self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
             elif settype == 'both': 
                 to_write_training = self.ttdict[fold]['training']
-                to_write_testing = self.ttdict[fold]['testing']
-                to_write_probes = self.ttdict[fold]['probes']
+                to_write_testing = self.ttdict[fold]['testing'] #eval during training
+                to_write_probes = self.ttdict[fold]['probes'] #eval afer training
+                #print(to_write_probes)
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
                 self.create_set(to_write_probes, settype, 'probe', fold, num_testing_classes)
