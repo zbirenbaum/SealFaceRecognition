@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.misc as misc
+from pdb import set_trace as bp
 
 def preprocess(images, config, is_training=False):
     # Load images first if they are file paths
@@ -79,7 +80,10 @@ def random_flip(images):
     return images_new
 
 def resize(images, size):
+    #bp()
+    print(images.shape)
     n, _h, _w = images.shape[:3]
+    print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
     w, h = tuple(size)
     shape_new = get_new_shape(images, size)
 

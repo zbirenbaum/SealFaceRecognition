@@ -38,9 +38,9 @@ def greyscale(img, path=False):
     if path:
         img = cv2.imread(img)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) # blur
-    smooth = cv2.GaussianBlur(gray, (95,95), 0)
-    division = cv2.divide(gray, smooth, scale=192) # divide gray by morphology image
-    return division
+    #smooth = cv2.GaussianBlur(gray, (95,95), 0)
+    #division = cv2.divide(gray, smooth, scale=192) # divide gray by morphology image
+    return gray
 
 def normalize_images(rwlist, overwrite=False):
     normalized_list = []
@@ -49,16 +49,15 @@ def normalize_images(rwlist, overwrite=False):
         wt = rw[1]
         img = cv2.imread(rd)
         #img=rem_lighting(img)
-        #img = normalize(img)
-        img = greyscale(img) 
-        normalized_list.append(img)
+        norm = normalize(img)
+        gray = greyscale(norm) 
+        #normalized_list.append(img)
         if(overwrite):
-            cv2.imwrite(wt,img)
+            cv2.imwrite(wt,gray)
     return normalized_list
 
-
-read_dir = 'data'
-write_dir = 'datanormalized'
+read_dir = 'data/unprocessed/Seal_Faces_Brandt_Ledges_1_29'
+write_dir = 'data/processed/Seal_Faces_Brandt_Ledges_1_29'
 readlist = dh.gen_path_list(read_dir)
 rwlist = []
 for rpath in readlist:
@@ -66,7 +65,7 @@ for rpath in readlist:
     fullstr = write_dir + substr
     rwlist.append((rpath, fullstr))
 normalized_list = normalize_images(rwlist, True)
-print(normalized_list[0])
+print('done')
 #nml_list = normalize_images(imglist)
 #print(nml_list[0])
 #print(nml_list[0].shape)
