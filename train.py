@@ -37,17 +37,18 @@ import shutil
 import traintestsplit as ttsplit
 import math
 from pdb import set_trace as bp
+from preprocess import preprocess
 
 
-
-def train(config, config_file, counter, trainset, probes=None, testset=None):
+def train(config, config_file, counter, trainset, probes=None, testset=None, total_num_classes=None):
     trainset = utils.Dataset(ddict=trainset)
     gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
-    trainset.images = utils.preprocess(trainset.images, config, True)
+    trainset.images = preprocess(trainset.images, config, True)
 
     # Creating the network (check network.py)
     network = Network()
     network.initialize(config, trainset.total_num_classes)
+#    network.initialize(config, len(list(probes.keys())))
 
     # Initalization log and summary for running
     log_dir = utils.create_log_dir(config, config_file, 'SealNet_Fold{}'.format(counter))
@@ -83,9 +84,10 @@ def train(config, config_file, counter, trainset, probes=None, testset=None):
 #                continue
 #            gal.append(line.strip())
     gal_set = evaluate.ImageSet(gal, config)
-    if config.batch_size == 0:
-        config.batch_size = len(gal)
+    #if config.batch_size == 0:
+    #config.batch_size = int(len(gal)/2)
     config.epoch_size = int(math.ceil(len(gal)/config.batch_size))
+    #config.epoch_size = 2
     trainset.start_batch_queue(config, True) 
 #    config.batch_size = 1
 #    config.epoch_size = math.ceil(len(gal))
@@ -170,15 +172,16 @@ def main():
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 
     builder = ttsplit.DatasetBuilder(settings.directory, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
-    print(builder.dsetbyfold[0])
+    #print(builder.dsetbyfold[0])
     for i in range(num_trainings):
         print('Starting training #{}\n'.format(i+1))
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
         probe_set = builder.probesetbyfold[i]
+#        print(probe_set[len(probe_set)-1])
 #        print(probe_set)
 #        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-#        train(config, settings.config_file, i+1, trainset, probe_set, testset)
+        train(config, settings.config_file, i+1, trainset, probe_set, testset)
 
 if __name__ == '__main__':
     main()

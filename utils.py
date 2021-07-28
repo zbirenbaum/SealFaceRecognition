@@ -212,7 +212,8 @@ class Dataset():
     def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1):
         #if config.batch_size is not None:
             #batch_size = config.batch_size
-        print(self.images)
+        #print(self.images)
+        bp() 
         self.batch_queue = Queue(maxsize=maxsize)
         def batch_queue_worker():
             while True:
@@ -220,6 +221,7 @@ class Dataset():
                     image_path_batch, label_batch = \
                         self.get_batch_classes(config.batch_size, config.num_classes_per_batch)
                 else:
+                    print(config.batch_size)
                     image_path_batch, label_batch = self.get_batch(config.batch_size)
                 image_batch = preprocess(image_path_batch, config, is_training)
                 self.batch_queue.put((image_batch, label_batch))#type: ignore

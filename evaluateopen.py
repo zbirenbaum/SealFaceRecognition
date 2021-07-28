@@ -10,19 +10,30 @@ def get_threshold():
     #awful hardcode pls fix thx
     return 0.6
 
-def identify(probe, gallery):
-    galfeaturesdict = {} 
-    uq = list(dict.fromkeys(gallery.labels))
-    galFeaturesList = []
-    for i in range(len(uq)):
-        idx = _find(gallery.labels, uq[i])
-        # Get feature vector for gallery images for the same indivdual
-        galFeatures = gallery.features[idx]
-        # individual feature vector from MAX, Mean, or Min template fusion
-        individualFeatures = facepy.linalg.normalize(np.mean(galFeatures, axis=0))
-        galFeaturesList.append(individualFeatures)
-        galfeaturesdict[i] = {'idx': idx, 'label': uq[i], 'features': individualFeatures}
 
+def get_mean_features(set, label_list):
+    setfeaturesdict = {} 
+    uq = label_list 
+    setFeaturesList = []
+    for i in range(len(uq)):
+        idx = _find(set.labels, uq[i])
+        # Get feature vector for set images for the same indivdual
+        setFeatures = set.features[idx]
+        # individual feature vector from MAX, Mean, or Min template fusion
+        individualFeatures = facepy.linalg.normalize(np.mean(setFeatures, axis=0))
+        setFeaturesList.append(individualFeatures)
+        setfeaturesdict[i] = {'idx': idx, 'label': uq[i], 'features': individualFeatures}
+
+    return setFeaturesList, setfeaturesdict
+
+
+
+def identify(probe, gallery):
+    uq = list(dict.fromkeys(gallery.labels))
+    galFeaturesList, galfeaturesdict= get_mean_features(gallery, uq)
+    probe_labels_uq = list(dict.fromkeys(probe.labels))
+    probe.images, throwaway = get_mean_features(probe, probe_labels_uq)
+    probe.labels=probe_labels_uq
     evaldict = {}
     predarray= []
     acceptlist = []
@@ -55,23 +66,43 @@ def identify(probe, gallery):
             deniedlist.append([probe.labels[i],
                 predictions[0][0], 
                 predictions[0][1],
-                evaldict[i]['inset'] == True])
+                evaldict[i]['inset'] == True,
+                evaldict[i]['inset']])
         else:
             acceptlist.append([probe.labels[i],
                 predictions[0][0], 
                 predictions[0][1],
-                evaldict[i]['inset'] == False])
+                evaldict[i]['inset'] == False,
+                evaldict[i]['inset']])
     
 #    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
 
     print(probe.labels[i] + " " + str(predictions[0]))
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept'])
+    full_list = deniedlist[:]
+    full_list.extend(acceptlist)
+
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'In Set'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
+    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
+    
     print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
     print(dnframe)
     print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
+
+#    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
+#    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
+
+    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['In Set']]['Highest Score'].mean()))
+    print('AVG Open Score: ' + str(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean()))
+
+    
+    print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
+    print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
+    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['In Set']]['Highest Score'].mean()))
+    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['In Set']==False]['Highest Score'].mean()))
+
 #        counter = 0
 #        for prediction in predarray[i]:
 #            print(prediction)

@@ -87,6 +87,22 @@ def resize(images, size):
     w, h = tuple(size)
     shape_new = get_new_shape(images, size)
 
+    print(shape_new)
+    images_new = np.ndarray(shape_new, dtype=images.dtype)
+
+    for i in range(n):
+        images_new[i] = misc.imresize(images[i], (h,w))
+
+    return images_new
+
+def resize_greyscale(images, size):
+    #bp()
+    print(images.shape)
+    n, _h, _w = images.shape[:1]
+    print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
+    w, h = tuple(size)
+    shape_new = get_new_shape(images, size)
+
     images_new = np.ndarray(shape_new, dtype=images.dtype)
 
     for i in range(n):

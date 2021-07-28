@@ -1,4 +1,5 @@
 from __future__ import division
+import utils
 import dirhandler as dh
 import datasplitter as ds
 import numpy as np
@@ -135,7 +136,7 @@ class DatasetBuilder(object):
             ttdict[fold] = {'training': {}, 'testing': {}, 'probes': {}}
             for key in self.open_training_idx[fold-1]:
                 photos = self.data[key]['photos'][:]
-                print(photos)
+                #print(photos)
                 holdout = photos.pop(fold-1)
                 ttdict[fold]['training'][key] = photos
                 ttdict[fold]['probes'][key]  = [holdout]

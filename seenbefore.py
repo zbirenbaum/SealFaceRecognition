@@ -12,11 +12,12 @@ import facepy
 import summary
 from evaluateopen import identify
 import traintestsplit as ttsplit
+from pdb import set_trace as bp
 
 
 
 class ImageSet:
-    def __init__(self, image_paths, config):
+    def __init__(self, image_paths, config, probe=False):
         self.image_paths = image_paths
         self.config = config
         self.images, self.labels = self.parse()
@@ -25,6 +26,14 @@ class ImageSet:
         lines = [line.strip().split(' ') for line in self.image_paths]
         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
     def extract_features(self, model, batch_size):
+        self.features = model.extract_feature(self.images, batch_size)
+    def extract_features_mean(self, model, batch_size):
+        samearr=[]
+        for i in range(1, len(self.images)):
+            prev = self.images[i-1]
+            curr = self.images[i]
+            if curr == prev:
+                samearr.append()
         self.features = model.extract_feature(self.images, batch_size)
 
 def get_model_dirs(model_dir):

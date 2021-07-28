@@ -10,7 +10,7 @@ import os
 log_base_dir = './log/'
 
 # The interval between writing summary
-summary_interval = 4
+summary_interval = 1
 
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
@@ -27,13 +27,13 @@ resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        #('resize', [(112,112)]),
-        #('random_flip', [])
+        ('random_flip', []),
+        ('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
 preprocess_test = [
-        #('resize', [(112,112)])
+        ('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
@@ -69,13 +69,13 @@ embedding_size = 512
 optimizer = "ADADELTA"
 
 # Number of samples per batch
-batch_size = 1
+batch_size = 16
 
 # Number of batches per epoch
-epoch_size = 0 #set in training
+#epoch_size = 16 #set in training
 
 # Number of epochs
-num_epochs = 1
+num_epochs = 100
 
 #learning rate strategy
 learning_rate_strategy = 'step'

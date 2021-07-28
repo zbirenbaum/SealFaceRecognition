@@ -1,0 +1,195 @@
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.006  000.006: --- NVIM STARTING ---
+000.175  000.169: locale set
+000.359  000.184: inits 1
+000.366  000.007: window checked
+000.388  000.022: parsing arguments
+000.413  000.024: expanding arguments
+000.437  000.024: inits 2
+000.737  000.300: init highlight
+000.738  000.001: waiting for UI
+001.628  000.890: done waiting for UI
+001.639  000.011: initialized screen early for UI
+001.718  000.008  000.008: sourcing /usr/share/nvim/archlinux.vim
+001.721  000.022  000.014: sourcing /etc/xdg//nvim/sysinit.vim
+004.221  002.489  002.489: sourcing /home/zach/.config/nvim/init.lua
+004.227  000.077: sourcing vimrc file(s)
+008.580  000.018  000.018: sourcing /usr/share/vim/vimfiles/ftdetect/meson.vim
+008.864  004.618  004.600: sourcing /usr/share/nvim/runtime/filetype.vim
+009.007  000.022  000.022: sourcing /usr/share/nvim/runtime/ftplugin.vim
+009.150  000.019  000.019: sourcing /usr/share/nvim/runtime/indent.vim
+009.501  000.172  000.172: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+009.669  000.371  000.199: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+009.722  000.454  000.083: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+010.049  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+010.063  000.006  000.006: sourcing /usr/share/nvim/runtime/plugin/health.vim
+010.117  000.047  000.047: sourcing /usr/share/nvim/runtime/plugin/man.vim
+010.132  000.007  000.007: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+010.240  000.101  000.101: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+010.262  000.012  000.012: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+010.357  000.007  000.007: sourcing /home/zach/.local/share/nvim/rplugin.vim
+010.361  000.090  000.084: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+010.434  000.067  000.067: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+010.455  000.007  000.007: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+010.474  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+010.489  000.007  000.007: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+010.508  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+010.527  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+010.977  000.409  000.409: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+012.831  001.808  001.808: sourcing /home/zach/.config/nvim/plugin/packer_compiled.lua
+012.982  001.040: loading plugins
+013.096  000.008  000.008: sourcing /home/zach/.local/share/nvim/site/pack/packer/start/which-key.nvim/plugin/which-key.vim
+013.198  000.208: loading packages
+013.327  000.129: loading after plugins
+013.335  000.008: inits 3
+015.011  001.676: reading ShaDa
+016.664  000.047  000.047: sourcing /usr/share/nvim/runtime/autoload/provider/pythonx.vim
+370.113  000.149  000.149: sourcing /usr/share/nvim/runtime/autoload/remote/host.vim
+370.188  353.611  353.415: sourcing /usr/share/nvim/runtime/autoload/provider/python3.vim
+528.225  157.989  157.989: sourcing /usr/share/nvim/runtime/autoload/provider/python.vim
+528.781  512.284  000.684: sourcing /usr/share/nvim/runtime/ftplugin/python.vim
+532.124  000.215  000.215: sourcing /usr/share/nvim/runtime/indent/python.vim
+533.582  000.719  000.719: sourcing /usr/share/nvim/runtime/syntax/python.vim
+541.064  005.522  005.522: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/plugin/nvim-treesitter.vim
+541.244  000.019  000.019: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/gdscript.vim
+541.280  000.015  000.015: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/gomod.vim
+541.323  000.025  000.025: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/hcl.vim
+541.367  000.027  000.027: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/query.vim
+541.400  000.015  000.015: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/yang.vim
+560.239  000.068  000.068: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-lspinstall/plugin/lspinstall.vim
+568.927  008.385  008.385: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-lspconfig/plugin/lspconfig.vim
+575.356  000.051  000.051: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/plenary.nvim/plugin/plenary.vim
+581.342  000.019  000.019: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/autoload/indent_blankline/helper.vim
+582.767  001.540  001.521: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/plugin/indent_blankline.vim
+584.887  001.740  001.740: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/lightspeed.nvim/plugin/lightspeed.vim
+585.768  000.037  000.037: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-colorizer.lua/plugin/colorizer.vim
+590.752  000.019  000.019: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/autoload/indent_blankline.vim
+593.711  048.021: opening buffers
+593.979  000.087  000.087: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/termwrapper.nvim/plugin/termwrapper.vim
+594.641  000.843: BufEnter autocommands
+594.647  000.006: editing files in windows
+608.496  000.278  000.278: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/galaxyline.nvim/plugin/galaxyline.vim
+610.554  000.025  000.025: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-web-devicons/plugin/nvim-web-devicons.vim
+612.337  017.387: VimEnter autocommands
+612.340  000.003: UIEnter autocommands
+704.192  091.759  091.759: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+704.208  000.109: before starting main loop
+704.806  000.017  000.017: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+705.216  000.232  000.232: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup.vim
+705.366  000.107  000.107: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/perf.vim
+706.096  000.357  000.357: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/loader.vim
+706.981  000.680  000.680: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/matchparen.vim
+708.788  004.239  002.846: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/plugin/matchup.vim
+708.993  000.009  000.009: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/after/plugin/matchit.vim
+711.225  000.616  000.616: sourcing /usr/share/nvim/runtime/ftplugin/python.vim
+715.010  000.051  000.051: sourcing /usr/share/nvim/runtime/indent/python.vim
+717.194  001.125  001.125: sourcing /usr/share/nvim/runtime/syntax/python.vim
+720.163  001.113  001.113: sourcing /usr/share/nvim/runtime/syntax/python.vim
+728.258  000.131  000.131: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/ts_engine.vim
+730.237  000.039  000.039: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/re.vim
+731.582  000.173  000.173: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/pos.vim
+732.404  000.600  000.600: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/delim.vim
+766.750  054.446: first screen update
+766.754  000.003: --- NVIM STARTED ---
+
+
+times in msec
+ clock   self+sourced   self:  sourced script
+ clock   elapsed:              other lines
+
+000.004  000.004: --- NVIM STARTING ---
+000.136  000.132: locale set
+000.297  000.161: inits 1
+000.303  000.006: window checked
+000.324  000.020: parsing arguments
+000.344  000.021: expanding arguments
+000.368  000.024: inits 2
+000.654  000.287: init highlight
+000.655  000.001: waiting for UI
+001.554  000.899: done waiting for UI
+001.589  000.035: initialized screen early for UI
+001.667  000.008  000.008: sourcing /usr/share/nvim/archlinux.vim
+001.669  000.022  000.013: sourcing /etc/xdg//nvim/sysinit.vim
+004.145  002.463  002.463: sourcing /home/zach/.config/nvim/init.lua
+004.151  000.076: sourcing vimrc file(s)
+008.373  000.017  000.017: sourcing /usr/share/vim/vimfiles/ftdetect/meson.vim
+008.636  004.466  004.449: sourcing /usr/share/nvim/runtime/filetype.vim
+008.774  000.023  000.023: sourcing /usr/share/nvim/runtime/ftplugin.vim
+008.914  000.018  000.018: sourcing /usr/share/nvim/runtime/indent.vim
+009.249  000.164  000.164: sourcing /usr/share/nvim/runtime/syntax/syncolor.vim
+009.416  000.361  000.197: sourcing /usr/share/nvim/runtime/syntax/synload.vim
+009.467  000.440  000.079: sourcing /usr/share/nvim/runtime/syntax/syntax.vim
+009.774  000.009  000.009: sourcing /usr/share/nvim/runtime/plugin/gzip.vim
+009.789  000.006  000.006: sourcing /usr/share/nvim/runtime/plugin/health.vim
+009.841  000.046  000.046: sourcing /usr/share/nvim/runtime/plugin/man.vim
+009.855  000.007  000.007: sourcing /usr/share/nvim/runtime/plugin/matchit.vim
+009.963  000.102  000.102: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+009.984  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/netrwPlugin.vim
+010.076  000.006  000.006: sourcing /home/zach/.local/share/nvim/rplugin.vim
+010.080  000.088  000.082: sourcing /usr/share/nvim/runtime/plugin/rplugin.vim
+010.152  000.065  000.065: sourcing /usr/share/nvim/runtime/plugin/shada.vim
+010.176  000.007  000.007: sourcing /usr/share/nvim/runtime/plugin/spellfile.vim
+010.194  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/tarPlugin.vim
+010.209  000.006  000.006: sourcing /usr/share/nvim/runtime/plugin/tohtml.vim
+010.228  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/tutor.vim
+010.246  000.010  000.010: sourcing /usr/share/nvim/runtime/plugin/zipPlugin.vim
+010.683  000.397  000.397: sourcing /usr/share/vim/vimfiles/plugin/fzf.vim
+012.425  001.697  001.697: sourcing /home/zach/.config/nvim/plugin/packer_compiled.lua
+012.563  000.994: loading plugins
+012.669  000.008  000.008: sourcing /home/zach/.local/share/nvim/site/pack/packer/start/which-key.nvim/plugin/which-key.vim
+012.767  000.196: loading packages
+012.889  000.122: loading after plugins
+012.897  000.008: inits 3
+014.489  001.592: reading ShaDa
+016.151  000.045  000.045: sourcing /usr/share/nvim/runtime/autoload/provider/pythonx.vim
+016.346  000.117  000.117: sourcing /usr/share/nvim/runtime/autoload/remote/host.vim
+016.410  000.343  000.181: sourcing /usr/share/nvim/runtime/autoload/provider/python3.vim
+016.650  000.656  000.312: sourcing /usr/share/nvim/runtime/ftplugin/python.vim
+018.177  000.082  000.082: sourcing /usr/share/nvim/runtime/indent/python.vim
+018.837  000.333  000.333: sourcing /usr/share/nvim/runtime/syntax/python.vim
+022.091  002.446  002.446: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/plugin/nvim-treesitter.vim
+022.176  000.008  000.008: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/gdscript.vim
+022.192  000.007  000.007: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/gomod.vim
+022.212  000.012  000.012: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/hcl.vim
+022.232  000.012  000.012: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/query.vim
+022.247  000.007  000.007: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-treesitter/ftdetect/yang.vim
+031.466  000.031  000.031: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-lspinstall/plugin/lspinstall.vim
+035.662  004.040  004.040: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-lspconfig/plugin/lspconfig.vim
+038.834  000.024  000.024: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/plenary.nvim/plugin/plenary.vim
+043.110  000.011  000.011: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/autoload/indent_blankline/helper.vim
+043.952  000.912  000.901: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/plugin/indent_blankline.vim
+045.235  001.061  001.061: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/lightspeed.nvim/plugin/lightspeed.vim
+045.799  000.025  000.025: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-colorizer.lua/plugin/colorizer.vim
+048.630  000.011  000.011: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/indent-blankline.nvim/autoload/indent_blankline.vim
+050.673  026.518: opening buffers
+050.837  000.052  000.052: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/termwrapper.nvim/plugin/termwrapper.vim
+051.257  000.533: BufEnter autocommands
+051.260  000.003: editing files in windows
+060.438  000.389  000.389: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/galaxyline.nvim/plugin/galaxyline.vim
+062.496  000.026  000.026: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/nvim-web-devicons/plugin/nvim-web-devicons.vim
+064.279  012.604: VimEnter autocommands
+064.281  000.003: UIEnter autocommands
+156.413  092.040  092.040: sourcing /usr/share/nvim/runtime/autoload/provider/clipboard.vim
+156.425  000.104: before starting main loop
+156.853  000.011  000.011: sourcing /usr/share/nvim/runtime/plugin/matchparen.vim
+157.141  000.179  000.179: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup.vim
+157.253  000.081  000.081: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/perf.vim
+157.787  000.255  000.255: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/loader.vim
+158.243  000.342  000.342: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/matchparen.vim
+159.121  002.422  001.556: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/plugin/matchup.vim
+159.220  000.004  000.004: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/after/plugin/matchit.vim
+160.339  000.302  000.302: sourcing /usr/share/nvim/runtime/ftplugin/python.vim
+162.149  000.025  000.025: sourcing /usr/share/nvim/runtime/indent/python.vim
+163.228  000.570  000.570: sourcing /usr/share/nvim/runtime/syntax/python.vim
+164.670  000.561  000.561: sourcing /usr/share/nvim/runtime/syntax/python.vim
+167.656  000.063  000.063: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/ts_engine.vim
+168.636  000.019  000.019: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/re.vim
+169.772  000.093  000.093: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/pos.vim
+170.182  000.300  000.300: sourcing /home/zach/.local/share/nvim/site/pack/packer/opt/vim-matchup/autoload/matchup/delim.vim
+190.624  029.839: first screen update
+190.626  000.002: --- NVIM STARTED ---
