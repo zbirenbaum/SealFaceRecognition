@@ -61,6 +61,16 @@ def identify(probe, gallery):
         
         predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
         
+        # Calculate the ranking of each prediction
+        rank = ""
+        if (evaldict[i]['inset']):
+            count = 1
+            while (predictions[count - 1][0] != evaldict[i]['probelabel']): 
+                count+=1
+            rank = str(count)
+        else:
+            rank = "OPEN"
+        
         predarray.append(predictions[0])
         nameprobelabel = probe.labels[i] 
         nameprobelabel = nameprobelabel[nameprobelabel.rindex('/')+1:]
@@ -72,13 +82,13 @@ def identify(probe, gallery):
                 namescorelabel, 
                 predictions[0][1],
                 evaldict[i]['inset'] == True,
-                evaldict[i]['inset']])
+                rank])
         else:
             acceptlist.append([nameprobelabel,
                 namescorelabel,
                 predictions[0][1],
                 evaldict[i]['inset'] == False,
-                evaldict[i]['inset']])
+                rank])
     
 #    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
@@ -87,26 +97,23 @@ def identify(probe, gallery):
     full_list = deniedlist[:]
     full_list.extend(acceptlist)
 
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'In Set'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
-    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'Rank'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
+    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
     
     print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
     print(dnframe)
     print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
 
-#    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
-#    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
-
-    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['In Set']]['Highest Score'].mean()))
-    print('AVG Open Score: ' + str(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean()))
+    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != "OPEN"]['Highest Score'].mean()))
+    print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == "OPEN"]['Highest Score'].mean()))
 
     
     print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
     print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
-    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['In Set']]['Highest Score'].mean()))
-    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['In Set']==False]['Highest Score'].mean()))
+    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != "OPEN"]['Highest Score'].mean()))
+    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']=="OPEN"]['Highest Score'].mean()))
 
 #        counter = 0
 #        for prediction in predarray[i]:
