@@ -62,15 +62,20 @@ def identify(probe, gallery):
         predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
         
         predarray.append(predictions[0])
+        nameprobelabel = probe.labels[i] 
+        nameprobelabel = nameprobelabel[nameprobelabel.rindex('/')+1:]
+
+        namescorelabel = predictions[0][0]
+        namescorelabel = namescorelabel[namescorelabel.rindex('/')+1:]
         if predictions[0][1] < threshold:
-            deniedlist.append([probe.labels[i],
-                predictions[0][0], 
+            deniedlist.append([nameprobelabel,
+                namescorelabel, 
                 predictions[0][1],
                 evaldict[i]['inset'] == True,
                 evaldict[i]['inset']])
         else:
-            acceptlist.append([probe.labels[i],
-                predictions[0][0], 
+            acceptlist.append([nameprobelabel,
+                namescorelabel,
                 predictions[0][1],
                 evaldict[i]['inset'] == False,
                 evaldict[i]['inset']])

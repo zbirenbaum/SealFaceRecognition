@@ -104,7 +104,7 @@ learning_rate_multipliers = {
 template_batch = False
 
 # Restore model
-restore_model_path = '/home/sshguest/research/SealFaceRecognition/testingmodel'
+restore_model_path = '/home/sshguest/research/SealFaceRecognition/modeltesting/testingmodel'
 restore_model = False
 # Keywords to filter restore variables, set None for all
 restore_scopes = None
