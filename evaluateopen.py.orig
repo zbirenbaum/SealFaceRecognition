@@ -67,9 +67,9 @@ def identify(probe, gallery):
             count = 1
             while (predictions[count - 1][0] != evaldict[i]['probelabel']): 
                 count+=1
-            rank = count
+            rank = str(count)
         else:
-            rank = -1
+            rank = "OPEN"
         
         predarray.append(predictions[0])
         nameprobelabel = probe.labels[i] 
@@ -108,27 +108,35 @@ def identify(probe, gallery):
 #    print(dnframe)
     print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
 
+<<<<<<< HEAD
 #    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
 #    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
 
-    accuracyframe=fullframe.loc[fullframe['Rank'] != -1]
-    print(accuracyframe)
-    accuracytotal = len(list(accuracyframe.index))
-    correct1 = len(accuracyframe.loc[accuracyframe['Probe Label'] == accuracyframe['Highest Score Label']].index)
-    correct5 = len(accuracyframe.loc[accuracyframe['Rank'] <= 5])
-    print('ACCURACY Rank 1: ' + str(correct1/accuracytotal))
-    print('ACCURACY Rank 5: ' + str(correct5/accuracytotal))
-    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != -1]['Highest Score'].mean()))
-    print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == -1]['Highest Score'].mean()))
+    accuracyframe=fullframe.loc[accframe['In Set']]
+    accuracytotal = len(list(accframe.index))
+    correct = len(accframe.loc[accframe['Probe Label'] == accframe['Highest Score Label']].index)
+    print(correct/accuracytotal)
+    print('ACCURACY Rank 1: ' + str(len(fullframe.loc[fullframe['Probe Label'] == fullframe['Highest Score Label']].index)/len(fullframe.index)))
+    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['In Set']]['Highest Score'].mean()))
+    print('AVG Open Score: ' + str(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean()))
+=======
+    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != "OPEN"]['Highest Score'].mean()))
+    print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == "OPEN"]['Highest Score'].mean()))
+>>>>>>> 286d19e0bcf47ca3c5b51c7bbd2d9ed78590d8f2
 
     
     print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
     print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
+<<<<<<< HEAD
+    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['In Set']]['Highest Score'].mean()))
+    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['In Set']==False]['Highest Score'].mean()))
     #fullframe.set_index(['Probe Label', 'Highest Score Label'], inplace=True)
     #print(fullframe)
     #print(fullframe.groupby('Probe Label').mean())
-    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != -1]['Highest Score'].mean()))
-    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']==-1]['Highest Score'].mean()))
+=======
+    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != "OPEN"]['Highest Score'].mean()))
+    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']=="OPEN"]['Highest Score'].mean()))
+>>>>>>> 286d19e0bcf47ca3c5b51c7bbd2d9ed78590d8f2
 
 #        counter = 0
 #        for prediction in predarray[i]:
