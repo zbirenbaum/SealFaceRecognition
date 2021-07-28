@@ -35,7 +35,7 @@ def gen_dict(folderdir, exclude=None, startat=None):
         counter = int(startat)
     for path in photodirpaths:
         photos = get_photos_in_dir(path)
-        print(len(photos))
+        #print(len(photos))
         mapdict[counter] = {'name': path, 'photos': photos}
         counter = counter + 1
 
