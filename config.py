@@ -15,7 +15,7 @@ summary_interval = 4
 # Cross-validation Parameters
 K_CV = 5    # Number of cross-validation folds (training/testing splits)
 splits_path = './splits'
-testing_type = 'both'
+testing_type = 'open'
 #Target image size for the input of network
 image_size = [112,112]
 
@@ -27,13 +27,13 @@ resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        ('resize', [(112,112)]),
+        #('resize', [(112,112)]),
         #('random_flip', [])
 #        ('standardize', ['deb'])
 ]
 
 preprocess_test = [
-        ('resize', [(112,112)])
+        #('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 

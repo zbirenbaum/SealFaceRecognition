@@ -9,10 +9,10 @@ def preprocess(images, config, is_training=False):
         image_paths = images
         images = []
         assert (config.channels==1 or config.channels==3)
-        #mode = 'RGB' if config.channels==3 else 'I'
+        mode = 'RGB' if config.channels==3 else 'I'
         print('Prepocessing images ...')
         for idx, image_path in enumerate(image_paths):
-                images.append(Image.open(image_path))
+            images.append(misc.imread(image_path, mode=mode))
         print('Done preprocessing images ...\n')
             
         images = np.stack(images, axis=0) # a = b if true else 
@@ -81,6 +81,7 @@ def random_flip(images):
     return images_new
 
 def resize(images, size):
+
     n, _h, _w = images.shape[:3]
     print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
     w, h = tuple(size)
@@ -90,7 +91,7 @@ def resize(images, size):
     print(images_new.shape)
 
     for i in range(n):
-        images_new[i] = np.array(images[i].resize((h,w)))
+        images_new[i] = np.array(misc.imresize(images[i],(h,w)))
 
     return images_new
 

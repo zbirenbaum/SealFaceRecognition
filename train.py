@@ -65,7 +65,7 @@ def train(config, config_file, i, builder):
     if config.testing_type == 'both':
         probes = utils.init_from_dict(testset)[3]
     else:
-        probes = utils.init_from_dict(probes)[3]
+        probes = utils.init_from_list(probes)[3]
     probe_set = evaluate.ImageSet(probes, config)
 
     gal_set = evaluate.ImageSet(gal, config)
