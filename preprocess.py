@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.misc as misc
+from PIL import Image
 from pdb import set_trace as bp
 
 def preprocess(images, config, is_training=False):
@@ -8,10 +9,10 @@ def preprocess(images, config, is_training=False):
         image_paths = images
         images = []
         assert (config.channels==1 or config.channels==3)
-        mode = 'RGB' if config.channels==3 else 'I'
+        #mode = 'RGB' if config.channels==3 else 'I'
         print('Prepocessing images ...')
         for idx, image_path in enumerate(image_paths):
-                images.append(misc.imread(image_path, mode=mode))
+                images.append(Image.open(image_path))
         print('Done preprocessing images ...\n')
             
         images = np.stack(images, axis=0) # a = b if true else 
@@ -80,17 +81,16 @@ def random_flip(images):
     return images_new
 
 def resize(images, size):
-    #bp()
-    print(images.shape)
     n, _h, _w = images.shape[:3]
     print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
     w, h = tuple(size)
     shape_new = get_new_shape(images, size)
 
     images_new = np.ndarray(shape_new, dtype=images.dtype)
+    print(images_new.shape)
 
     for i in range(n):
-        images_new[i] = misc.imresize(images[i], (h,w))
+        images_new[i] = np.array(images[i].resize((h,w)))
 
     return images_new
 

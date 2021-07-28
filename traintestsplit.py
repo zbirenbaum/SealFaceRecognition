@@ -152,13 +152,13 @@ class DatasetBuilder(object):
                 to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
-                self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
+                self.create_probe(to_write_testing, settype, 'probe', fold)
             elif settype == 'open':
                 to_write_training = self.ttdict[fold]['training']
                 to_write_testing = self.ttdict[fold]['testing']
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = num_training_classes#len(to_write_testing.keys()) + num_training_classes
-                self.create_probe(to_write_testing, settype, 'probe', fold, num_testing_classes)
+                self.create_probe(to_write_testing, settype, 'probe', fold)
             elif settype == 'both': 
                 to_write_training = self.ttdict[fold]['training']
                 to_write_testing = self.ttdict[fold]['testing'] #eval during training
@@ -166,11 +166,11 @@ class DatasetBuilder(object):
                 #print(to_write_probes)
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
-                self.create_set(to_write_probes, settype, 'probe', fold, num_testing_classes)
+                self.create_set(to_write_probes, settype, 'probe', fold)
             else:
                 return "ERROR"
-            self.create_set(to_write_training, settype, 'train', fold, num_training_classes)
-            self.create_set(to_write_testing, settype, 'test', fold, num_testing_classes)
+            self.create_set(to_write_training, settype, 'train', fold)
+            self.create_set(to_write_testing, settype, 'test', fold)
         return
 
 
@@ -191,14 +191,13 @@ class DatasetBuilder(object):
         self.probesetbyfold.append(probeset)
         return
 
-    def create_probe(self, ttdict, settype, typett, fold, num_classes):
+    def create_probe(self, ttdict, settype, typett, fold):
         probeset = {}
         splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
         if not os.path.isdir(splits_dir):
             os.makedirs(splits_dir)
         fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
         with open(fname, 'w') as f:
-            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
                     probeset[label] = [photopath]
@@ -208,13 +207,12 @@ class DatasetBuilder(object):
         self.probesetbyfold.append(probeset)
         return
 
-    def create_set(self, ttdict, settype, typett, fold, num_classes): 
+    def create_set(self, ttdict, settype, typett, fold): 
         splits_dir = os.path.join(os.path.expanduser('./splits/{}/fold{}'.format(settype,fold)))
         if not os.path.isdir(splits_dir):
             os.makedirs(splits_dir)
         fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
         with open(fname, 'w') as f:
-            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
                     f.write(photopath + ' ' + str(label) + '\n')

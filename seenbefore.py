@@ -7,8 +7,6 @@ import os
 from network import Network
 import sys
 import utils
-import facepy.evaluation as fev
-import facepy
 import summary
 from evaluateopen import identify
 import traintestsplit as ttsplit
@@ -64,22 +62,14 @@ def main():
     probes = []
 
     with open("./splits/both/fold1/probe.txt" ,'r') as f:
-        counter = 0
         for line in f:
-            if counter == 0:
-                counter = 1
-                continue
             probes.append(line.strip())
 
     probe_set = ImageSet(probes, config)
     #probe_set.extract_features(network, len(probes))
     #
     with open("./splits/both/fold1/train.txt", 'r') as f:
-        counter = 0
         for line in f:
-            if counter == 0:
-                counter = 1
-                continue
             gal.append(line.strip())
     gal_set = ImageSet(gal, config)
     #probe_set = ImageSet(probes, config)

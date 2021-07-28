@@ -10,6 +10,7 @@ def get_threshold():
     #awful hardcode pls fix thx
     return 0.6
 
+
 def identify(probe, gallery):
     galfeaturesdict = {} 
     uq = list(dict.fromkeys(gallery.labels))
@@ -49,25 +50,33 @@ def identify(probe, gallery):
         
         
         predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
+        rank = ""
+        if (evaldict[i]['inset']):
+            count = 1
+            while (predictions[count - 1][0] != evaldict[i]['probelabel']): 
+                count+=1
+            rank = str(count)
+        else:
+            rank = "OPEN"
         
         predarray.append(predictions[0])
         if predictions[0][1] < threshold:
             deniedlist.append([probe.labels[i],
                 predictions[0][0], 
+                rank,
                 predictions[0][1],
                 evaldict[i]['inset'] == True])
         else:
             acceptlist.append([probe.labels[i],
                 predictions[0][0], 
+                rank,
                 predictions[0][1],
                 evaldict[i]['inset'] == False])
-    
-#    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
 
     print(probe.labels[i] + " " + str(predictions[0]))
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept'])
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Rank', 'Highest Score', 'False Reject'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'R , 'Highest Score','False Accept'])
     print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
     print(dnframe)

@@ -3,6 +3,8 @@ from cv2 import cv2
 import numpy as np
 from tensorflow.python.ops.gen_io_ops import read_file
 import dirhandler as dh
+import sys
+import os
 
 def morpher(img, path=False):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -56,26 +58,45 @@ def normalize_images(rwlist, overwrite=False):
             cv2.imwrite(wt,gray)
     return normalized_list
 
-read_dir = 'data/unprocessed/Seal_Faces_Brandt_Ledges_1_29'
-write_dir = 'data/processed/Seal_Faces_Brandt_Ledges_1_29'
-readlist = dh.gen_path_list(read_dir)
-rwlist = []
-for rpath in readlist:
-    substr=rpath[len(read_dir): len(rpath)]
-    fullstr = write_dir + substr
-    rwlist.append((rpath, fullstr))
-normalized_list = normalize_images(rwlist, True)
-print('done')
-#nml_list = normalize_images(imglist)
-#print(nml_list[0])
-#print(nml_list[0].shape)
+def main():
+    args = sys.argv
+    if len(args) != 2:
+        print('Usage: python zprocess.py folder')
+        print('Preprocess all of the photos in data/unprocessed/folder and write to data/processed/folder')
+        return
 
-# read the image
+    dir = args[1]
+    
+    # read from ./data/unprocessed and write to ./data/processed
+    read_dir = os.path.join(os.getcwd(), 'data', 'unprocessed', dir)
+    write_dir = os.path.join(os.getcwd(), 'data', 'processed', dir)
+    
+    # make sure the write folder exists
+    if (not os.path.exists(write_dir)):
+        os.makedirs(write_dir)
+    readlist = dh.gen_path_list(read_dir)
+    rwlist = []
+    for rpath in readlist:
+        substr = rpath[len(read_dir) + 1 : len(rpath)]
+        
+        # make sure all the necessary folders exist
+        paths = substr.split('/')
+        cur, i = write_dir, 0
+        while (i < len(paths) - 1):
+            cur = os.path.join(cur, paths[i])
+            if (not os.path.exists(cur)):
+                os.makedirs(cur)
+            i += 1
+            
+        wpath = os.path.join(write_dir, substr)
+        rwlist.append((rpath, wpath))
+    normalized_list = normalize_images(rwlist, True)
+    print('done')    
 
-# save results
 
-# show results
-#cv2.imshow('smooth', smooth)  
-#cv2.imshow('division', division)  
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+    
+    
+if __name__ == '__main__':
+    main()
+
+

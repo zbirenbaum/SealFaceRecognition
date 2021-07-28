@@ -27,13 +27,13 @@ resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        #('resize', [(112,112)]),
+        ('resize', [(112,112)]),
         #('random_flip', [])
 #        ('standardize', ['deb'])
 ]
 
 preprocess_test = [
-        #('resize', [(112,112)])
+        ('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
