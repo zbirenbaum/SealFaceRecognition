@@ -72,7 +72,7 @@ def main():
     gal = []
     probes = []
 
-    with open("./splits/both/fold1/probe.txt" ,'r') as f:
+    with open("./splits/both/fold5/probe.txt" ,'r') as f:
         counter = 0
         for line in f:
             if counter == 0:
@@ -83,7 +83,7 @@ def main():
     probe_set = ImageSet(probes, config)
     #probe_set.extract_features(network, len(probes))
     #
-    with open("./splits/both/fold1/train.txt", 'r') as f:
+    with open("./splits/both/fold5/train.txt", 'r') as f:
         counter = 0
         for line in f:
             if counter == 0:

@@ -32,8 +32,8 @@ def identify(probe, gallery):
     uq = list(dict.fromkeys(gallery.labels))
     galFeaturesList, galfeaturesdict= get_mean_features(gallery, uq)
     probe_labels_uq = list(dict.fromkeys(probe.labels))
-    probe.images, throwaway = get_mean_features(probe, probe_labels_uq)
-    probe.labels=probe_labels_uq
+#    probe.images, throwaway = get_mean_features(probe, probe_labels_uq)
+#    probe.labels=probe_labels_uq
     evaldict = {}
     predarray= []
     acceptlist = []
@@ -82,6 +82,8 @@ def identify(probe, gallery):
     
 #    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
+    pd.set_option('display.max_columns', 10000)
+    pd.set_option('display.max_rows', 10000)
 
     print(probe.labels[i] + " " + str(predictions[0]))
     full_list = deniedlist[:]
@@ -91,14 +93,19 @@ def identify(probe, gallery):
     accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
     fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
     
-    print(accframe)
+#    print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
-    print(dnframe)
+#    print(dnframe)
     print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
 
 #    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
 #    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
 
+    accuracyframe=fullframe.loc[accframe['In Set']]
+    accuracytotal = len(list(accframe.index))
+    correct = len(accframe.loc[accframe['Probe Label'] == accframe['Highest Score Label']].index)
+    print(correct/accuracytotal)
+    print('ACCURACY Rank 1: ' + str(len(fullframe.loc[fullframe['Probe Label'] == fullframe['Highest Score Label']].index)/len(fullframe.index)))
     print('AVG Closed Score: ' + str(fullframe.loc[fullframe['In Set']]['Highest Score'].mean()))
     print('AVG Open Score: ' + str(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean()))
 
@@ -107,6 +114,9 @@ def identify(probe, gallery):
     print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
     print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['In Set']]['Highest Score'].mean()))
     print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['In Set']==False]['Highest Score'].mean()))
+    #fullframe.set_index(['Probe Label', 'Highest Score Label'], inplace=True)
+    #print(fullframe)
+    #print(fullframe.groupby('Probe Label').mean())
 
 #        counter = 0
 #        for prediction in predarray[i]:
