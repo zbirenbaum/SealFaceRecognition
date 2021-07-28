@@ -1,5 +1,4 @@
 import sys
-from pdb import set_trace as bp
 import os
 import numpy as np
 import imp
@@ -8,8 +7,6 @@ import random
 from datetime import datetime
 import shutil
 from preprocess import preprocess
-# from threading import Thread
-# from Queue import Queue
 from multiprocessing import Process, Queue
 
 def import_file(full_path_to_module, name='module.name'):
@@ -115,7 +112,6 @@ class Dataset():
         self.total_num_classes = max(int(line[1]) for line in lines)
         lines = lines[1:] #start at index 1
         images = [line[0] for line in lines]
-        #print(images)
         labels = [int(line[1]) for line in lines]
         self.images = np.array(images, dtype=np.object)
         self.labels = np.array(labels, dtype=np.int32)
@@ -209,11 +205,7 @@ class Dataset():
         return image_batch, label_batch
 
    # Multithreading preprocessing images
-    def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1):
-        #if config.batch_size is not None:
-            #batch_size = config.batch_size
-        #print(self.images)
-        bp() 
+    def start_batch_queue(self, config, is_training, maxsize=16, num_threads=1): 
         self.batch_queue = Queue(maxsize=maxsize)
         def batch_queue_worker():
             while True:
@@ -221,7 +213,6 @@ class Dataset():
                     image_path_batch, label_batch = \
                         self.get_batch_classes(config.batch_size, config.num_classes_per_batch)
                 else:
-                    print(config.batch_size)
                     image_path_batch, label_batch = self.get_batch(config.batch_size)
                 image_batch = preprocess(image_path_batch, config, is_training)
                 self.batch_queue.put((image_batch, label_batch))#type: ignore
@@ -242,20 +233,12 @@ def init_from_dict(ddict):
     set_list = []
 
     total_num_classes = len(ddict.keys())
-    #print(ddict)
-    for key in ddict.keys():
+    for i, key in enumerate(ddict.keys()):
         for photopath in ddict[key]:
-            labels.append(key)
+            labels.append(i)
             imagelist.append(str(photopath))
-            set_list.append(photopath + " " + str(key))
-    #classes = list(set(labels))
-    images=imagelist
-    print(total_num_classes)
-    #images = [image.strip() for image in imagelist]
-#      print(images)
-    return images, labels, total_num_classes, set_list
-
-
+            set_list.append(photopath + " " + key)
+    return imagelist, labels, total_num_classes, set_list
 
 # Calulate the shape for creating new array given (w,h)
 ''' Run various functions as defined in the config preprocess '''

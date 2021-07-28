@@ -87,7 +87,6 @@ def resize(images, size):
     w, h = tuple(size)
     shape_new = get_new_shape(images, size)
 
-    print(shape_new)
     images_new = np.ndarray(shape_new, dtype=images.dtype)
 
     for i in range(n):

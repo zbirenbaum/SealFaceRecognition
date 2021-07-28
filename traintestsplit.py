@@ -6,12 +6,12 @@ import numpy as np
 import os
 import utils as ut
 from pdb import set_trace as bp
-import json
+# import json
 
-def printasjs(dictobj):
-    js = json.dumps(dictobj[3], indent=4)
-    print(js)
-    return
+# def printasjs(dictobj):
+#     js = json.dumps(dictobj[3], indent=4)
+#     print(js)
+#     return
 
 def gen_full_dict(dir, startat=0):
     fulldict = {}
@@ -42,10 +42,6 @@ def create_probe_dict(ttdict):
 def gen_probes_from_dir(probedir):
     presplitprobes = create_probe_dict(dh.gen_dict(probedir, 0))
     return presplitprobes
-
-def ignore(k):
-    k=k+0
-    return
 
 class DatasetBuilder(object):
     def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None):
@@ -93,8 +89,7 @@ class DatasetBuilder(object):
             for fold in self.ttdict.keys():
                 training_num_classes = (len(self.ttdict[fold]['training'].keys()))
         else:
-            for k in range(self.kfold):
-                ignore(k)
+            for _ in range(self.kfold):
                 training_num_classes.append(total_classes)
         
         return total_classes, training_num_classes
@@ -154,7 +149,6 @@ class DatasetBuilder(object):
                 name = self.data[key]['name'] 
                 photos = self.data[key]['photos'][:]
                 ttdict[fold]['probes'][name] = photos
-            print(json.dumps(ttdict, indent=4))
         return ttdict
 
     def write_ttdict(self, settype):
@@ -253,4 +247,4 @@ class DatasetBuilder(object):
         return closeddict
 
 
-builder = DatasetBuilder('data/processed', usedict=1, settype='both', kfold=5)
+#builder = DatasetBuilder('data/processed', usedict=1, settype='both', kfold=5)
