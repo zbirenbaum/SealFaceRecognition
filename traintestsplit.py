@@ -182,7 +182,6 @@ class DatasetBuilder(object):
             os.makedirs(splits_dir)
         fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
         with open(fname, 'w') as f:
-            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
                     probeset[label] = [photopath]
@@ -199,7 +198,6 @@ class DatasetBuilder(object):
             os.makedirs(splits_dir)
         fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
         with open(fname, 'w') as f:
-            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
                     probeset[label] = [photopath]
@@ -215,7 +213,6 @@ class DatasetBuilder(object):
             os.makedirs(splits_dir)
         fname = './splits/{}/fold{}/{}.txt'.format(settype, fold, typett)
         with open(fname, 'w') as f:
-            f.write('Total_Number_Of_Classes' + ' ' + str(num_classes) + '\n')
             for label in ttdict.keys():
                 for photopath in ttdict[label]:
                     f.write(photopath + ' ' + str(label) + '\n')

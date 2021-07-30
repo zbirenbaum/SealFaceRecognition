@@ -1,20 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Feb  1 13:17:56 2018
-@author: Debayan Deb
-"""
 import os
 from network import Network
 import sys
 import utils
-import facepy.evaluation as fev
-import facepy
-import summary
-from evaluateopen import identify
-import traintestsplit as ttsplit
-from pdb import set_trace as bp
-
-
+import evaluateOpen
 
 class ImageSet:
     def __init__(self, image_paths, config, probe=False):
@@ -57,33 +46,25 @@ def main():
     probes = []
 
     with open("./splits/both/fold1/probe.txt" ,'r') as f:
-        counter = 0
         for line in f:
-            if counter == 0:
-                counter = 1
-                continue
             probes.append(line.strip())
 
     probe_set = ImageSet(probes, config)
-    #probe_set.extract_features(network, len(probes))
-    #
+
     with open("./splits/both/fold1/train.txt", 'r') as f:
-        counter = 0
         for line in f:
-            if counter == 0:
-                counter = 1
-                continue
             gal.append(line.strip())
     gal_set = ImageSet(gal, config)
-    #probe_set = ImageSet(probes, config)
-    #gal_set = ImageSet(gal, config)
 
     model_name = modelslist[0]
     network.load_model(model_name)
 
     probe_set.extract_features(network, len(probes))
     gal_set.extract_features(network, len(gal))
-    identify(probe_set, gal_set)
+    evaldict = evaluateOpen.identify(probe_set, gal_set)
+    evaluateOpen.displayTestingResult(evaldict)
+    
+    
 if __name__ == "__main__":
     num_models = 5 
      

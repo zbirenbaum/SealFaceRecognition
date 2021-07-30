@@ -4,12 +4,10 @@ from scipy import spatial
 import operator
 import pandas as pd
 
+THRESHOLD = 0.6
+
 def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
-def get_threshold():
-    #awful hardcode pls fix thx
-    return 0.6
-
 
 def get_mean_features(set, label_list):
     setfeaturesdict = {} 
@@ -27,89 +25,97 @@ def get_mean_features(set, label_list):
     return setFeaturesList, setfeaturesdict
 
 
-
 def identify(probe, gallery):
     uq = list(dict.fromkeys(gallery.labels))
-    galFeaturesList, galfeaturesdict= get_mean_features(gallery, uq)
-    probe_labels_uq = list(dict.fromkeys(probe.labels))
-    probe.images, throwaway = get_mean_features(probe, probe_labels_uq)
-    probe.labels=probe_labels_uq
+    _, galfeaturesdict= get_mean_features(gallery, uq)
+    
     evaldict = {}
-    predarray= []
-    acceptlist = []
-    deniedlist = []
     
-    score_vec = []
-    label_vec = []
-
-    threshold = get_threshold()
+    # evaldict = map probe labels to prediction
     for i in range(len(probe.labels)):
-        evaldict[i] = {'probelabel': probe.labels[i], 
-                'inset': probe.labels[i] in uq,
-                'scores': {}
+        probelabel = probe.labels[i]
+        evaldict[probelabel] = { 
+                'inset': probelabel in uq, # whether this probe label is in the set (for testing purposes)
+                                           # In actual open-set, this is false by default because we do not know the actual identity of the probes
+                'scores': [] # sorted predictions with each of the class in gallery, scores[i] = [ith_gallery_class, corresponding_similarity_score]
                 }
+        
+        prediction = {}
         for j in range(len(uq)):
-            evaldict[i]['scores'][uq[j]] = 1-spatial.distance.cosine(probe.features[i], galfeaturesdict[j]['features'])
-            
-        for gal, score in evaldict[i]['scores'].items():
-            score_vec.append(score)
-            if (probe.labels[i] == gal):
-                label_vec.append(True)
-            else:
-                label_vec.append(False)
+            prediction[uq[j]] = 1-spatial.distance.cosine(probe.features[i], galfeaturesdict[j]['features'])
         
+        evaldict[probelabel]['scores'] = sorted(prediction.items(), key=operator.itemgetter(1), reverse=True)
         
-        predictions = sorted(evaldict[i]['scores'].items(), key=operator.itemgetter(1), reverse=True)
-        
-        predarray.append(predictions[0])
-        if predictions[0][1] < threshold:
-            deniedlist.append([probe.labels[i],
-                predictions[0][0], 
-                predictions[0][1],
-                evaldict[i]['inset'] == True,
-                evaldict[i]['inset']])
-        else:
-            acceptlist.append([probe.labels[i],
-                predictions[0][0], 
-                predictions[0][1],
-                evaldict[i]['inset'] == False,
-                evaldict[i]['inset']])
+    return evaldict
+
+def displayTestingResult(evaldict):
+    predarray= []
+    acceptlist = [] # probes that have similarity score >= THRESHOLD
+    deniedlist = [] # probes that have similarity score < THRESHOLD
     
-#    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
+    for probelabel, probeinfo in evaldict.items():
+        scores = probeinfo['scores']    
+        inset = probeinfo['inset']    
 
+        # Calculate the ranking of each prediction
+        rank = 0
+        if (inset):
+            count = 1
+            while (scores[count - 1][0] != probelabel): 
+                count+=1
+            rank = count
+        else:
+            rank = -1
 
-    print(probe.labels[i] + " " + str(predictions[0]))
+        # remove redundant paths
+        nameprobelabel = probelabel[probelabel.rindex('/')+1:]
+
+        namescorelabel = scores[0][0] # rank-1 scores
+        namescorelabel = namescorelabel[namescorelabel.rindex('/')+1:]
+        predarray.append(namescorelabel)
+        
+        if scores[0][1] < THRESHOLD:
+            deniedlist.append([nameprobelabel,
+                namescorelabel, 
+                scores[0][1],
+                inset,
+                rank])
+        else:
+            acceptlist.append([nameprobelabel,
+                namescorelabel,
+                scores[0][1],
+                not inset,
+                rank])
+
+    pd.set_option('display.max_rows', 10000)
+
     full_list = deniedlist[:]
     full_list.extend(acceptlist)
 
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'In Set'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
-    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'In Set'])
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'Rank'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
+    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
     
     print(accframe)
-    print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
+    print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(evaldict)))
     print(dnframe)
-    print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
+    print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(evaldict)))
 
-#    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
-#    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
+    accuracyframe=fullframe.loc[fullframe['Rank'] != -1]
+    accuracytotal = len(list(accuracyframe.index))
+    correct1 = len(accuracyframe.loc[accuracyframe['Probe Label'] == accuracyframe['Highest Score Label']].index)
+    correct5 = len(accuracyframe.loc[accuracyframe['Rank'] <= 5])
+    print('ACCURACY Rank 1: ' + str(correct1/accuracytotal))
+    print('ACCURACY Rank 5: ' + str(correct5/accuracytotal))
+    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != -1]['Highest Score'].mean()))
+    print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == -1]['Highest Score'].mean()))
 
-    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['In Set']]['Highest Score'].mean()))
-    print('AVG Open Score: ' + str(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean()))
-
-    
     print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
     print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
-    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['In Set']]['Highest Score'].mean()))
-    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['In Set']==False]['Highest Score'].mean()))
+    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != -1]['Highest Score'].mean()))
+    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']==-1]['Highest Score'].mean()))
 
-#        counter = 0
-#        for prediction in predarray[i]:
-#            print(prediction)
-#            if counter == 5:
-#                break
-#            counter = counter +1
-    return
+
 def closed(probe, galFeaturesList):        
     score_matrix = facepy.metric.cosineSimilarity(probe.features, np.array(galFeaturesList))
     for i in range(len(probe.labels)):
