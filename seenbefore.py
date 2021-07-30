@@ -53,22 +53,6 @@ def main():
     config = utils.import_file(config_file, 'config')
    
     modelslist = get_model_dirs(model_dir)  
-#    builder = ttsplit.DatasetBuilder(
-#            photodir='data/fulldataset/2019data',
-#            usedict=1,
-#            settype='closed',
-#            kfold=int(5)
-#            )
-
-#    closedsetprobes = builder.probesetbyfold[0]
-
-#    gal = builder.dsetbyfold[0].set_list
-
-#    opensetprobes = ttsplit.create_split_probe_dict(dir='data/openset/Mitchell_Field_Singles_1_31Chips',startat=len(closedsetprobes))
-
-#    print(opensetprobes.keys())
-#    opensetprobes.update(closedsetprobes)
-#    probes = utils.init_from_dict(opensetprobes)[3]
     gal = []
     probes = []
 
