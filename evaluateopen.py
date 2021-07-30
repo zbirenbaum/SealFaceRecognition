@@ -32,8 +32,7 @@ def identify(probe, gallery):
     uq = list(dict.fromkeys(gallery.labels))
     galFeaturesList, galfeaturesdict= get_mean_features(gallery, uq)
     probe_labels_uq = list(dict.fromkeys(probe.labels))
-#    probe.images, throwaway = get_mean_features(probe, probe_labels_uq)
-#    probe.labels=probe_labels_uq
+
     evaldict = {}
     predarray= []
     acceptlist = []
