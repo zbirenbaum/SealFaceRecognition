@@ -92,7 +92,6 @@ def identify(probe, gallery):
     
 #    facepy.plot.score_distribution(np.array(score_vec), np.array(label_vec))
 
-    pd.set_option('display.max_columns', 10000)
     pd.set_option('display.max_rows', 10000)
 
     print(probe.labels[i] + " " + str(predictions[0]))
@@ -103,16 +102,16 @@ def identify(probe, gallery):
     accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
     fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
     
-#    print(accframe)
+    print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(probe.labels)))
-#    print(dnframe)
+    print(dnframe)
     print('False Reject: ' + str(dnframe['False Reject'].sum()) + '/' + str(len(probe.labels)))
 
 #    print(fullframe.loc[fullframe['In Set']]['Highest Score'].mean())
 #    print(fullframe.loc[fullframe['In Set']==False]['Highest Score'].mean())
 
     accuracyframe=fullframe.loc[fullframe['Rank'] != -1]
-    print(accuracyframe)
+#    print(accuracyframe)
     accuracytotal = len(list(accuracyframe.index))
     correct1 = len(accuracyframe.loc[accuracyframe['Probe Label'] == accuracyframe['Highest Score Label']].index)
     correct5 = len(accuracyframe.loc[accuracyframe['Rank'] <= 5])

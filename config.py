@@ -27,7 +27,7 @@ resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        #('random_flip', []),
+        #('random_flip', [])
         #('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
@@ -47,7 +47,7 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/seal_net_old.py"
+network = "nets/seal_net_new.py"
 
 # Model version, only for some networks
 model_version = 'seal'

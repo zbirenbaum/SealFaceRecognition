@@ -14,3 +14,5 @@ data/
 log/
 data/
 data2
+nets/
+modeltesting
