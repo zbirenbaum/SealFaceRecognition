@@ -19,22 +19,18 @@ class Menubar(ttk.Frame):
         quit()
 
     def display_help(self):
-        '''Displays help document'''
-        pass
-
-    def display_about(self):
-        '''Displays info about program'''
-        pass
+        self.new_win = tkinter.Toplevel(self.root) # Set parent
+        HelpWindow(self.new_win)
 
     def init_menubar(self):
         self.menubar = tkinter.Menu(self.root)
+        
         self.menu_file = tkinter.Menu(self.menubar) # Creates a "File" menu
         self.menu_file.add_command(label='Exit', command=self.on_exit) # Adds an option to the menu
         self.menubar.add_cascade(menu=self.menu_file, label='File') # Adds File menu to the bar. Can also be used to create submenus.
 
         self.menu_help = tkinter.Menu(self.menubar) #Creates a "Help" menu
         self.menu_help.add_command(label='Help', command=self.display_help)
-        self.menu_help.add_command(label='About', command=self.display_about)
         self.menubar.add_cascade(menu=self.menu_help, label='Help')
 
         self.root.config(menu=self.menubar)
@@ -68,48 +64,18 @@ class Window(ttk.Frame):
         '''Closes window'''
         self.parent.destroy()
 
-class SomethingWindow(Window):
+class HelpWindow(Window):
     """ New popup window """
 
     def init_gui(self):
-        self.parent.title("New Window")
-        self.parent.columnconfigure(0, weight=1)
-        self.parent.rowconfigure(3, weight=1)
+        self.parent.title("Help")
+        self.parent.geometry("700x150")
 
         # Create Widgets
-        self.label_title = ttk.Label(self.parent, text="This sure is a new window!")
-        self.contentframe = ttk.Frame(self.parent, relief="sunken")
-
-        self.label_test = ttk.Label(self.contentframe, text='Enter some text:')
-        self.input_test = ttk.Entry(self.contentframe, width=30, validate='focusout', validatecommand=(self.validate_notempty))
-
-        self.btn_do = ttk.Button(self.parent, text='Action', command=self.do_something)
-        self.btn_cancel = ttk.Button(self.parent, text='Cancel', command=self.close_win)
-
-        # Layout
-        self.label_title.grid(row=0, column=0, columnspan=2, sticky='nsew')
-        self.contentframe.grid(row=1, column=0, columnspan=2, sticky='nsew')
-
-        self.label_test.grid(row=0, column=0)
-        self.input_test.grid(row=0, column=1, sticky='w')
-
-        self.btn_do.grid(row=2, column=0, sticky='e')
-        self.btn_cancel.grid(row=2, column=1, sticky='e')
-
-        # Padding
-        for child in self.parent.winfo_children():
-            child.grid_configure(padx=10, pady=5)
-        for child in self.contentframe.winfo_children():
-            child.grid_configure(padx=5, pady=2)
-
-    def do_something(self):
-        '''Does something'''
-        text = self.input_test.get().strip()
-        if text:
-            # Do things with text
-            self.close_win()
-        else:
-            print("Error: But for real though, field must not be empty.")
+        text = "This is a graphical user interface for SealNet. \n\nYou need to create a `result.json` file by running `python seenbefore.py` prior to opening the GUI.\n\nThis GUI will display the current probe seal to the left of the screen with its name in between the Previous \nbutton and the Next button. On the right, the GUI will display the top-5 prediction from our facial recognition \nmodel with its respective similarity score. You can manually choose the one that you think it's the right match."
+        
+        self.help_label = ttk.Label(self.parent, text=text)
+        self.help_label.pack(padx=15, pady=15)
 
 class GUI(ttk.Frame):
     """Main GUI class"""
@@ -128,8 +94,6 @@ class GUI(ttk.Frame):
         self.root.title('SealNet')
         self.root.geometry("1100x900")
         self.grid(column=0, row=0, sticky='nsew')
-        #self.grid_columnconfigure(0, weight=1) # Allows column to stretch upon resizing
-        #self.grid_rowconfigure(0, weight=1) # Same with row
         self.root.grid_columnconfigure(0, weight=1)
         self.root.grid_rowconfigure(0, weight=1)
         self.root.option_add('*tearOff', 'FALSE') # Disables ability to tear menu bar into own window
@@ -232,7 +196,10 @@ class GUI(ttk.Frame):
 
 if __name__ == '__main__':
     root = tkinter.Tk()
-    GUI(root)
+    if (os.path.exists('result.json')):
+        GUI(root)
+    else:
+        HelpWindow(root)
     root.mainloop()
 
 
