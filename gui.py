@@ -55,11 +55,6 @@ class Window(ttk.Frame):
         '''Initiates GUI of any popup window'''
         pass
 
-    @abc.abstractmethod
-    def do_something(self):
-        '''Does something that all popup windows need to do'''
-        pass
-
     def notEmpty(self, P):
         '''Validates Entry fields to ensure they aren't empty'''
         if P.strip():
@@ -82,7 +77,6 @@ class SomethingWindow(Window):
         self.parent.rowconfigure(3, weight=1)
 
         # Create Widgets
-
         self.label_title = ttk.Label(self.parent, text="This sure is a new window!")
         self.contentframe = ttk.Frame(self.parent, relief="sunken")
 
@@ -131,6 +125,38 @@ class GUI(ttk.Frame):
         self.curRankPred = []         
         
         self.init_gui()
+
+    def init_gui(self):
+        self.root.title('SealNet')
+        self.root.geometry("1200x650")
+        self.grid(column=0, row=0, sticky='nsew')
+        #self.grid_columnconfigure(0, weight=1) # Allows column to stretch upon resizing
+        #self.grid_rowconfigure(0, weight=1) # Same with row
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.option_add('*tearOff', 'FALSE') # Disables ability to tear menu bar into own window
+        
+        # Menu Bar
+        self.menubar = Menubar(self.root)
+
+        # Button Bar
+        self.buttonBar = ttk.Frame(self)
+        self.buttonBar.grid(row=0, column=0)
+
+        self.buttonBarDict = {}
+        self.buttonBarDict[(0,0)] = ttk.Button(self.buttonBar, text="Previous", command=self.prev).grid(row=0, column=0)
+        self.buttonBarDict[(0,1)] = ttk.Label(self.buttonBar, text="").grid(row=0, column=1)
+        self.buttonBarDict[(0,2)] = ttk.Button(self.buttonBar, text="Next", command=self.next).grid(row=0, column=2)
+
+        # Main Frame
+        self.mainFrame = ttk.Frame(self)
+        self.mainFrame.grid(row=2, column=0)
+        
+        # Check if there is no probe
+        if (len(self.probelabel) == 0):
+            ttk.Label(self, text="There are no probe images to display")
+        else:
+            self.loadCurrentImage()
         
     def getPhotosFromDir(self, dir):
         res = []
@@ -144,56 +170,45 @@ class GUI(ttk.Frame):
             idx += 1
         return res
     
+    # Loading the main frame of the GUI displaying the current probe result
     def loadCurrentImage(self):
         curProbe = self.probelabel[self.current]
+        # Display the probe names
+        ttk.Label(self.buttonBar, text=curProbe[curProbe.rindex('/')+1:]).grid(row=0, column=1)
+
+        # Add Probe and Label title
+        ttk.Label(self.mainFrame, text="Probe").grid(row=0, column=0)
+        ttk.Label(self.mainFrame, text="Label").grid(row=0, column=1, columnspan=3+self.maxPhotos)
         
         # Loading Probes
         probeImages = self.getPhotosFromDir(curProbe)
         self.curProbeImgWidget = [ImageTk.PhotoImage(file=image) for image in probeImages]
         for i in range(len(self.curProbeImgWidget)):
-            ttk.Label(self, image=self.curProbeImgWidget[i]).grid(row=i, column=0)
+            ttk.Label(self.mainFrame, image=self.curProbeImgWidget[i]).grid(row=i+1, column=0)
             
         # Loading Rank-5
         self.curRankPred = [[] for _ in range(self.rank)]
         for i in range(self.rank):
-            galImages = self.getPhotosFromDir(self.data[curProbe]['scores'][i][0])
+            curGal, curGalScore = self.data[curProbe]['scores'][i][0], self.data[curProbe]['scores'][i][1]
+            galImages = self.getPhotosFromDir(curGal)
             self.curRankPred[i] = [ImageTk.PhotoImage(file=image) for image in galImages]
+            ttk.Label(self.mainFrame, text='Rank {}'.format(i+1)).grid(row=i+1, column=1)
+            ttk.Label(self.mainFrame, text=curGal[curGal.rindex('/')+1:]).grid(row=i+1, column=2)
+            ttk.Label(self.mainFrame, text='Score: {:.3f}'.format(curGalScore)).grid(row=i+1, column=3)
             for j in range(len(self.curRankPred[i])):
-                ttk.Label(self, image=self.curRankPred[i][j]).grid(row=i, column=j+1)
+                ttk.Label(self.mainFrame, image=self.curRankPred[i][j]).grid(row=i+1, column=j+4)
     
+    # Iterate through next image
     def next(self):
         if (self.current < len(self.probelabel) - 1):
             self.current += 1
-            print(self.current)
             self.loadCurrentImage()
-            
+    
+    # Iterate through previous image
     def prev(self):
         if (self.current > 0):
             self.current -= 1
-            print(self.current)
             self.loadCurrentImage()
-
-    def init_gui(self):
-        self.root.title('SealNet')
-        self.root.geometry("700x600")
-        self.grid(column=0, row=0, sticky='nsew')
-        self.grid_columnconfigure(0, weight=1) # Allows column to stretch upon resizing
-        self.grid_rowconfigure(0, weight=1) # Same with row
-        self.root.grid_columnconfigure(0, weight=1)
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.option_add('*tearOff', 'FALSE') # Disables ability to tear menu bar into own window
-        
-        # Menu Bar
-        self.menubar = Menubar(self.root)
-        
-        # Check if there is no probe
-        if (len(self.probelabel) == 0):
-            ttk.Label(self, text="There are no probe images to display")
-        else:
-            self.loadCurrentImage()
-        
-        # self.bind("<KeyPress-KP_Right>", self.next)
-        # self.bind("<KeyPress-KP_Left>", self.prev)
 
 if __name__ == '__main__':
     root = tkinter.Tk()
