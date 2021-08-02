@@ -68,6 +68,7 @@ def displayTestingResult(evaldict):
             rank = -1
 
         # remove redundant paths
+        print(probelabel)
         nameprobelabel = probelabel[probelabel.rindex('/')+1:]
 
         namescorelabel = scores[0][0] # rank-1 scores
