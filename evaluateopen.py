@@ -104,10 +104,10 @@ def displayTestingResult(evaldict):
 
     accuracyframe=fullframe.loc[fullframe['Rank'] != -1]
     accuracytotal = len(list(accuracyframe.index))
-    correct1 = len(accuracyframe.loc[accuracyframe['Probe Label'] == accuracyframe['Highest Score Label']].index)
+    correct1 = len(accuracyframe.loc[accuracyframe['Rank'] == 1])
     correct5 = len(accuracyframe.loc[accuracyframe['Rank'] <= 5])
-    print('ACCURACY Rank 1: ' + str(correct1/accuracytotal))
-    print('ACCURACY Rank 5: ' + str(correct5/accuracytotal))
+    print('ACCURACY Rank 1: {:.3f}'.format(correct1/accuracytotal))
+    print('ACCURACY Rank 5: {:.3f}'.format(correct5/accuracytotal))
     print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != -1]['Highest Score'].mean()))
     print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == -1]['Highest Score'].mean()))
 

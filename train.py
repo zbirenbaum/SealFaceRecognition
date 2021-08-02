@@ -36,19 +36,24 @@ import evaluate
 import shutil
 import traintestsplit as ttsplit
 import math
-from pdb import set_trace as bp
 from preprocess import preprocess
 
 
-def train(config, config_file, counter, trainset, probes=None, testset=None, total_num_classes=None):
+def train(config, config_file, counter, trainset, testset=None, total_num_classes=None):
+    # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
-    gal = trainset.set_list# delete later, gallary set equal to training prior to preprocess
     trainset.images = preprocess(trainset.images, config, True)
+    gal = trainset.set_list
+    gal_set = evaluate.ImageSet(gal, config)   
+    
+    probeset = utils.Dataset(ddict=testset)
+    probeset.images = preprocess(probeset.images, config)
+    probes = probeset.set_list
+    probe_set = evaluate.ImageSet(probes, config)
 
-    # Creating the network (check network.py)
+    # Initialize the network
     network = Network()
     network.initialize(config, trainset.total_num_classes)
-#    network.initialize(config, len(list(probes.keys())))
 
     # Initalization log and summary for running
     log_dir = utils.create_log_dir(config, config_file, 'SealNet_Fold{}'.format(counter))
@@ -56,61 +61,24 @@ def train(config, config_file, counter, trainset, probes=None, testset=None, tot
     if config.restore_model:
         network.restore_model(config.restore_model, config.restore_scopes)
 
-    # Load gallery and probe file_list
-#    print('Loading probe and gallery images...')
-#    probes = []
-#    gal = []
-#    with open(splits_path + '/probe.txt' ,'r') as f:
-#        counter = 0
-#        for line in f:
-#            if counter == 0:
-#                counter = counter + 1
-#                continue
-#            probes.append(line.strip())
-    probes = utils.init_from_dict(testset)[3]
-
-    if config.testing_type == 'both':
-        probes = utils.init_from_dict(testset)[3]
-    else:
-        probes = utils.init_from_dict(probes)[3]
-    print(probes)
-    probe_set = evaluate.ImageSet(probes, config)
-
-#    with open(splits_path  + '/train.txt', 'r') as f:
-#        counter = 0
-#        for line in f:
-#            if counter == 0:
-#                counter = counter + 1
-#                continue
-#            gal.append(line.strip())
-    gal_set = evaluate.ImageSet(gal, config)
-    #if config.batch_size == 0:
-    #config.batch_size = int(len(gal)/2)
     config.epoch_size = int(math.ceil(len(gal)/config.batch_size))
-    #config.epoch_size = 2
     trainset.start_batch_queue(config, True) 
-#    config.batch_size = 1
-#    config.epoch_size = math.ceil(len(gal))
-    #batch_size = len(list(set(probe_set.labels)))
-    #batch_size = config.batch_size
-    #epoch_size = config.epoch_size
-    #
-    # Main Loop
-    #
+
+    ##############################################################################################################
+    ############################################## MAIN LOOP #####################################################
+    ##############################################################################################################
     print('\nStart Training\n# epochs: {}\nepoch_size: {}\nbatch_size: {}\n'\
             .format(config.num_epochs, config.epoch_size, config.batch_size)) #config.epoch_size, config.batch_size))
 
     global_step = 0
     start_time = time.time()
-#    learning_rate=.001
+    # Learning_rate=.001
     df = pd.DataFrame()
     for epoch in range(config.num_epochs):
         # Training
         for step in range(config.epoch_size):    #config.epoch_size):
             # Prepare input
             learning_rate = utils.get_updated_learning_rate(global_step, config)
-#            learning_rate = utils.get_updated_learning_rate(global_step, config)
-#            learning_rate = network.learning_rate_placeholder
             image_batch, label_batch = trainset.pop_batch_queue()
 
             wl, sm, global_step = network.train(image_batch, label_batch, learning_rate, config.keep_prob)
@@ -166,22 +134,16 @@ def main():
     if not settings.splits:
         if os.path.exists(os.path.expanduser('./splits')):
             shutil.rmtree(os.path.expanduser('./splits')) 
-        #splitData = splits.create_splits(settings.directory, num_trainings)
-        #splitData = splitrewrite.DataSplitter(settings.directory, num_trainings)
     else:
         print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
 
     builder = ttsplit.DatasetBuilder(settings.directory, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
-    #print(builder.dsetbyfold[0])
+
     for i in range(num_trainings):
         print('Starting training #{}\n'.format(i+1))
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
-        probe_set = builder.probesetbyfold[i]
-#        print(probe_set[len(probe_set)-1])
-#        print(probe_set)
-#        print('There are {} seal photos, {} unique seals in training, {} probe photos, {} gallery photos, {} unique seals for testing\n'.format(splitData[i][0], splitData[i][1], splitData[i][2], splitData[i][3], splitData[i][4]))
-        train(config, settings.config_file, i+1, trainset, probe_set, testset)
+        train(config, settings.config_file, i+1, trainset, testset)
 
 if __name__ == '__main__':
     main()

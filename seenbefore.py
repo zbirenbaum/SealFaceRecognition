@@ -37,7 +37,7 @@ def get_model_dirs(model_dir):
 
 def main():
 
-    model_dir = './testingmodel/'
+    model_dir = './modeltesting/store/'
     network = Network()
     config_file = 'config.py'
     config = utils.import_file(config_file, 'config')

@@ -4,6 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 import json
 import abc
+import os
 
 class Menubar(ttk.Frame):
     """Builds a menu bar for the top of the main window"""
@@ -121,15 +122,60 @@ class GUI(ttk.Frame):
     def __init__(self, parent, *args, **kwargs):
         ttk.Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
+        self.data = json.load(open('result.json'))
+        self.probelabel = list(self.data.keys()) # contains all probe images
+        self.current = 0
+        self.maxPhotos = 5
+        self.rank = 5
+        self.curProbeImgWidget = []
+        self.curRankPred = []         
+        
         self.init_gui()
-
-    def openwindow(self):
-        self.new_win = tkinter.Toplevel(self.root) # Set parent
-        SomethingWindow(self.new_win)
+        
+    def getPhotosFromDir(self, dir):
+        res = []
+        count = 0
+        idx = 0
+        lstdir = os.listdir(dir)
+        while (idx < len(lstdir) and count < self.maxPhotos):
+            if (lstdir[idx].endswith(('.jpeg', '.png', '.jpg', '.JPG'))):
+                res.append(os.path.join(dir, lstdir[idx]))
+                count += 1
+            idx += 1
+        return res
+    
+    def loadCurrentImage(self):
+        curProbe = self.probelabel[self.current]
+        
+        # Loading Probes
+        probeImages = self.getPhotosFromDir(curProbe)
+        self.curProbeImgWidget = [ImageTk.PhotoImage(file=image) for image in probeImages]
+        for i in range(len(self.curProbeImgWidget)):
+            ttk.Label(self, image=self.curProbeImgWidget[i]).grid(row=i, column=0)
+            
+        # Loading Rank-5
+        self.curRankPred = [[] for _ in range(self.rank)]
+        for i in range(self.rank):
+            galImages = self.getPhotosFromDir(self.data[curProbe]['scores'][i][0])
+            self.curRankPred[i] = [ImageTk.PhotoImage(file=image) for image in galImages]
+            for j in range(len(self.curRankPred[i])):
+                ttk.Label(self, image=self.curRankPred[i][j]).grid(row=i, column=j+1)
+    
+    def next(self):
+        if (self.current < len(self.probelabel) - 1):
+            self.current += 1
+            print(self.current)
+            self.loadCurrentImage()
+            
+    def prev(self):
+        if (self.current > 0):
+            self.current -= 1
+            print(self.current)
+            self.loadCurrentImage()
 
     def init_gui(self):
-        self.root.title('Test GUI')
-        self.root.geometry("600x400")
+        self.root.title('SealNet')
+        self.root.geometry("700x600")
         self.grid(column=0, row=0, sticky='nsew')
         self.grid_columnconfigure(0, weight=1) # Allows column to stretch upon resizing
         self.grid_rowconfigure(0, weight=1) # Same with row
@@ -140,15 +186,14 @@ class GUI(ttk.Frame):
         # Menu Bar
         self.menubar = Menubar(self.root)
         
-        # Create Widgets
-        self.btn = ttk.Button(self, text='Open Window', command=self.openwindow)
-
-        # Layout using grid
-        self.btn.grid(row=0, column=0, sticky='ew')
-
-        # Padding
-        for child in self.winfo_children():
-            child.grid_configure(padx=10, pady=5)
+        # Check if there is no probe
+        if (len(self.probelabel) == 0):
+            ttk.Label(self, text="There are no probe images to display")
+        else:
+            self.loadCurrentImage()
+        
+        # self.bind("<KeyPress-KP_Right>", self.next)
+        # self.bind("<KeyPress-KP_Left>", self.prev)
 
 if __name__ == '__main__':
     root = tkinter.Tk()
@@ -156,26 +201,3 @@ if __name__ == '__main__':
     root.mainloop()
 
 
-# root = tk.Tk()
-
-# MAX_ROWS = 4
-# current_row = 0
-# current_column = 0
-
-# data = json.loads(open('result.json'))
-
-# img = []
-
-# for probe in data.keys():
-#     im = Image.open(probe)
-#     photo = ImageTk.PhotoImage(im)
-
-#     label = tk.Label(image=photo)
-#     label.image = photo
-#     label.grid(row = current_row, column = current_column)
-#     current_row += 1
-#     if (current_row >= 4):
-#         current_column += 1
-#         current_row = 0
-
-# root.mainloop()

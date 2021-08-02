@@ -10,7 +10,7 @@ def preprocess(images, config, is_training=False):
         assert (config.channels==1 or config.channels==3)
         mode = 'RGB' if config.channels==3 else 'I'
         print('Prepocessing images ...')
-        for idx, image_path in enumerate(image_paths):
+        for _, image_path in enumerate(image_paths):
                 images.append(misc.imread(image_path, mode=mode))
         print('Done preprocessing images ...\n')
             
@@ -87,7 +87,6 @@ def resize(images, size):
     w, h = tuple(size)
     shape_new = get_new_shape(images, size)
 
-    print(shape_new)
     images_new = np.ndarray(shape_new, dtype=images.dtype)
 
     for i in range(n):

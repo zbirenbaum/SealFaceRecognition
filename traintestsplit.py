@@ -5,6 +5,12 @@ import numpy as np
 import os
 import utils as ut
 from pdb import set_trace as bp
+# import json
+
+# def printasjs(dictobj):
+#     js = json.dumps(dictobj[3], indent=4)
+#     print(js)
+#     return
 
 def gen_full_dict(dir, startat=0):
     fulldict = {}
@@ -36,10 +42,6 @@ def gen_probes_from_dir(probedir):
     presplitprobes = create_probe_dict(dh.gen_dict(probedir, 0))
     return presplitprobes
 
-def ignore(k):
-    k=k+0
-    return
-
 class DatasetBuilder(object):
     def __init__(self, photodir, kfold,usedict=1, exclude=None, settype=None):
         self.photodir = photodir
@@ -56,6 +58,7 @@ class DatasetBuilder(object):
         if settype=='open':
             self.settype='open'
             self.ttdict = self.gen_open_ttdict()
+            #printasjs(self.ttdict)
             self.write_ttdict('open')
         elif settype == 'both':
             self.settype='both'
@@ -68,6 +71,7 @@ class DatasetBuilder(object):
         else:
             self.settype='closed'
             self.ttdict = self.gen_closed_ttdict()
+            #printasjs(self.ttdict)
             self.write_ttdict('closed')
 
         if usedict == 1 and settype != 'both':
@@ -84,8 +88,7 @@ class DatasetBuilder(object):
             for fold in self.ttdict.keys():
                 training_num_classes = (len(self.ttdict[fold]['training'].keys()))
         else:
-            for k in range(self.kfold):
-                ignore(k)
+            for _ in range(self.kfold):
                 training_num_classes.append(total_classes)
         
         return total_classes, training_num_classes
@@ -134,15 +137,17 @@ class DatasetBuilder(object):
         for fold in range(1,self.kfold+1):
             ttdict[fold] = {'training': {}, 'testing': {}, 'probes': {}}
             for key in self.open_training_idx[fold-1]:
+                name = self.data[key]['name'] 
                 photos = self.data[key]['photos'][:]
                 print(photos)
                 holdout = photos.pop(fold-1)
-                ttdict[fold]['training'][key] = photos
-                ttdict[fold]['probes'][key]  = [holdout]
-                ttdict[fold]['testing'][key] = [holdout]
+                ttdict[fold]['training'][name] = photos
+                ttdict[fold]['probes'][name]  = [holdout]
+                ttdict[fold]['testing'][name] = [holdout]
             for key in self.open_testing_idx[fold-1]:
+                name = self.data[key]['name'] 
                 photos = self.data[key]['photos'][:]
-                ttdict[fold]['probes'][key] = photos
+                ttdict[fold]['probes'][name] = photos
         return ttdict
 
     def write_ttdict(self, settype):
@@ -236,3 +241,6 @@ class DatasetBuilder(object):
                 closeddict[fold]['testing'][label] = photos_testing
 
         return closeddict
+
+
+#builder = DatasetBuilder('data/processed', usedict=1, settype='both', kfold=5)
