@@ -1,6 +1,5 @@
---------------------------------
-SEALNET USER GUIDE
---------------------------------
+# SEALNET
+
 This document is intended as a detailed guide to help with
 installation and running of
 SealNet, a face recognition software for Harbor Seals. The
@@ -10,13 +9,14 @@ Linux but they can be
 modified for use on other setups running Linux or other Unix-like
 systems.
 To run a command, type it out on the terminal and hit enter.
---------------------------------
-DATA
---------------------------------
+
+## Data
+
 SealNet is a face recognition software that is trained using photos.
 As of now, the software
 expects files of png, jpg and jpeg formats.
 The directories must be structured as follows:
+```
 .
 ├── SealFaceRecognition
 └── data
@@ -31,25 +31,23 @@ The directories must be structured as follows:
             ├── photo1.png
             ├── photo2.png
             └── photo3.jpg
-The photos directory will then be copied to AWS as shown in step 2 of
-'SET UP SEALNET'
---------------------------------
-CONNECT TO AWS FOR NEW USER
---------------------------------
+```
+We will show you how to upload your data to AWS in step 3 of setting up SEALNET
+
+## Connect to AWS for new user
+
 If this is your first time connecting to AWS, you can follow the instructions
 below to set up your workspace. 
 
 The instructions assume you are running MacOs or some other Unix-like
 system. If you have
 Windows installed, you may need to download and install OpenSSH
-https://docs.microsoft.com/en-us/windows-server/administration/
-openssh/openssh_install_firstuse.
+https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse.
 1. Download the ssh key YOURNAME_id_rsa to your Downloads folder.
 For instance, if your name is Ahmet Ay, it will be aay_id_rsa.
 2. If you are not on the Colgate network, make sure you are connected
 to the VPN
-3. Start the aws instance by visiting http://hpc-aws-
-launcher.colgate.edu/ and clicking start.
+3. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 4. Open terminal application from the applications folder
 5. Run `cd ~/Downloads/` to change the directory
 6. Run `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
@@ -71,9 +69,9 @@ the primary working directory.
 9. Run `cd YOURNAME_workspace`
 Now you have created your own workspace on the AWS cluster. Whenever you
 connect to AWS next time, please cd to this workspace to run your code.
---------------------------------
-SET UP SEALNET FOR NEW USER
---------------------------------
+
+## Setting up SEALNET for new user
+
 The following instructions assume that you are currently in your workspace
 on the AWS instance. If you have set up SEALNET before, you can skip this 
 step.
@@ -98,18 +96,18 @@ to copy the photos to AWS
 6. Activate your virtual environment by running `source ./py39/bin/activate`
 7. Install all dependencies by running `pip install -r requirements.txt`
 When you are done with the virtual environment, run `deactivate`
---------------------------------
-FOR RETURNING USERS
---------------------------------
+
+## Accessing SEALNET for returning user
+
 1. Connect to AWS by running `cd ~/Downloads/` 
 and  `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
 2. Go to your SealNet workspace by running
 `cd /data/YOURNAME_workspace/SealFaceRecognition` 
 3. Activate your virtual environment by running `source ./py39/bin/activate`.
 When you are done with the virtual environment, run `deactivate`.
---------------------------------
-TRAINING SEALNET
---------------------------------
+
+# Training SEALNET
+
 To train SealNet, make sure you are in the SealNet workspace and is 
 currently in the py39 virtual environment.
 
@@ -120,9 +118,9 @@ the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
 Alternatively, you can also run `python train.py -c config.py -d ./data/processed/FOLDERNAME -n 5`
 to run a 5 fold cross-validation on the data in FOLDERNAME.
---------------------------------
-USING SEALNET
---------------------------------
+
+## Using SEALNET for prediction
+
 1. Run `python seenbefore.py` to run the recognition model on your probe data. It will output 
 a result.json file that you will use to open the GUI.
 2. On a SEPARATE terminal, run `cd ~/Downloads` and
