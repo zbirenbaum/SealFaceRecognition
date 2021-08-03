@@ -10,7 +10,7 @@ modified for use on other setups running Linux or other Unix-like
 systems.
 To run a command, type it out on the terminal and hit enter.
 
-## Data
+# Data
 
 SealNet is a face recognition software that is trained using photos.
 As of now, the software
@@ -36,7 +36,7 @@ The directories must be structured as follows:
 ```
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
 
-## Connect to AWS for new user
+# Connect to AWS for new user
 
 If this is your first time connecting to AWS, you can follow the instructions
 below to set up your workspace. 
@@ -72,7 +72,7 @@ the primary working directory.
 Now you have created your own workspace on the AWS cluster. Whenever you
 connect to AWS next time, please cd to this workspace to run your code.
 
-## Setting up SEALNET for new user
+# Setting up SEALNET for new user
 
 The following instructions assume that you are currently in your workspace
 on the AWS instance. If you have set up SEALNET before, you can skip this 
@@ -99,7 +99,7 @@ to copy the photos to AWS
 7. Install all dependencies by running `pip install -r requirements.txt`
 When you are done with the virtual environment, run `deactivate`
 
-## Accessing SEALNET for returning user
+# Accessing SEALNET for returning user
 
 1. Connect to AWS by running `cd ~/Downloads/` 
 and  `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
@@ -121,7 +121,7 @@ terminal window or log out while the program is running.
 Alternatively, you can also run `python train.py -c config.py -d ./data/processed/FOLDERNAME -n 5`
 to run a 5 fold cross-validation on the data in FOLDERNAME.
 
-## Using SEALNET for prediction
+# Using SEALNET for prediction
 
 1. Run `python seenbefore.py` to run the recognition model on your probe data. It will output 
 a result.json file that you will use to open the GUI.
