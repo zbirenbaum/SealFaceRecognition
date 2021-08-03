@@ -21,16 +21,18 @@ The directories must be structured as follows:
 ├── SealFaceRecognition
 └── data
     ├─── unprocessed 
-        ├── seal_1
-        │   ├── photo1.png
-        │   └── photo2.png
-        ├── seal_2
-        │   ├── photo1.jpg
-        │   └── photo2.jpg
-        └── seal_3
-            ├── photo1.png
-            ├── photo2.png
-            └── photo3.jpg
+        ├───FOLDERNAME
+            ├── seal_1
+            │   ├── photo1.png
+            │   └── photo2.png
+            ├── seal_2
+            │   ├── photo1.jpg
+            │   └── photo2.jpg
+            └── seal_3
+                ├── photo1.png
+                ├── photo2.png
+                └── photo3.jpg
+    ├─── processed 
 ```
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
 
