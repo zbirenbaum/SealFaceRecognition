@@ -94,19 +94,22 @@ directory
 to copy the photos to AWS
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
-`python3 -m venv py39`
-6. Activate your virtual environment by running `source ./py39/bin/activate`
+`python3 -m venv py37`
+The AWS instance has python 3.7 as the global python3 version.
+6. Activate your virtual environment by running `source ./py37/bin/activate`
 7. Install all dependencies by running `pip install -r requirements.txt`
 When you are done with the virtual environment, run `deactivate`
 
 # Accessing SEALNET for returning user
 
-1. Connect to AWS by running `cd ~/Downloads/` 
+1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
+2. Connect to AWS by running `cd ~/Downloads/` 
 and  `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
-2. Go to your SealNet workspace by running
+3. Go to your SealNet workspace by running
 `cd /data/YOURNAME_workspace/SealFaceRecognition` 
-3. Activate your virtual environment by running `source ./py39/bin/activate`.
+4. Activate your virtual environment by running `source ./py37/bin/activate`.
 When you are done with the virtual environment, run `deactivate`.
+5. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 
 # Training SEALNET
 
