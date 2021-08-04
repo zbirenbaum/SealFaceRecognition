@@ -86,7 +86,8 @@ class Dataset():
         self.set_list = None
 
         if path is not None:
-            self.init_from_path(path)
+            self.images, self.labels, self.total_num_classes, self.set_list = self.init_from_path(path)
+            self.images = np.array(self.images, dtype=np.object)
         
         if ddict is not None:
             self.images, self.labels, self.total_num_classes, self.set_list = init_from_dict(ddict)
@@ -98,10 +99,22 @@ class Dataset():
         del self.classes
         self.__init__()
 
-    
+    # Create the training set by specifying 
     def init_from_path(self, path):
         path = os.path.expanduser(path)
-        self.init_from_list(path)
+        imagelist = []
+        labels = []
+        set_list = []
+
+        for sealId in os.listdir(path):
+            sealPath = os.path.join(path, sealId)
+            for photo in os.listdir(sealPath):
+                photoPath = os.path.join(sealPath, photo)
+                if photo.endswith(('.jpg', '.jpeg', '.png')):
+                    labels.append(sealId)
+                    imagelist.append(str(photoPath))
+                    set_list.append(photoPath + " " + sealId)
+        return imagelist, labels, len(set(labels)), set_list
 
     def init_from_list(self, filename):
         with open(filename, 'r') as f:

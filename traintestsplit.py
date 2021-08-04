@@ -3,14 +3,6 @@ import dirhandler as dh
 import datasplitter as ds
 import numpy as np
 import os
-import utils as ut
-from pdb import set_trace as bp
-# import json
-
-# def printasjs(dictobj):
-#     js = json.dumps(dictobj[3], indent=4)
-#     print(js)
-#     return
 
 def gen_full_dict(dir, startat=0):
     fulldict = {}
@@ -71,7 +63,6 @@ class DatasetBuilder(object):
         else:
             self.settype='closed'
             self.ttdict = self.gen_closed_ttdict()
-            #printasjs(self.ttdict)
             self.write_ttdict('closed')
 
         if usedict == 1 and settype != 'both':
@@ -242,5 +233,3 @@ class DatasetBuilder(object):
 
         return closeddict
 
-
-#builder = DatasetBuilder('data/processed', usedict=1, settype='both', kfold=5)

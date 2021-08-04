@@ -1,7 +1,6 @@
 from __future__ import division
 from cv2 import cv2
 import numpy as np
-from tensorflow.python.ops.gen_io_ops import read_file
 import dirhandler as dh
 import sys
 import os
@@ -61,8 +60,8 @@ def normalize_images(rwlist, overwrite=False):
 def main():
     args = sys.argv
     if len(args) != 2:
-        print('Usage: python zprocess.py folder')
         print('Preprocess all of the photos in data/unprocessed/folder and write to data/processed/folder')
+        print('Error. Invalid number of arguments. Usage: python zprocess.py folder')
         return
 
     dir = args[1]

@@ -22,12 +22,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import sys
 import pandas as pd
 import os
 import time
 import tensorflow as tf
-import tensorflow.contrib.slim as slim
 import numpy as np
 from argparse import ArgumentParser
 import utils
@@ -39,7 +37,7 @@ import math
 from preprocess import preprocess
 
 
-def train(config, config_file, counter, trainset, testset=None, total_num_classes=None):
+def trainKFold(config, config_file, counter, trainset, testset=None):
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
     trainset.images = preprocess(trainset.images, config, True)
@@ -113,6 +111,53 @@ def train(config, config_file, counter, trainset, testset=None, total_num_classe
     results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
     shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
 
+def trainAllData(trainingDir, config, config_file):
+    trainset = utils.Dataset(path=trainingDir)
+    
+    # Initialize the network
+    network = Network()
+    network.initialize(config, trainset.total_num_classes)
+
+    # Initalization log and summary for running
+    log_dir = utils.create_log_dir(config, config_file, 'SealNet_Full_Training')
+    summary_writer = tf.summary.FileWriter(log_dir, network.graph)
+    if config.restore_model:
+        network.restore_model(config.restore_model, config.restore_scopes)
+
+    config.epoch_size = int(math.ceil(len(trainset.set_list)/config.batch_size))
+    trainset.start_batch_queue(config, True) 
+    
+    ##############################################################################################################
+    ############################################## MAIN LOOP #####################################################
+    ##############################################################################################################
+    print('\nStart Training\n# epochs: {}\nepoch_size: {}\nbatch_size: {}\n'\
+            .format(config.num_epochs, config.epoch_size, config.batch_size)) #config.epoch_size, config.batch_size))
+
+    global_step = 0
+    start_time = time.time()
+    df = pd.DataFrame()
+    for epoch in range(config.num_epochs):
+        # Training
+        for step in range(config.epoch_size):   
+            # Prepare input
+            learning_rate = utils.get_updated_learning_rate(global_step, config)
+            image_batch, label_batch = trainset.pop_batch_queue()
+
+            wl, sm, global_step = network.train(image_batch, label_batch, learning_rate, config.keep_prob)
+
+            # Display
+            if step % config.summary_interval == 0:
+                duration = time.time() - start_time
+                start_time = time.time()
+                utils.display_info(epoch, step, duration, wl)
+                summary_writer.add_summary(sm, global_step=global_step)
+
+        # Save the model
+        network.save_model(log_dir, global_step)
+
+    resultsdf_file = 'log/full_train.csv'
+    df.to_csv(resultsdf_file, index=False)    
+
 def main():
     parser = ArgumentParser(description='Train SealNet', add_help=False)
     parser.add_argument('-c','--config_file', dest='config_file', action='store', 
@@ -126,24 +171,29 @@ def main():
     
 
     settings = parser.parse_args()
-    config = utils.import_file(settings.config_file, 'config')
-    num_trainings = 3 if not settings.number else settings.number
-    print('Running training {} times'.format(num_trainings))
-    splitData = []
+    dir = settings.directory
+    config_file = settings.config_file
+    config = utils.import_file(config_file, 'config')
+    if (settings.number):
+        num_trainings = settings.number
+        print('Running training {} times'.format(num_trainings))
 
-    if not settings.splits:
-        if os.path.exists(os.path.expanduser('./splits')):
-            shutil.rmtree(os.path.expanduser('./splits')) 
+        if not settings.splits:
+            if os.path.exists(os.path.expanduser('./splits')):
+                shutil.rmtree(os.path.expanduser('./splits')) 
+        else:
+            print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
+
+        builder = ttsplit.DatasetBuilder(dir, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+
+        for i in range(num_trainings):
+            print('Starting training #{}\n'.format(i+1))
+            trainset = builder.dsetbyfold[i]
+            testset = builder.testsetbyfold[i]
+            trainKFold(config, config_file, i+1, trainset, testset)
+
     else:
-        print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
-
-    builder = ttsplit.DatasetBuilder(settings.directory, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
-
-    for i in range(num_trainings):
-        print('Starting training #{}\n'.format(i+1))
-        trainset = builder.dsetbyfold[i]
-        testset = builder.testsetbyfold[i]
-        train(config, settings.config_file, i+1, trainset, testset)
+        trainAllData(dir, config, config_file)
 
 if __name__ == '__main__':
     main()
