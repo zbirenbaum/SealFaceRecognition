@@ -11,15 +11,9 @@ splits/
 unused/
 data/
 log/
-<<<<<<< HEAD
-data/
-data2
-modeltesting/
-=======
 data*
 nets/
 modeltesting
-py39
+py37
 result.json
 modeltesting
->>>>>>> aabf33bbc16ffc5a8bbe3886661e4431e4d95281
