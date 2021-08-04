@@ -10,6 +10,14 @@ modified for use on other setups running Linux or other Unix-like
 systems.
 To run a command, type it out on the terminal and hit enter.
 
+# Prerequisite
+
+To run this program we need python 3.7 installed. You can check your python version
+by typing `python3 -V`. If you don't have python 3.7, you can download it here:
+https://www.python.org/downloads/release/python-379/.
+
+If you are using the AWS cluster, it is already installed for you.
+
 # Data
 
 SealNet is a face recognition software that is trained using photos.
