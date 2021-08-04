@@ -13,7 +13,8 @@ model_params = {
     '36': ([2, 4, 8, 2], [64, 128, 256, 512]),
     '64': ([3, 8, 16, 3], [64, 128, 256, 512]),
 #    'seal': ([0, 1, 2, 1], [64, 256, 512, 1024], [1,32,32,32,32]),
-    'seal': ([1, 2, 3, 4], [64, 256, 512, 1024], [1,32,64,256,512]),
+    'seal': ([1, 2, 2, 1, 1], [64, 256, 512, 1024, 2048], [1,32,32,32,32,32]),
+    #'seal': ([1, 2, 3, 4], [64, 256, 512, 1024], [1,32,32,32,32]),
     'sealDropout': ([0,0,0,0], [64,128,256,512], [1,1,1,1,1])
 }
 
@@ -167,6 +168,8 @@ def inference(images, keep_probability, phase_train=True, bottleneck_layer_size=
                     net = conv_module(net, num_layers[3], num_kernels[3], groups[3], scope='conv4')
                     print('module_4 shape:', [dim.value for dim in net.shape])
                     
+                    net = conv_module(net, num_layers[4], num_kernels[4], groups[4], scope='conv5')
+                    print('module_5 shape:', [dim.value for dim in net.shape])
                     
 #                    net = convolution(net,
 #                            bottleneck_layer_size, 
@@ -180,7 +183,7 @@ def inference(images, keep_probability, phase_train=True, bottleneck_layer_size=
                     net = convolution(net,
                             bottleneck_layer_size,
                             kernel_size=[net.shape[1], net.shape[2]], 
-                            groups=groups[4], 
+                            groups=groups[5], 
                             shuffle=False, 
                             stride=1, 
                             padding='VALID', 

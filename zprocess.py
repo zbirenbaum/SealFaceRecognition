@@ -54,6 +54,7 @@ def normalize_images(rwlist, overwrite=False):
         norm = normalize(img)
         gray = greyscale(norm) 
         #normalized_list.append(img)
+        print(wt)
         if(overwrite):
             cv2.imwrite(wt,gray)
     return normalized_list
@@ -90,7 +91,7 @@ def main():
             
         wpath = os.path.join(write_dir, substr)
         rwlist.append((rpath, wpath))
-    normalized_list = normalize_images(rwlist, True)
+    normalized_list = normalize_images(rwlist, False)
     print('done')    
 
 if __name__ == '__main__':
