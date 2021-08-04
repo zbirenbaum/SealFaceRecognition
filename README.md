@@ -54,17 +54,17 @@ system. If you have
 Windows installed, you may need to download and install OpenSSH
 https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse.
 1. Download the ssh key YOURNAME_id_rsa to your Downloads folder.
-For instance, if your name is Ahmet Ay, it will be aay_id_rsa.
+For instance, if your name is Ahmet Ay, it will be aay_id_rsa.txt.
 2. If you are not on the Colgate network, make sure you are connected
 to the VPN
 3. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 4. Open terminal application from the applications folder
 5. Run `cd ~/Downloads/` to change the directory
-6. Run `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
+6. Run `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu`
 
 NOTE: If you try to log in to AWS and you encounter an error that says:
     WARNING: UNPROTECTED PRIVATE KEY FILE!
-Run this command 'chmod 400 YOURNAME_id_rsa' in the Downloads folder to
+Run this command 'chmod 400 YOURNAME_id_rsa.txt' in the Downloads folder to
 change permissions on your key.
 
 At this step, you are now connected to the AWS cluster. 
@@ -88,9 +88,9 @@ step.
 
 1. Run `git clone https://github.com/zbirenbaum/SealFaceRecognition.git` to
 download SealNet
-2.  a. Run `mkdir data`
-    b. Run `cd data`
-    c. Run `mkdir unprocessed` 
+2.  a. Run `mkdir data && cd data`
+    b. Run `mkdir unprocessed && mkdir processed`
+    c. Run `` 
     This step will create the data/unprocessed folder where you will store your 
     unprocessed photos
 3. a. Download the unprocessed photos for training SealNet to your Downloads
@@ -98,7 +98,7 @@ folder in a folder named photos
     b. In a SEPARATE terminal window, run 'cd ~/Downloads/' to change
 directory
     c. Run 
-`scp -i YOURNAME_id_rsa -r PHOTOFOLDER/ YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/unprocessed` 
+`scp -i YOURNAME_id_rsa.txt -r PHOTOFOLDER/ YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/unprocessed` 
 to copy the photos to AWS
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
@@ -113,12 +113,13 @@ When you are done with the virtual environment, run `deactivate`
 
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 2. Connect to AWS by running `cd ~/Downloads/` 
-and  `ssh -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu`
+and  `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu`
 3. Go to your SealNet workspace by running
 `cd /data/YOURNAME_workspace/SealFaceRecognition` 
-4. Activate your virtual environment by running `source ./py37/bin/activate`.
+4. Checking for the latest version of the software by running `git pull` 
+5. Activate your virtual environment by running `source ./py37/bin/activate`.
 When you are done with the virtual environment, run `deactivate`.
-5. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
+6. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 
 # Training SEALNET
 
@@ -138,7 +139,7 @@ to run a 5 fold cross-validation on the data in FOLDERNAME.
 1. Run `python seenbefore.py` to run the recognition model on your probe data. It will output 
 a result.json file that you will use to open the GUI.
 2. On a SEPARATE terminal, run `cd ~/Downloads` and
-`scp -i YOURNAME_id_rsa YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ~/Downloads/`
+`scp -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ~/Downloads/`
 to download the result files into Download folders.
 3. Run 'sudo poweroff' to end the AWS session or visit http://hpc-aws-launcher.colgate.edu/ 
 and click stop
