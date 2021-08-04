@@ -1,0 +1,5 @@
+SE entails adding a net output post shuffling back to the input of said operation
+https://nico-curti.github.io/NumPyNet/NumPyNet/layers/pixelshuffle_layer.html
+
+By finding dependancies between channels (e.g. the same input with different filters applied) we add feature resolution to the input data of the next convolutional layer
+https://arxiv.org/pdf/1609.04802.pdf -> SISR paper

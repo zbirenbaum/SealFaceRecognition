@@ -1,0 +1,44 @@
+First Convolution:
+1. net = conv_module(images, num_layers[0], num_kernels[0], groups[0], scope='conv1')
+2. conv_module:
+  1. first conv:
+    net = convolution(net, type=transform, scope=transform, kernel_size = 3, stride=3) 
+  2. max_pool
+    net = max_pool2d(net, kernel_size=3, stride=2)
+  3. res layer convolution [this is the first list in model parameter setup. executes the following layer.reslayers[layernum] times]
+    net = conv of kernel_size=1, stride=1, shuffle=True
+    
+    net = conv of kernel_size=3, stride=1, shuffle=False
+
+  4.
+
+
+
+
+notes:
+net=images in first call
+res layer convolution:
+  1st conv: just shuffles inputs? -> actually increases input dims
+  2nd conv: res_conv kernel_size=3
+  net = se_module(net): https://github.com/taki0112/SENet-Tensorflow/blob/master/assests/senet_block.JPG
+
+Explanatoin of SE:
+"Squeeze-and-Excitation" (SE) block, that adaptively recalibrates channel-wise feature responses by explicitly modelling interdependencies between channels
+
+Explanation of channels:
+A convolution layer receives the image (w×h×c) as input, and generates as output an activation map of dimensions w′×h′×c′.
+
+The number of input channels in the convolution is c, while the number of output channels is c′.
+
+The filter for such a convolution is a tensor of dimensions f×f×c×c′, where f is the filter size (normally 3 or 5).
+
+This way, the number of channels is the depth of the matrices involved in the convolutions.
+Also, a convolution operation defines the variation in such depth by specifying input and output channels.
+
+Because normally you want to apply not just one single f×f×c filter, but many different filters.
+The number of filters you apply is c′.
+
+And usually, you have all your c′ filters together in a single tensor, which has dimensionality f×f×c×c′. 
+Each of the slices of the tensor along its fourth dimension is a filter that is applied independently to the input matrix.
+
+
