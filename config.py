@@ -27,13 +27,13 @@ resize = False
 
 # Preprocessing for training
 preprocess_train = [
-        ('random_flip', []),
-        ('resize', [(112,112)])
+        #('random_flip', [])
+        #('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
 preprocess_test = [
-        ('resize', [(112,112)])
+        #('resize', [(112,112)])
 #        ('standardize', ['deb'])
 ]
 
@@ -47,7 +47,7 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/seal_net_old.py"
+network = "nets/seal_net_new.py"
 
 # Model version, only for some networks
 model_version = 'seal'
@@ -104,7 +104,7 @@ learning_rate_multipliers = {
 template_batch = False
 
 # Restore model
-restore_model_path = '/home/sshguest/research/SealFaceRecognition/testingmodel'
+restore_model_path = '/home/sshguest/research/SealFaceRecognition/modeltesting/testingmodel'
 restore_model = False
 # Keywords to filter restore variables, set None for all
 restore_scopes = None

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 tensorflow==1.13.1
 scipy==1.1.0
 matplotlib
@@ -6,3 +7,16 @@ sklearn
 opencv-python
 matplotlib
 
+=======
+h5py==2.10.0
+matplotlib==3.0.3
+numpy==1.18.5
+opencv-python==4.4.0.42
+pandas==0.25.3
+Pillow==7.2.0
+scikit-learn==0.22.2.post1
+scipy==1.1.0
+tensorboard==1.13.1
+tensorflow-estimator==1.13.0
+tensorflow-gpu==1.13.1
+>>>>>>> aabf33bbc16ffc5a8bbe3886661e4431e4d95281
