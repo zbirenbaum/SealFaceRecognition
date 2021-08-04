@@ -64,7 +64,7 @@ to the VPN
 
 NOTE: If you try to log in to AWS and you encounter an error that says:
     WARNING: UNPROTECTED PRIVATE KEY FILE!
-Run this command 'chmod 400 YOURNAME_id_rsa.txt' in the Downloads folder to
+Run this command `chmod 400 YOURNAME_id_rsa.txt` in the Downloads folder to
 change permissions on your key.
 
 At this step, you are now connected to the AWS cluster. 
@@ -111,7 +111,11 @@ When you are done with the virtual environment, run `deactivate`
 
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 2. Connect to AWS by running `cd ~/Downloads/` 
-and  `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu`
+and  `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu` and click yes if prompted.
+NOTE: If you try to log in to AWS and you encounter an error that says:
+    WARNING: UNPROTECTED PRIVATE KEY FILE!
+Run this command `chmod 400 YOURNAME_id_rsa.txt` in the Downloads folder to
+change permissions on your key.
 3. Go to your SealNet workspace by running
 `cd /data/YOURNAME_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
