@@ -105,7 +105,8 @@ to copy the photos to AWS
 `python3 -m venv py37`
 The AWS instance has python 3.7 as the global python3 version.
 6. Activate your virtual environment by running `source ./py37/bin/activate`
-7. Install all dependencies by running `pip install -r requirements.txt`
+7. Install all dependencies by running `pip install -r requirements.txt`. If it gives an error,
+run `./py37/bin/python3 -m pip install --upgrade pip` to update pip and run the previous command again.
 When you are done with the virtual environment, run `deactivate`
 
 # Accessing SEALNET for returning user
