@@ -93,11 +93,9 @@ download SealNet
     c. Run `` 
     This step will create the data/unprocessed folder where you will store your 
     unprocessed photos
-3. a. Download the unprocessed photos for training SealNet to your Downloads
-folder in a folder named photos
-    b. In a SEPARATE terminal window, run 'cd ~/Downloads/' to change
-directory
-    c. Run 
+3. Download the unprocessed photos for training SealNet to your Downloads
+folder in a folder named photos or move it to the Downloads folder. In a SEPARATE terminal window, run `cd ~/Downloads/` to change
+directory. Run 
 `scp -i YOURNAME_id_rsa.txt -r PHOTOFOLDER/ YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/unprocessed` 
 to copy the photos to AWS
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
@@ -117,9 +115,10 @@ and  `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu`
 3. Go to your SealNet workspace by running
 `cd /data/YOURNAME_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
-5. Activate your virtual environment by running `source ./py37/bin/activate`.
+5. If you need to upload new data, check step 3 of Setting up SEALNET for new user. 
+6. Activate your virtual environment by running `source ./py37/bin/activate`.
 When you are done with the virtual environment, run `deactivate`.
-6. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
+7. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 
 # Training SEALNET
 
