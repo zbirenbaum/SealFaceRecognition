@@ -121,8 +121,6 @@ change permissions on your key.
 4. Checking for the latest version of the software by running `git pull` 
 5. If you need to upload new data, check step 3 of Setting up SEALNET for new user. 
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
-When you are done with the virtual environment, run `deactivate`.
-7. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 
 # Training SEALNET
 
@@ -144,5 +142,11 @@ a result.json file that you will use to open the GUI.
 2. On a SEPARATE terminal, run `cd ~/Downloads` and
 `scp -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ~/Downloads/`
 to download the result files into Download folders.
-3. Run 'sudo poweroff' to end the AWS session or visit http://hpc-aws-launcher.colgate.edu/ 
-and click stop
+
+# Close the program
+
+1. When you are done with the program, close the virtual environment by running `deactivate`.
+2. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
+
+# Additional info:
+1. The result.json file will be used in https://github.com/hieudo-hn/recognitionGUI.git.

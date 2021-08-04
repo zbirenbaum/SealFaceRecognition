@@ -3,7 +3,7 @@ import os
 from network import Network
 import sys
 import utils
-import evaluateOpen
+import evaluateopen
 import json
 
 class ImageSet:
@@ -62,14 +62,14 @@ def main():
 
     probe_set.extract_features(network, len(probes))
     gal_set.extract_features(network, len(gal))
-    evaldict = evaluateOpen.identify(probe_set, gal_set)
+    evaldict = evaluateopen.identify(probe_set, gal_set)
     
     # storing results into json format
     out_file = open("result.json", "w")
     json.dump(evaldict, out_file)
     out_file.close()
     
-    evaluateOpen.displayTestingResult(evaldict)
+    evaluateopen.displayTestingResult(evaldict)
     
     
 if __name__ == "__main__":
