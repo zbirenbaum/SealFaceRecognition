@@ -5,6 +5,8 @@ import dirhandler as dh
 import sys
 import os
 
+SIZE = (112,112)
+
 def morpher(img, path=False):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret,thresh = cv2.threshold(gray,5,255,cv2.THRESH_TOZERO)
@@ -51,10 +53,11 @@ def normalize_images(rwlist, overwrite=False):
         img = cv2.imread(rd)
         #img=rem_lighting(img)
         norm = normalize(img)
-        gray = greyscale(norm) 
+        gray = greyscale(norm)
+        resize = cv2.resize(gray, SIZE, interpolation=cv2.INTER_NEAREST)
         #normalized_list.append(img)
         if(overwrite):
-            cv2.imwrite(wt,gray)
+            cv2.imwrite(wt,resize)
     return normalized_list
 
 def main():  
