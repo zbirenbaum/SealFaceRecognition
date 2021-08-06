@@ -28,6 +28,18 @@ The directories must be structured as follows:
 .
 ├── SealFaceRecognition
 └── data
+    ├─── probe
+        ├───PROBE
+            ├── seal_1
+            │   ├── photo1.png
+            │   └── photo2.png
+            ├── seal_2
+            │   ├── photo1.jpg
+            │   └── photo2.jpg
+            └── seal_3
+                ├── photo1.png
+                ├── photo2.png
+                └── photo3.jpg
     ├─── unprocessed 
         ├───FOLDERNAME
             ├── seal_1
@@ -42,6 +54,7 @@ The directories must be structured as follows:
                 └── photo3.jpg
     ├─── processed 
 ```
+In the ./data folder, there should be a probe folder for probe images, unprocessed folder for your unprocessed training data, processed folder where training data will be stored after being pre-processed. 
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
 
 # Connect to AWS for new user
@@ -89,12 +102,12 @@ step.
 1. Run `git clone https://github.com/zbirenbaum/SealFaceRecognition.git` to
 download SealNet
 2.  a. Run `mkdir data && cd data`
-    b. Run `mkdir unprocessed && mkdir processed`
-    c. Run `` 
+    b. Run `mkdir unprocessed && mkdir processed && mkdir probe`
+    c. Run `cd ..` 
     This step will create the data/unprocessed folder where you will store your 
     unprocessed photos
-3. Download the unprocessed photos for training SealNet to your Downloads
-folder in a folder named photos or move it to the Downloads folder. In a SEPARATE terminal window, run `cd ~/Downloads/` to change
+3. Make sure that your training data is in the Download folder and is named 'Final_Training_Data'. You should also make sure that no files/folders within Final_Training_Data has a space in their names. 
+In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
 `scp -i YOURNAME_id_rsa.txt -r PHOTOFOLDER/ YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/unprocessed` 
 to copy the photos to AWS
@@ -129,18 +142,26 @@ currently in the py39 virtual environment.
 
 1. Run `python zprocess.py FOLDERNAME` to pre-process all photos in 
 /data/unprocessed/FOLDERNAME 
-2. Run `python train.py -c config.py -d ./data/processed/FOLDERNAME` to start training
+2. Run `sh ./train.sh` to start training
 the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
-Alternatively, you can also run `python train.py -c config.py -d ./data/processed/FOLDERNAME -n 5`
+Alternatively, you can also run `sh ./train.sh 5`
 to run a 5 fold cross-validation on the data in FOLDERNAME.
 
 # Using SEALNET for prediction
 
-1. Run `python seenbefore.py` to run the recognition model on your probe data. It will output 
-a result.json file that you will use to open the GUI.
-2. On a SEPARATE terminal, run `cd ~/Downloads` and
-`scp -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ~/Downloads/`
+1. If you have uploaded the probe photos, you can ignore this step.
+Otherwise, make sure the probe photos are in the Download folder and run: 
+```
+cd ~/Downloads
+scp -i YOURNAME_id_rsa.txt -r YOUR_PROBE_FOLDER YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/probe
+```
+2. On the terminal connected to AWS, run `sh ./generatePrediction.sh` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
+3. Back on the other terminal, run 
+```
+cd ~/Downloads
+scp -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ./
+```
 to download the result files into Download folders.
 
 # Close the program
@@ -150,3 +171,5 @@ to download the result files into Download folders.
 
 # Additional info:
 1. The result.json file will be used in https://github.com/hieudo-hn/recognitionGUI.git.
+2. How to open a separate terminal: Right Click on the Terminal Icon and choose New Window.
+3. Tips on terminal: Use Tab to autocomplete pathing in your terminal and arrow up to view your previous command 
