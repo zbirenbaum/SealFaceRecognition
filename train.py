@@ -113,6 +113,7 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
 
 def trainAllData(trainingDir, config, config_file):
     trainset = utils.Dataset(ddict=ttsplit.gen_full_dict(trainingDir))
+    trainset.images = preprocess(trainset.images, config, True)
     
     # Initialize the network
     network = Network()
