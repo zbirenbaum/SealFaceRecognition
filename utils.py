@@ -251,7 +251,7 @@ def init_from_dict(ddict):
         for photopath in ddict[key]:
             labels.append(i)
             imagelist.append(str(photopath))
-            set_list.append(photopath + " " + key)
+            set_list.append(photopath + " " + str(key))
     return imagelist, labels, total_num_classes, set_list
 
 # Calulate the shape for creating new array given (w,h)

@@ -112,7 +112,7 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
     shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
 
 def trainAllData(trainingDir, config, config_file):
-    trainset = utils.Dataset(path=trainingDir)
+    trainset = utils.Dataset(ddict=ttsplit.gen_full_dict(trainingDir))
     
     # Initialize the network
     network = Network()
