@@ -57,18 +57,10 @@ def normalize_images(rwlist, overwrite=False):
             cv2.imwrite(wt,gray)
     return normalized_list
 
-def main():
-    args = sys.argv
-    if len(args) != 2:
-        print('Preprocess all of the photos in data/unprocessed/folder and write to data/processed/folder')
-        print('Error. Invalid number of arguments. Usage: python zprocess.py folder')
-        return
-
-    dir = args[1]
-    
+def main():  
     # read from ./data/unprocessed and write to ./data/processed
-    read_dir = os.path.join(os.getcwd(), 'data', 'unprocessed', dir)
-    write_dir = os.path.join(os.getcwd(), 'data', 'processed', dir)
+    read_dir = './data/unprocessed/Final_Training_Data'
+    write_dir = './data/processed/Final_Training_Data'
     
     # make sure the write folder exists
     if (not os.path.exists(write_dir)):

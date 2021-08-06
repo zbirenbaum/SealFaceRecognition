@@ -1,4 +1,3 @@
-2020data/
 env/
 .vscode
 __pycache__
@@ -6,14 +5,13 @@ __pycache__
 error*
 *.pyc
 photos/*
-log_fullrun_backup/*
 splits/
 unused/
-data/
 log/
 data*
-nets/
 modeltesting
 py3*
 result.json
-modeltesting
+referencePhotos.txt
+probePhotos.txt
+

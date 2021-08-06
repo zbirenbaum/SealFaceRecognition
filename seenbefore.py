@@ -37,7 +37,7 @@ def get_model_dirs(model_dir):
 
 def main():
 
-    model_dir = './modeltesting/store/'
+    model_dir = './trainedModel'
     network = Network()
     config_file = 'config.py'
     config = utils.import_file(config_file, 'config')
@@ -46,13 +46,13 @@ def main():
     gal = []
     probes = []
 
-    with open("./splits/both/fold1/probe.txt" ,'r') as f:
+    with open("./probePhotos.txt" ,'r') as f:
         for line in f:
             probes.append(line.strip())
 
     probe_set = ImageSet(probes, config)
 
-    with open("./splits/both/fold1/train.txt", 'r') as f:
+    with open("./referencePhotos.txt", 'r') as f:
         for line in f:
             gal.append(line.strip())
     gal_set = ImageSet(gal, config)
