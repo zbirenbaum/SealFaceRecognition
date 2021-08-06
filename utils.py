@@ -94,6 +94,8 @@ class Dataset():
             self.images = np.array(self.images, dtype=np.object)
             self.labels = np.array(self.labels, dtype=np.int32)
             self.init_classes()
+        
+        print(self.labels)
 
     def clear(self):
         del self.classes
@@ -105,7 +107,7 @@ class Dataset():
         imagelist = []
         labels = []
         set_list = []
-
+        
         for sealId in os.listdir(path):
             sealPath = os.path.join(path, sealId)
             for photo in os.listdir(sealPath):
@@ -120,8 +122,7 @@ class Dataset():
         with open(filename, 'r') as f:
             lines = f.readlines()
         lines = [line.strip().split(' ') for line in lines]
-        assert len(lines)>0 and len(lines[0])==2, \
-            'All lines except for the first line must be in format: "fullpath(str) label(int)"'
+        assert len(lines)>0 and len(lines[0])==2
         self.total_num_classes = max(int(line[1]) for line in lines)
         lines = lines[1:] #start at index 1
         images = [line[0] for line in lines]
