@@ -20,7 +20,7 @@ testing_type = 'both'
 image_size = [112,112]
 
 # 3 channels means RGB, 1 channel for grayscale
-channels = 1
+channels = 3
 
 # Resize images before processing, assign as (w,h) or False
 resize = False

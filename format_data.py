@@ -45,10 +45,12 @@ def main():
         return
     directory = args[2]
     
+    
+    individuals = get_individuals(directory)
+    labels = list(individuals.keys())
+
     #gallery: facechips that will be used as reference
     if (args[1].lower() == 'gallery'):
-        individuals = get_individuals(directory)
-        labels = list(individuals.keys())
         with open('./referencePhotos.txt', 'w') as gallery:
             for key in labels:
                 value = individuals[key]
@@ -58,14 +60,10 @@ def main():
     #probe: facechips that will be used to compare with the reference photos
     elif (args[1].lower() == 'probe'):
         with open('./probePhotos.txt', 'w') as probe: 
-            path = Path(directory).resolve()
-            extensions = ('png', 'jpg', 'jpeg')
-            assert(os.path.exists(path))
-
-            for file_name in os.listdir(path):
-                if file_name.lower().endswith(extensions):
-                    file_path = os.path.join(path, file_name)
-                    probe.write((str(file_path)) + ' 1\n')
+            for key in labels:
+                value = individuals[key]
+                for j in range(len(value)):
+                    probe.write(value[j] + ' ' + key + '\n')
     else:
         print("First argument must be 'gallery' or 'probe'")
         return

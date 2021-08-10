@@ -178,7 +178,7 @@ def load_model(sess, model_path, scope=None):
             if (os.path.isfile(model_path)):
                 # Frozen grpah
                 print('Model filename: %s' % model_path)
-                with gfile.FastGFile(model_path,'rb') as f:
+                with tf.io.gfile.FastGFile(model_path,'rb') as f:
                     graph_def = tf.GraphDef()
                     graph_def.ParseFromString(f.read())
                     tf.import_graph_def(graph_def, name='')
