@@ -69,10 +69,10 @@ def displayTestingResult(evaldict):
 
         # remove redundant paths
         print(probelabel)
-        nameprobelabel = probelabel[probelabel.rindex('/')+1:]
+        nameprobelabel = probelabel[probelabel.rfind('/')+1:]
 
         namescorelabel = scores[0][0] # rank-1 scores
-        namescorelabel = namescorelabel[namescorelabel.rindex('/')+1:]
+        namescorelabel = namescorelabel[namescorelabel.rfind('/')+1:]
         predarray.append(namescorelabel)
         
         if scores[0][1] < THRESHOLD:

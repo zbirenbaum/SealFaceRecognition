@@ -140,7 +140,8 @@ change permissions on your key.
 To train SealNet, make sure you are in the SealNet workspace and is 
 currently in the py39 virtual environment.
 
-1. Run `sh ./train.sh` to start training
+1. Run `source ../cuda.sh` 
+2. Run `sh ./train.sh` to start training
 the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
 Alternatively, you can also run `sh ./train.sh 5`
