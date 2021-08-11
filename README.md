@@ -66,18 +66,18 @@ The instructions assume you are running MacOs or some other Unix-like
 system. If you have
 Windows installed, you may need to download and install OpenSSH
 https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse.
-1. Download the ssh key YOURNAME_id_rsa to your Downloads folder.
+1. Download the ssh key kingram_id_rsa to your Downloads folder.
 For instance, if your name is Ahmet Ay, it will be aay_id_rsa.txt.
 2. If you are not on the Colgate network, make sure you are connected
 to the VPN
 3. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 4. Open terminal application from the applications folder
 5. Run `cd ~/Downloads/` to change the directory
-6. Run `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu`
+6. Run `ssh -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu`
 
 NOTE: If you try to log in to AWS and you encounter an error that says:
     WARNING: UNPROTECTED PRIVATE KEY FILE!
-Run this command `chmod 400 YOURNAME_id_rsa.txt` in the Downloads folder to
+Run this command `chmod 400 kingram_id_rsa.txt` in the Downloads folder to
 change permissions on your key.
 
 At this step, you are now connected to the AWS cluster. 
@@ -87,9 +87,9 @@ or visit http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 The upcoming instructions assume the EC2 instance has been configured by
 Colgate ITS. You will need git and latest python3 installed. 
 7. Run `cd /data` to access the data directory
-8. Run `mkdir YOURNAME_workspace` to create your workspace. This will be
+8. Run `mkdir kingram_workspace` to create your workspace. This will be
 the primary working directory.
-9. Run `cd YOURNAME_workspace`
+9. Run `cd kingram_workspace`
 Now you have created your own workspace on the AWS cluster. Whenever you
 connect to AWS next time, please cd to this workspace to run your code.
 
@@ -109,7 +109,7 @@ download SealNet and run `cd ./SealFaceRecognition`
 3. Make sure that your training data is in the Download folder and is named 'Final_Training_Data'. You should also make sure that no files/folders within Final_Training_Data has a space in their names. 
 In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
-`scp -i YOURNAME_id_rsa.txt -r PHOTOFOLDER/ YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/unprocessed` 
+`scp -i kingram_id_rsa.txt -r PHOTOFOLDER/ kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed` 
 to copy the photos to AWS
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
@@ -123,14 +123,14 @@ When you are done with the virtual environment, run `deactivate`
 # Accessing SEALNET for returning user
 
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
-2. Connect to AWS by running `cd ~/Downloads/` 
-and  `ssh -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu` and click yes if prompted.
+2. Open a new terminal and connect to AWS by running `cd ~/Downloads/` 
+and  `ssh -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu` and click yes if prompted.
 NOTE: If you try to log in to AWS and you encounter an error that says:
     WARNING: UNPROTECTED PRIVATE KEY FILE!
-Run this command `chmod 400 YOURNAME_id_rsa.txt` in the Downloads folder to
+Run this command `chmod 400 kingram_id_rsa.txt` in the Downloads folder to
 change permissions on your key.
 3. Go to your SealNet workspace by running
-`cd /data/YOURNAME_workspace/SealFaceRecognition` 
+`cd /data/kingram_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
 5. If you need to upload new data, check step 3 of Setting up SEALNET for new user. 
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
@@ -153,13 +153,13 @@ to run a 5 fold cross-validation on the data in FOLDERNAME.
 Otherwise, make sure the probe photos are in the Download folder and run: 
 ```
 cd ~/Downloads
-scp -i YOURNAME_id_rsa.txt -r YOUR_PROBE_FOLDER YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/probe
+scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/probe
 ```
 2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the other terminal, run 
 ```
 cd ~/Downloads
-scp -i YOURNAME_id_rsa.txt YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/result.json ./
+scp -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/result.json ./
 ```
 to download the result files into Download folders.
 
