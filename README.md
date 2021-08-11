@@ -10,6 +10,9 @@ modified for use on other setups running Linux or other Unix-like
 systems.
 To run a command, type it out on the terminal and hit enter.
 
+The instruction here is an example of how to access the terminal for user named Krista Ingram.
+If you have your own account, please replace kingram with your account name (for instance, Ahmet Ay should be aay).
+
 # Prerequisite
 
 To run this program we need python 3.7 installed. You can check your python version
@@ -29,7 +32,7 @@ The directories must be structured as follows:
 ├── SealFaceRecognition
 └── data
     ├─── probe
-        ├───PROBE
+        ├───YOUR_PROBE_FOLDER
             ├── seal_1
             │   ├── photo1.png
             │   └── photo2.png
@@ -41,7 +44,7 @@ The directories must be structured as follows:
                 ├── photo2.png
                 └── photo3.jpg
     ├─── unprocessed 
-        ├───FOLDERNAME
+        ├───Final_Training_Dataset
             ├── seal_1
             │   ├── photo1.png
             │   └── photo2.png
@@ -106,7 +109,7 @@ download SealNet and run `cd ./SealFaceRecognition`
     c. Run `cd ..` 
     This step will create the data/unprocessed folder where you will store your 
     unprocessed photos
-3. Make sure that your training data is in the Download folder and is named 'Final_Training_Data'. You should also make sure that no files/folders within Final_Training_Data has a space in their names. 
+3. Make sure that your training data is in the Download folder and is named 'Final_Training_Dataset'. You should also make sure that no files/folders within Final_Training_Dataset has a space in their names. 
 In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
 `scp -i kingram_id_rsa.txt -r PHOTOFOLDER/ kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed` 
@@ -125,10 +128,7 @@ When you are done with the virtual environment, run `deactivate`
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 2. Open a new terminal and connect to AWS by running `cd ~/Downloads/` 
 and  `ssh -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu` and click yes if prompted.
-NOTE: If you try to log in to AWS and you encounter an error that says:
-    WARNING: UNPROTECTED PRIVATE KEY FILE!
-Run this command `chmod 400 kingram_id_rsa.txt` in the Downloads folder to
-change permissions on your key.
+NOTE: If you try to log in to AWS and you encounter an error that says: WARNING: UNPROTECTED PRIVATE KEY FILE! then run this command `chmod 400 kingram_id_rsa.txt` in the Downloads folder to change permissions on your key.
 3. Go to your SealNet workspace by running
 `cd /data/kingram_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
@@ -145,16 +145,17 @@ currently in the py39 virtual environment.
 the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
 Alternatively, you can also run `sh ./train.sh 5`
-to run a 5 fold cross-validation on the data in FOLDERNAME.
+to run a 5 fold cross-validation on your data.
 
 # Using SEALNET for prediction
 
 1. If you have uploaded the probe photos, you can ignore this step.
-Otherwise, make sure the probe photos are in the Download folder and run: 
+Otherwise, open a SEPARATE terminal, make sure the probe photos are in the Download folder and run: 
 ```
 cd ~/Downloads
 scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/probe
 ```
+To understand how YOUR_PROBE_FOLDER should be organized, look at the data section.
 2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the other terminal, run 
 ```
