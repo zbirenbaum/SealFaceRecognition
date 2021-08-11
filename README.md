@@ -100,7 +100,7 @@ on the AWS instance. If you have set up SEALNET before, you can skip this
 step.
 
 1. Run `git clone https://github.com/zbirenbaum/SealFaceRecognition.git` to
-download SealNet
+download SealNet and run `cd ./SealFaceRecognition`
 2.  a. Run `mkdir data && cd data`
     b. Run `mkdir unprocessed && mkdir processed && mkdir probe`
     c. Run `cd ..` 
@@ -140,7 +140,7 @@ change permissions on your key.
 To train SealNet, make sure you are in the SealNet workspace and is 
 currently in the py39 virtual environment.
 
-1. Run `source ../cuda.sh` 
+1. Run `source ../cuda.sh`          
 2. Run `sh ./train.sh` to start training
 the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
@@ -155,7 +155,7 @@ Otherwise, make sure the probe photos are in the Download folder and run:
 cd ~/Downloads
 scp -i YOURNAME_id_rsa.txt -r YOUR_PROBE_FOLDER YOURNAME@gpu-1.colgate.edu:/data/YOURNAME_workspace/SealFaceRecognition/data/probe
 ```
-2. On the terminal connected to AWS, run `sh ./generatePrediction.sh` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
+2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the other terminal, run 
 ```
 cd ~/Downloads

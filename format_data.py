@@ -28,7 +28,8 @@ def get_individuals(directory):
         path = os.path.join(prefix, item)
         if not os.path.isdir(path):
             continue
-        name = str(item)
+        name = str(path)
+        name = '.' + name[name.rfind('/data/'):]
         individuals[name] = []
         for file_name in os.listdir(path):
             if file_name.lower().endswith(extensions):
