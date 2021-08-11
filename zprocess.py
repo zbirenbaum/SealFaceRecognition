@@ -56,6 +56,7 @@ def normalize_images(rwlist, overwrite=False):
         gray = greyscale(norm)
         resize = cv2.resize(gray, SIZE, interpolation=cv2.INTER_NEAREST)
         np.expand_dims(resize, axis=0)
+        #normalized_list.append(img)
         if(overwrite):
             cv2.imwrite(wt,resize)
     return normalized_list
