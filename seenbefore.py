@@ -17,6 +17,7 @@ class ImageSet:
         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
     def extract_features(self, model, batch_size):
         self.features = model.extract_feature(self.images, batch_size)
+
     def extract_features_mean(self, model, batch_size):
         samearr=[]
         for i in range(1, len(self.images)):
@@ -60,8 +61,8 @@ def main():
     model_name = modelslist[0]
     network.load_model(model_name)
 
-    probe_set.extract_features(network, len(probes))
-    gal_set.extract_features(network, len(gal))
+    probe_set.extract_features(network, int(len(probes)/4))
+    gal_set.extract_features(network, int(len(gal)/4))
     evaldict = evaluateopen.identify(probe_set, gal_set)
     
     # storing results into json format

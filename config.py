@@ -17,7 +17,7 @@ K_CV = 5    # Number of cross-validation folds (training/testing splits)
 splits_path = './splits'
 testing_type = 'both'
 #Target image size for the input of network
-image_size = [112,112]
+image_size = [160,160]
 
 # 3 channels means RGB, 1 channel for grayscale
 channels = 3

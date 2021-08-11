@@ -5,7 +5,7 @@ import dirhandler as dh
 import sys
 import os
 
-SIZE = (176,176)
+SIZE = (160,160)
 
 def morpher(img, path=False):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
