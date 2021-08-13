@@ -7,9 +7,9 @@ python zprocess.py
 NUM_FOLD=$1
 if [[ $NUM_Fold -gt 0 ]]
 then
-    python train.py -c config.py -d ./data/processed/Final_Training_Dataset -n $NUM_FOLD
+    python train.py -c config.py -d ./data/processed/train/Final_Training_Dataset -n $NUM_FOLD
 else
-    python train.py -c config.py -d ./data/processed/Final_Training_Dataset
+    python train.py -c config.py -d ./data/processed/train/Final_Training_Dataset
 fi
 
 # move the trained model to ./trainedModel

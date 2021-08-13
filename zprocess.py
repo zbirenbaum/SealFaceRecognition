@@ -63,8 +63,8 @@ def normalize_images(rwlist, overwrite=False):
 
 def main():  
     # read from ./data/unprocessed and write to ./data/processed
-    read_dir = './data/unprocessed/Final_Training_Dataset'
-    write_dir = './data/processed/Final_Training_Dataset'
+    read_dir = './data/unprocessed/'
+    write_dir = './data/processed/'
     
     # make sure the write folder exists
     if (not os.path.exists(write_dir)):
@@ -86,7 +86,7 @@ def main():
         wpath = os.path.join(write_dir, substr)
         rwlist.append((rpath, wpath))
     normalized_list = normalize_images(rwlist, True)
-    print('done')    
+    print('Finished preprocessing')    
 
 if __name__ == '__main__':
     main()

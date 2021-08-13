@@ -157,7 +157,7 @@ scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/k
 ```
 To understand how YOUR_PROBE_FOLDER should be organized, look at the data section.
 2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
-3. Back on the other terminal, run 
+3. Back on the Desktop terminal, run 
 ```
 cd ~/Downloads
 scp -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/result.json ./
