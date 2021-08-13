@@ -31,33 +31,37 @@ The directories must be structured as follows:
 .
 ├── SealFaceRecognition
 └── data
-    ├─── probe
-        ├───YOUR_PROBE_FOLDER
-            ├── seal_1
-            │   ├── photo1.png
-            │   └── photo2.png
-            ├── seal_2
-            │   ├── photo1.jpg
-            │   └── photo2.jpg
-            └── seal_3
-                ├── photo1.png
-                ├── photo2.png
-                └── photo3.jpg
+    ├─── processed
+        ├─── train
+        ├─── probe
     ├─── unprocessed 
-        ├───Final_Training_Dataset
-            ├── seal_1
-            │   ├── photo1.png
-            │   └── photo2.png
-            ├── seal_2
-            │   ├── photo1.jpg
-            │   └── photo2.jpg
-            └── seal_3
-                ├── photo1.png
-                ├── photo2.png
-                └── photo3.jpg
-    ├─── processed 
+        ├─── train
+            ├───Final_Training_Dataset
+                ├── seal_1
+                │   ├── photo1.png
+                │   └── photo2.png
+                ├── seal_2
+                │   ├── photo1.jpg
+                │   └── photo2.jpg
+                └── seal_3
+                    ├── photo1.png
+                    ├── photo2.png
+                    └── photo3.jpg
+        ├─── probe
+            ├───YOUR_PROBE_FOLDER
+                ├── seal_1
+                │   ├── photo1.png
+                │   └── photo2.png
+                ├── seal_2
+                │   ├── photo1.jpg
+                │   └── photo2.jpg
+                └── seal_3
+                    ├── photo1.png
+                    ├── photo2.png
+                    └── photo3.jpg
+
 ```
-In the ./data folder, there should be a probe folder for probe images, unprocessed folder for your unprocessed training data, processed folder where training data will be stored after being pre-processed. 
+In the ./data folder, there should be a processed and an unprocessed folder. All initial data should be placed in the unprocessed folder, where training data should be in train and probe data should be in probe. 
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
 
 # Connect to AWS for new user
@@ -70,7 +74,6 @@ system. If you have
 Windows installed, you may need to download and install OpenSSH
 https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse.
 1. Download the ssh key kingram_id_rsa to your Downloads folder.
-For instance, if your name is Ahmet Ay, it will be aay_id_rsa.txt.
 2. If you are not on the Colgate network, make sure you are connected
 to the VPN
 3. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
@@ -104,15 +107,14 @@ step.
 
 1. Run `git clone https://github.com/zbirenbaum/SealFaceRecognition.git` to
 download SealNet and run `cd ./SealFaceRecognition`
-2.  a. Run `mkdir data && cd data`
-    b. Run `mkdir unprocessed && mkdir processed && mkdir probe`
-    c. Run `cd ..` 
-    This step will create the data/unprocessed folder where you will store your 
-    unprocessed photos
+2. Setting up the data folder: 
+```
+mkdir data && mkdir data/processed && mkdir data/unprocessed && mkdir data/unprocessed/train && mkdir data/unprocessed/probe && mkdir data/processed/train && mkdir data/processed/probe
+```
 3. Make sure that your training data is in the Download folder and is named 'Final_Training_Dataset'. You should also make sure that no files/folders within Final_Training_Dataset has a space in their names. 
 In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
-`scp -i kingram_id_rsa.txt -r PHOTOFOLDER/ kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed` 
+`scp -i kingram_id_rsa.txt -r Final_Training_Dataset kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/train` 
 to copy the photos to AWS
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
@@ -153,7 +155,7 @@ to run a 5 fold cross-validation on your data.
 Otherwise, open a SEPARATE terminal, make sure the probe photos are in the Download folder and run: 
 ```
 cd ~/Downloads
-scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/probe
+scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
 ```
 To understand how YOUR_PROBE_FOLDER should be organized, look at the data section.
 2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
