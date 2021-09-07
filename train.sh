@@ -5,7 +5,7 @@ python zprocess.py
 
 # training
 NUM_FOLD=$1
-if [[ $NUM_Fold -gt 0 ]]
+if [[ $NUM_FOLD -gt 0 ]]
 then
     python train.py -c config.py -d ./data/processed/train/Final_Training_Dataset -n $NUM_FOLD
 else
