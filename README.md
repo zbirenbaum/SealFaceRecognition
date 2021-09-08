@@ -48,7 +48,7 @@ The directories must be structured as follows:
                     ├── photo2.png
                     └── photo3.jpg
         ├─── probe
-            ├───YOUR_PROBE_FOLDER
+            ├───probe_folder_test
                 ├── seal_1
                 │   ├── photo1.png
                 │   └── photo2.png
@@ -114,8 +114,15 @@ mkdir data && mkdir data/processed && mkdir data/unprocessed && mkdir data/unpro
 3. Make sure that your training data is in the Download folder and is named 'Final_Training_Dataset'. You should also make sure that no files/folders within Final_Training_Dataset has a space in their names. 
 In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
-`scp -i kingram_id_rsa.txt -r Final_Training_Dataset kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/train` 
-to copy the photos to AWS
+```
+scp -i kingram_id_rsa.txt -r Final_Training_Dataset kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/train
+```
+to copy the photos to AWS.
+Similarly, if you have new probe folders, make sure that it is named probe_folder_test and is located in the Downloads folder on your local laptop. Then run:
+```
+scp -i kingram_id_rsa.txt -r probe_folder_test kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
+```
+
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
 `python3 -m venv py37`
@@ -134,7 +141,7 @@ NOTE: If you try to log in to AWS and you encounter an error that says: WARNING:
 3. Go to your SealNet workspace by running
 `cd /data/kingram_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
-5. If you need to upload new data, check step 3 of Setting up SEALNET for new user. 
+5. **[ONLY DO THIS STEP IF YOU ARE TRAINING WITH NEW DATA]** Run `sh ./clean.sh` and then check step 3 of Setting up SEALNET for new user to upload new training and probe photos.
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
 7. Run `source ../cuda.sh`  
 
@@ -154,9 +161,9 @@ to run a 5 fold cross-validation on your data.
 Otherwise, open a SEPARATE terminal, make sure the probe photos are in the Download folder and run: 
 ```
 cd ~/Downloads
-scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
+scp -i kingram_id_rsa.txt -r probe_folder_test kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
 ```
-2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
+2. On the terminal connected to AWS, run `sh ./generatePrediction.sh` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the Desktop terminal, run 
 ```
 cd ~/Downloads
