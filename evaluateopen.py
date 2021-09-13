@@ -106,15 +106,15 @@ def displayTestingResult(evaldict):
     accuracytotal = len(list(accuracyframe.index))
     correct1 = len(accuracyframe.loc[accuracyframe['Rank'] == 1])
     correct5 = len(accuracyframe.loc[accuracyframe['Rank'] <= 5])
-    print('ACCURACY Rank 1: {:.3f}'.format(correct1/accuracytotal))
-    print('ACCURACY Rank 5: {:.3f}'.format(correct5/accuracytotal))
-    print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != -1]['Highest Score'].mean()))
-    print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == -1]['Highest Score'].mean()))
+    #print('ACCURACY Rank 1: {:.3f}'.format(correct1/accuracytotal))
+    #print('ACCURACY Rank 5: {:.3f}'.format(correct5/accuracytotal))
+    #print('AVG Closed Score: ' + str(fullframe.loc[fullframe['Rank'] != -1]['Highest Score'].mean()))
+    #print('AVG Open Score: ' + str(fullframe.loc[fullframe['Rank'] == -1]['Highest Score'].mean()))
 
-    print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
-    print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
-    print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != -1]['Highest Score'].mean()))
-    print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']==-1]['Highest Score'].mean()))
+    #print('AVG Accepted Score: ' + str(accframe['Highest Score'].mean()))
+    #print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
+    #print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != -1]['Highest Score'].mean()))
+    #print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']==-1]['Highest Score'].mean()))
 
 
 def closed(probe, galFeaturesList):        
