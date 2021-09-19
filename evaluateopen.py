@@ -1,10 +1,13 @@
+from scipy import stats
 import facepy
 import numpy as np
 from scipy import spatial
 import operator
 import pandas as pd
+import math
 
-THRESHOLD = 0.6
+THRESHOLD = .65
+ZTHRESH = 2.8
 
 def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
@@ -48,23 +51,42 @@ def identify(probe, gallery):
         
     return evaldict
 
+def gen_difflist(scorelists):
+    diff = []
+    scorelists = np.array(scorelists)
+    for slist in scorelists:
+        diff.append([])
+        for i in range(0, len(slist) - 2):
+            diff[len(diff)-1].append(slist[i] - slist[i+1])
+    return np.array(diff)
+
 def displayTestingResult(evaldict):
+
     predarray= []
     acceptlist = [] # probes that have similarity score >= THRESHOLD
     deniedlist = [] # probes that have similarity score < THRESHOLD
+    insetscorelists = []
+    opensetscorelists = []
     
     for probelabel, probeinfo in evaldict.items():
+        scoreslist = []
         scores = probeinfo['scores']    
+        #print(scores)
         inset = probeinfo['inset']    
-
         # Calculate the ranking of each prediction
         rank = 0
+        for tup in scores:
+            scoreslist.append(tup[1])
+        zscores = stats.zscore(scoreslist)
+
         if (inset):
+            insetscorelists.append(scoreslist)
             count = 1
             while (scores[count - 1][0] != probelabel): 
                 count+=1
             rank = count
         else:
+            opensetscorelists.append(scoreslist)
             rank = -1
 
         # remove redundant paths
@@ -74,28 +96,33 @@ def displayTestingResult(evaldict):
         namescorelabel = scores[0][0] # rank-1 scores
         namescorelabel = namescorelabel[namescorelabel.rfind('/')+1:]
         predarray.append(namescorelabel)
-        
-        if scores[0][1] < THRESHOLD:
+
+#        diff12 = ((scoreslist[0]-scoreslist[1]) ** (1. / 3))
+#        diff12 = math.exp(scoreslist[0]-scoreslist[1])
+        diff12 = scores[0][1]*(1+(scoreslist[0]-scoreslist[1]))
+#        if diff12 + scores[0][1] < THRESHOLD:
+#        if zscores[0] < ZTHRESH:
+        if diff12 < THRESHOLD:
             deniedlist.append([nameprobelabel,
                 namescorelabel, 
                 scores[0][1],
                 inset,
-                rank])
+                rank, zscores[0], scores[0][1] + diff12])
         else:
             acceptlist.append([nameprobelabel,
                 namescorelabel,
                 scores[0][1],
                 not inset,
-                rank])
+                rank, zscores[0], scores[0][1] + diff12])
 
     pd.set_option('display.max_rows', 10000)
 
     full_list = deniedlist[:]
     full_list.extend(acceptlist)
 
-    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'Rank'])
-    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
-    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank'])
+    dnframe = pd.DataFrame(data=deniedlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score', 'False Reject', 'Rank', 'ZSCORE', 'DIFF WEIGHTED SCORE'])
+    accframe = pd.DataFrame(data=acceptlist, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank', 'ZSCORE', 'DIFF WEIGHTED SCORE'])
+    fullframe = pd.DataFrame(data=full_list, columns=['Probe Label', 'Highest Score Label', 'Highest Score','False Accept', 'Rank', 'ZSCORE', 'DIFF WEIGHTED SCORE'])
     
     print(accframe)
     print('False Accepts: ' + str(accframe['False Accept'].sum()) + '/' + str(len(evaldict)))
@@ -115,8 +142,21 @@ def displayTestingResult(evaldict):
     print('AVG Denied Score: ' + str(dnframe['Highest Score'].mean()))
     print('AVG False Reject Score: ' + str(dnframe.loc[dnframe['Rank'] != -1]['Highest Score'].mean()))
     print('AVG True Reject Score: ' + str(dnframe.loc[dnframe['Rank']==-1]['Highest Score'].mean()))
+    print('AVG False Reject ZSCORE: ' + str(dnframe.loc[dnframe['Rank'] != -1]['ZSCORE'].mean()))
+    print('AVG True Reject ZSCORE: ' + str(dnframe.loc[dnframe['Rank']==-1]['ZSCORE'].mean()))
 
+    insetdiff = np.transpose(gen_difflist(insetscorelists))
+    opendiff = np.transpose(gen_difflist(opensetscorelists))
 
+    print('\nINSET Diff 1-2: ' + str(np.mean(insetdiff[0])))
+    print('!INSET Diff 1-2: ' + str(np.mean(opendiff[0])))
+    print('DIFF 1-2 INSET-OPENSET DIFF: ' + str(np.mean(insetdiff[0]) - np.mean(opendiff[0])))
+
+    print('\nINSET Diff 2-3: ' + str(np.mean(insetdiff[1])))
+    print('!INSET Diff 2-3: ' + str(np.mean(opendiff[1])))
+    print('DIFF 2-3 INSET-OPENSET DIFF: ' + str(np.mean(insetdiff[1]) - np.mean(opendiff[1])))
+
+    print('\nINSET 1-2: ' + str(insetdiff[0]))
 def closed(probe, galFeaturesList):        
     score_matrix = facepy.metric.cosineSimilarity(probe.features, np.array(galFeaturesList))
     for i in range(len(probe.labels)):

@@ -60,8 +60,8 @@ def main():
     model_name = modelslist[0]
     network.load_model(model_name)
 
-    probe_set.extract_features(network, len(probes))
-    gal_set.extract_features(network, len(gal))
+    probe_set.extract_features(network, int(len(probes)/4))
+    gal_set.extract_features(network, int(len(gal)/4))
     evaldict = evaluateopen.identify(probe_set, gal_set)
     
     # storing results into json format
