@@ -35,7 +35,26 @@ import shutil
 import traintestsplit as ttsplit
 import math
 from preprocess import preprocess
+import json
 
+def gen_save_splits(builder, num_trainings):
+    for i in range(num_trainings):
+        print('Starting training #{}\n'.format(i+1))
+        trainset = builder.dsetbyfold[i]
+        testset = builder.testsetbyfold[i]
+        save_split(trainset, i, "train")
+        save_split(testset, i, "test")
+        
+def save_split(dictionary, foldnum, filename):
+    directory = "splitsave/" + str(foldnum+1) + "/"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    with open(directory + filename + ".json", "w") as outfile:
+        json.dump(dictionary, outfile)
+
+def load_split(foldnum, filename):
+    with open("splitsave/" + str(foldnum+1) + "/" + filename + ".json", "r") as infile:
+        return json.load(infile)
 
 def trainKFold(config, config_file, counter, trainset, testset=None):
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
@@ -169,8 +188,9 @@ def main():
         required=False, help='Flag to use existing splits for training and testing data')
     parser.add_argument('-n', '--number', dest='number', action='store', type=int,
         required=False, help='Number of times to run the training(default is 3)')
+    parser.add_argument('-g', '--generate', dest='generate', action='store', type=bool,
+        required=False, help='generate splits file for later use (default: False)')
     
-
     settings = parser.parse_args()
     dir = settings.directory
     config_file = settings.config_file
@@ -179,18 +199,24 @@ def main():
         num_trainings = settings.number
         print('Running training {} times'.format(num_trainings))
 
+        builder = ttsplit.DatasetBuilder(dir, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+        if settings.generate:
+            gen_save_splits(builder, settings.number)
+
         if not settings.splits:
             if os.path.exists(os.path.expanduser('./splits')):
                 shutil.rmtree(os.path.expanduser('./splits')) 
         else:
-            print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
-
-        builder = ttsplit.DatasetBuilder(dir, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+            for i in range(num_trainings):
+                builder.dsetbyfold[i] = load_split(i, "train")
+                builder.testsetbyfold[i] = load_split(i, "test")
+                
 
         for i in range(num_trainings):
             print('Starting training #{}\n'.format(i+1))
             trainset = builder.dsetbyfold[i]
             testset = builder.testsetbyfold[i]
+            print(testset)
             trainKFold(config, config_file, i+1, trainset, testset)
 
     else:
