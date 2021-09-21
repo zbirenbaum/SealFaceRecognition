@@ -41,7 +41,6 @@ result_file = "result.txt"
 
 def gen_save_splits(builder, num_trainings):
     for i in range(num_trainings):
-        print('Starting training #{}\n'.format(i+1))
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
         save_split(trainset, i, "train")
@@ -123,7 +122,7 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
         if (epoch == config.num_epochs - 1):
             f = open(result_file, "a+")
-            f.write('Training Number #{}: Rank-1 = {:.3f} Rank-5 = {:.3f}'.format(counter, rank1[0], rank5[0]))
+            f.write('Training Number #{}: Rank-1 = {:.3f} Rank-5 = {:.3f}\n'.format(counter, rank1[0], rank5[0]))
             f.close()
 
         # Output test result
