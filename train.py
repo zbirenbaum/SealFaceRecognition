@@ -216,7 +216,6 @@ def main():
             print('Starting training #{}\n'.format(i+1))
             trainset = builder.dsetbyfold[i]
             testset = builder.testsetbyfold[i]
-            print(testset)
             trainKFold(config, config_file, i+1, trainset, testset)
 
     else:
