@@ -6,7 +6,7 @@ error*
 *.pyc
 photos/*
 splits/
-splitsave
+splitsave/
 unused/
 log/
 data*

@@ -118,11 +118,15 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
         probe_set.extract_features(network, len(probes))
         gal_set.extract_features(network, len(gal))
 
-        rank1, rank5, df = evaluate.identify(log_dir, probe_set, gal_set)
+        rank1, rank5, df, rankset = evaluate.identify(log_dir, probe_set, gal_set)
+        print(rankset)
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
         if (epoch == config.num_epochs - 1):
             f = open(result_file, "a+")
-            f.write('Training Number #{}: Rank-1 = {:.3f} Rank-5 = {:.3f}\n'.format(counter, rank1[0], rank5[0]))
+            f.write('Training Number #{}:\n'.format(counter))
+            for i in range(len(rankset)):
+                f.write('Rank-{}={:.3f} '.format(i+1, rankset[i]))
+            f.write('\n')
             f.close()
 
         # Output test result
