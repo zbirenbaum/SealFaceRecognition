@@ -1,3 +1,4 @@
+models_for_comparison
 env/
 .vscode
 __pycache__
@@ -9,6 +10,7 @@ splits/
 unused/
 log/
 data*
+data
 modeltesting
 py3*
 result.json
