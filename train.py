@@ -37,9 +37,10 @@ import math
 from preprocess import preprocess
 import json
 
+result_file = "result.txt"
+
 def gen_save_splits(builder, num_trainings):
     for i in range(num_trainings):
-        print('Starting training #{}\n'.format(i+1))
         trainset = builder.dsetbyfold[i]
         testset = builder.testsetbyfold[i]
         save_split(trainset, i, "train")
@@ -57,6 +58,11 @@ def load_split(foldnum, filename):
         return json.load(infile)
 
 def trainKFold(config, config_file, counter, trainset, testset=None):
+    # Create a new result file
+    if counter == 1:
+        f = open(result_file, "w+")
+        f.close()
+
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
     trainset.images = preprocess(trainset.images, config, True)
@@ -112,9 +118,17 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
         probe_set.extract_features(network, len(probes))
         gal_set.extract_features(network, len(gal))
 
-        rank1, rank5, df = evaluate.identify(log_dir, probe_set, gal_set)
+        rank1, rank5, df, rankset = evaluate.identify(log_dir, probe_set, gal_set)
+        print(rankset)
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
-        
+        if (epoch == config.num_epochs - 1):
+            f = open(result_file, "a+")
+            f.write('Training Number #{}:\n'.format(counter))
+            for i in range(len(rankset)):
+                f.write('Rank-{}={:.3f} '.format(i+1, rankset[i]))
+            f.write('\n')
+            f.close()
+
         # Output test result
         summary = tf.Summary()
         summary.value.add(tag='identification/rank1', simple_value=rank1[0])
