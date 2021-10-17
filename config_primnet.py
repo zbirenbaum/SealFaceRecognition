@@ -54,7 +54,7 @@ num_gpus = 1
 localization_net = None
 
 # The network architecture
-network = "nets/prim_net.py"
+network = "./nets/prim_net.py"
 
 # Model version, only for some networks
 model_version = 'prim'

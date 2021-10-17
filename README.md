@@ -13,7 +13,7 @@ To run a command, type it out on the terminal and hit enter.
 The instruction here is an example of how to access the terminal for user named Krista Ingram.
 If you have your own account, please replace kingram with your account name (for instance, Ahmet Ay should be aay).
 
-# Prerequisite
+## Prerequisite
 
 To run this program we need python 3.7 installed. You can check your python version
 by typing `python3 -V`. If you don't have python 3.7, you can download it here:
@@ -21,7 +21,7 @@ https://www.python.org/downloads/release/python-379/.
 
 If you are using the AWS cluster, it is already installed for you.
 
-# Data
+## Data
 
 SealNet is a face recognition software that is trained using photos.
 As of now, the software
@@ -48,7 +48,7 @@ The directories must be structured as follows:
                     ├── photo2.png
                     └── photo3.jpg
         ├─── probe
-            ├───YOUR_PROBE_FOLDER
+            ├───probe_folder_test
                 ├── seal_1
                 │   ├── photo1.png
                 │   └── photo2.png
@@ -64,7 +64,7 @@ The directories must be structured as follows:
 In the ./data folder, there should be a processed and an unprocessed folder. All initial data should be placed in the unprocessed folder, where training data should be in train and probe data should be in probe. 
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
 
-# Connect to AWS for new user
+## Connect to AWS for new user
 
 If this is your first time connecting to AWS, you can follow the instructions
 below to set up your workspace. 
@@ -99,7 +99,7 @@ the primary working directory.
 Now you have created your own workspace on the AWS cluster. Whenever you
 connect to AWS next time, please cd to this workspace to run your code.
 
-# Setting up SEALNET for new user
+## Setting up SEALNET for new user
 
 The following instructions assume that you are currently in your workspace
 on the AWS instance. If you have set up SEALNET before, you can skip this 
@@ -114,8 +114,15 @@ mkdir data && mkdir data/processed && mkdir data/unprocessed && mkdir data/unpro
 3. Make sure that your training data is in the Download folder and is named 'Final_Training_Dataset'. You should also make sure that no files/folders within Final_Training_Dataset has a space in their names. 
 In a SEPARATE terminal window, run `cd ~/Downloads/` to change
 directory. Run 
-`scp -i kingram_id_rsa.txt -r Final_Training_Dataset kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/train` 
-to copy the photos to AWS
+```
+scp -i kingram_id_rsa.txt -r Final_Training_Dataset kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/train
+```
+to copy the photos to AWS.
+Similarly, if you have new probe folders, make sure that it is named probe_folder_test and is located in the Downloads folder on your local laptop. Then run:
+```
+scp -i kingram_id_rsa.txt -r probe_folder_test kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
+```
+
 4. In the other terminal window still logged into AWS, run `cd SealFaceRecognition` to change directory
 5. Create a virtual environment by running:
 `python3 -m venv py37`
@@ -125,7 +132,7 @@ The AWS instance has python 3.7 as the global python3 version.
 run `./py37/bin/python3 -m pip install --upgrade pip` to update pip and run the previous command again.
 When you are done with the virtual environment, run `deactivate`
 
-# Accessing SEALNET for returning user
+## Accessing SEALNET for returning user
 
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
 2. Open a new terminal and connect to AWS by running `cd ~/Downloads/` 
@@ -134,31 +141,29 @@ NOTE: If you try to log in to AWS and you encounter an error that says: WARNING:
 3. Go to your SealNet workspace by running
 `cd /data/kingram_workspace/SealFaceRecognition` 
 4. Checking for the latest version of the software by running `git pull` 
-5. If you need to upload new data, check step 3 of Setting up SEALNET for new user. 
+5. **[ONLY DO THIS STEP IF YOU ARE TRAINING WITH NEW DATA]** Run `sh ./clean.sh` and then check step 3 of Setting up SEALNET for new user to upload new training and probe photos.
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
+7. Run `source ../cuda.sh`  
 
-# Training SEALNET
+## Training SEALNET
 
 To train SealNet, make sure you are in the SealNet workspace and is 
 currently in the py39 virtual environment.
-
-1. Run `source ../cuda.sh`          
-2. Run `sh ./train.sh` to start training
+        
+1. Run `sh ./train.sh` to start training
 the network with the pre-processed data. Do not close the
 terminal window or log out while the program is running.
 Alternatively, you can also run `sh ./train.sh 5`
 to run a 5 fold cross-validation on your data.
 
-# Using SEALNET for prediction
-
+## Using SEALNET for prediction
 1. If you have uploaded the probe photos, you can ignore this step.
 Otherwise, open a SEPARATE terminal, make sure the probe photos are in the Download folder and run: 
 ```
 cd ~/Downloads
-scp -i kingram_id_rsa.txt -r YOUR_PROBE_FOLDER kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
+scp -i kingram_id_rsa.txt -r probe_folder_test kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
 ```
-To understand how YOUR_PROBE_FOLDER should be organized, look at the data section.
-2. On the terminal connected to AWS, run `sh ./generatePrediction.sh YOUR_PROBE_FOLDER` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
+2. On the terminal connected to AWS, run `sh ./generatePrediction.sh` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the Desktop terminal, run 
 ```
 cd ~/Downloads
@@ -166,12 +171,12 @@ scp -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu:/data/kingram_workspace/Seal
 ```
 to download the result files into Download folders.
 
-# Close the program
+## Close the program
 
 1. When you are done with the program, close the virtual environment by running `deactivate`.
 2. Stop the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking stop.
 
-# Additional info:
+## Additional info:
 1. The result.json file will be used in https://github.com/hieudo-hn/recognitionGUI.git.
 2. How to open a separate terminal: Right Click on the Terminal Icon and choose New Window.
 3. Tips on terminal: Use Tab to autocomplete pathing in your terminal and arrow up to view your previous command 

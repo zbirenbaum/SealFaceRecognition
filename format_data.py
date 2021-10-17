@@ -57,7 +57,6 @@ def main():
                 value = individuals[key]
                 for j in range(len(value)):
                     gallery.write(value[j] + ' ' + key + '\n')
-
     #probe: facechips that will be used to compare with the reference photos
     elif (args[1].lower() == 'probe'):
         with open('./probePhotos.txt', 'w') as probe: 

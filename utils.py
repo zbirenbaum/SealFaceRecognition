@@ -94,8 +94,6 @@ class Dataset():
             self.images = np.array(self.images, dtype=np.object)
             self.labels = np.array(self.labels, dtype=np.int32)
             self.init_classes()
-        
-        print(self.labels)
 
     def clear(self):
         del self.classes

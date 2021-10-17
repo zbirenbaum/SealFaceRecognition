@@ -81,7 +81,6 @@ def random_flip(images):
 
 def resize(images, size):
     #bp()
-    print(images.shape)
     n, _h, _w = images.shape[:3]
     print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
     w, h = tuple(size)
@@ -95,8 +94,6 @@ def resize(images, size):
     return images_new
 
 def resize_greyscale(images, size):
-    #bp()
-    print(images.shape)
     n, _h, _w = images.shape[:1]
     print('(n: {}, _h: {}, _w: {})'.format(n, _h, _w))
     w, h = tuple(size)

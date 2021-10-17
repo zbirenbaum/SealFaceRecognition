@@ -50,7 +50,6 @@ class DatasetBuilder(object):
         if settype=='open':
             self.settype='open'
             self.ttdict = self.gen_open_ttdict()
-            #printasjs(self.ttdict)
             self.write_ttdict('open')
         elif settype == 'both':
             self.settype='both'
@@ -130,7 +129,6 @@ class DatasetBuilder(object):
             for key in self.open_training_idx[fold-1]:
                 name = self.data[key]['name'] 
                 photos = self.data[key]['photos'][:]
-                print(photos)
                 holdout = photos.pop(fold-1)
                 ttdict[fold]['training'][name] = photos
                 ttdict[fold]['probes'][name]  = [holdout]
@@ -159,7 +157,6 @@ class DatasetBuilder(object):
                 to_write_training = self.ttdict[fold]['training']
                 to_write_testing = self.ttdict[fold]['testing'] #eval during training
                 to_write_probes = self.ttdict[fold]['probes'] #eval afer training
-                #print(to_write_probes)
                 num_training_classes = len(to_write_training.keys())
                 num_testing_classes = len(to_write_testing.keys())
                 self.create_set(to_write_probes, settype, 'probe', fold)

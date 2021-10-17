@@ -35,8 +35,27 @@ import shutil
 import traintestsplit as ttsplit
 import math
 from preprocess import preprocess
+import json
 
 result_file = "result.txt"
+
+def gen_save_splits(builder, num_trainings):
+    for i in range(num_trainings):
+        trainset = builder.dsetbyfold[i]
+        testset = builder.testsetbyfold[i]
+        save_split(trainset, i, "train")
+        save_split(testset, i, "test")
+        
+def save_split(dictionary, foldnum, filename):
+    directory = "splitsave/" + str(foldnum+1) + "/"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    with open(directory + filename + ".json", "w") as outfile:
+        json.dump(dictionary, outfile)
+
+def load_split(foldnum, filename):
+    with open("splitsave/" + str(foldnum+1) + "/" + filename + ".json", "r") as infile:
+        return json.load(infile)
 
 def trainKFold(config, config_file, counter, trainset, testset=None):
     # Create a new result file
@@ -99,13 +118,17 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
         probe_set.extract_features(network, len(probes))
         gal_set.extract_features(network, len(gal))
 
-        rank1, rank5, df = evaluate.identify(log_dir, probe_set, gal_set)
+        rank1, rank5, df, rankset = evaluate.identify(log_dir, probe_set, gal_set)
+        print(rankset)
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
         if (epoch == config.num_epochs - 1):
             f = open(result_file, "a+")
-            f.write('Training Number #{}: Rank-1 = {:.3f} Rank-5 = {:.3f}'.format(counter, rank1[0], rank5[0]))
+            f.write('Training Number #{}:\n'.format(counter))
+            for i in range(len(rankset)):
+                f.write('Rank-{}={:.3f} '.format(i+1, rankset[i]))
+            f.write('\n')
             f.close()
-        
+
         # Output test result
         summary = tf.Summary()
         summary.value.add(tag='identification/rank1', simple_value=rank1[0])
@@ -179,8 +202,9 @@ def main():
         required=False, help='Flag to use existing splits for training and testing data')
     parser.add_argument('-n', '--number', dest='number', action='store', type=int,
         required=False, help='Number of times to run the training(default is 3)')
+    parser.add_argument('-g', '--generate', dest='generate', action='store', type=bool,
+        required=False, help='generate splits file for later use (default: False)')
     
-
     settings = parser.parse_args()
     dir = settings.directory
     config_file = settings.config_file
@@ -189,13 +213,18 @@ def main():
         num_trainings = settings.number
         print('Running training {} times'.format(num_trainings))
 
+        builder = ttsplit.DatasetBuilder(dir, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+        if settings.generate:
+            gen_save_splits(builder, settings.number)
+
         if not settings.splits:
             if os.path.exists(os.path.expanduser('./splits')):
                 shutil.rmtree(os.path.expanduser('./splits')) 
         else:
-            print('Using existing splits in the splits folder. Haven\'t implemented this yet so don\'t use it.')
-
-        builder = ttsplit.DatasetBuilder(dir, usedict=1, settype=config.testing_type, kfold=int(num_trainings))
+            for i in range(num_trainings):
+                builder.dsetbyfold[i] = load_split(i, "train")
+                builder.testsetbyfold[i] = load_split(i, "test")
+                
 
         for i in range(num_trainings):
             print('Starting training #{}\n'.format(i+1))
