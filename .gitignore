@@ -11,7 +11,7 @@ log/
 data*
 modeltesting
 py3*
-result.json
+result.*
 referencePhotos.txt
 probePhotos.txt
 trainedModel

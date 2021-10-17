@@ -36,8 +36,14 @@ import traintestsplit as ttsplit
 import math
 from preprocess import preprocess
 
+result_file = "result.txt"
 
 def trainKFold(config, config_file, counter, trainset, testset=None):
+    # Create a new result file
+    if counter == 1:
+        f = open(result_file, "w+")
+        f.close()
+    
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
     trainset.images = preprocess(trainset.images, config, True)
@@ -95,6 +101,10 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
 
         rank1, rank5, df = evaluate.identify(log_dir, probe_set, gal_set)
         print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
+        if (epoch == config.num_epochs - 1):
+            f = open(result_file, "a+")
+            f.write('Training Number #{}: Rank-1 = {:.3f} Rank-5 = {:.3f}'.format(counter, rank1[0], rank5[0]))
+            f.close()
         
         # Output test result
         summary = tf.Summary()
