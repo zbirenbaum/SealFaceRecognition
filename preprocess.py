@@ -11,7 +11,7 @@ def preprocess(images, config, is_training=False):
         mode = 'RGB' if config.channels==3 else 'I'
         print('Prepocessing images ...')
         for _, image_path in enumerate(image_paths):
-                images.append(misc.imread(image_path, mode=mode))
+            images.append(misc.imread(image_path, mode=mode))
         print('Done preprocessing images ...\n')
             
         images = np.stack(images, axis=0)

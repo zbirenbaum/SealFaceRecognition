@@ -7,16 +7,28 @@ import evaluateopen
 import json
 
 class ImageSet:
+    
+
+
     def __init__(self, image_paths, config, probe=False):
         self.image_paths = image_paths
         self.config = config
         self.images, self.labels = self.parse()
         self.features = None
+        
     def parse(self):
-        lines = [line.strip().split(' ') for line in self.image_paths]
-        print(lines)
-        #return [line[0] for line in lines], [line[1] for line in lines]
-        return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
+        print(self.image_paths)
+        lines = [line.split(' ') for line in self.image_paths]
+        images = []
+        labels = []
+        for line in lines:
+            images.append(line[0])
+            labels.append(line[1])
+        print(images)
+        processed = utils.preprocess(images, self.config, False)
+        #lines = lines[1:] #start at index 1
+        return processed, [line[1] for line in lines]
+    
     def extract_features(self, model, batch_size):
         self.features = model.extract_feature(self.images, batch_size)
     def extract_features_mean(self, model, batch_size):
@@ -61,18 +73,16 @@ def main():
     for k in testdata.keys():
         for path in testdata[k]:
             newstr = path  + ' ' + path[:path.rfind('/')] 
-            print(newstr)
             probes.append(newstr)
-    print(probes)
             
-    probe_set = ImageSet(probes, config)
+    probe_set = ImageSet(image_paths = probes, config = config)
     
-    galdata = load_split(2, 'test')
+    galdata = load_split(2, 'train')
     for k in galdata.keys():
         for path in galdata[k]:
-            probes.append(path  + ' ' + path[:path.rfind('/')])
+            gal.append(path  + ' ' + path[:path.rfind('/')])
 
-    gal_set = ImageSet(gal, config)
+    gal_set = ImageSet(image_paths = gal, config = config)
 
     #model_name = modelslist[0]
     network.load_model(model)

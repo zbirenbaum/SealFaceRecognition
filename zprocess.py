@@ -63,8 +63,8 @@ def normalize_images(rwlist, overwrite=False):
 
 def main():  
     # read from ./data/unprocessed and write to ./data/processed
-    read_dir = './data/unprocessed/'
-    write_dir = './data/processed/'
+    read_dir = './final_dataset/Final_Data/'
+    write_dir = './final_dataset/processed/'
     
     # make sure the write folder exists
     if (not os.path.exists(write_dir)):

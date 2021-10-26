@@ -211,22 +211,22 @@ class DatasetBuilder(object):
         f.close()
         return
 
-    def gen_sub_ttdict(data, kfold):
-        closeddict = {}
-        for fold in range (1, self.kfold+1):
-            closeddict[fold] = {
-                    'training':{},
-                    'testing':{}
-                    }
-        for label in data.keys():
-            labeldict = data[label]
-            photolist = np.array(labeldict['photos'])
-            photoidx_training, photoidx_testing = ds.calcindices([],[],0,len(photolist), kfold)
-            for fold in range(1, kfold+1):
-                photos_training = list(photolist[photoidx_training[fold-1]])
-                photos_testing = list(photolist[photoidx_testing[fold-1]])
-                closeddict[fold]['training'][label] = photos_training
-                closeddict[fold]['testing'][label] = photos_testing
-
-        return closeddict
-
+#     def gen_sub_ttdict(data, kfold):
+#         closeddict = {}
+#         for fold in range (1, self.kfold+1):
+#             closeddict[fold] = {
+#                     'training':{},
+#                     'testing':{}
+#                     }
+#         for label in data.keys():
+#             labeldict = data[label]
+#             photolist = np.array(labeldict['photos'])
+#             photoidx_training, photoidx_testing = ds.calcindices([],[],0,len(photolist), kfold)
+#             for fold in range(1, kfold+1):
+#                 photos_training = list(photolist[photoidx_training[fold-1]])
+#                 photos_testing = list(photolist[photoidx_testing[fold-1]])
+#                 closeddict[fold]['training'][label] = photos_training
+#                 closeddict[fold]['testing'][label] = photos_testing
+# 
+#         return closeddict
+# 

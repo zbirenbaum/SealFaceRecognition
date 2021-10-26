@@ -14,6 +14,7 @@ import numpy as np
 import summary
 import pandas as pd
 from pdb import set_trace as bp
+from scipy import misc
 def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
 
@@ -28,11 +29,39 @@ def printdf(df):
 
 class ImageSet:
 
-    def __init__(self, image_paths, config):
+    def load_images(self):
+        image_paths = self.image_paths
+        images = []
+        mode = 'RGB' if self.config.channels==3 else 'I'
+        print('Prepocessing images ...')
+        lines = [line.split(' ') for line in self.image_paths]
+        for line in lines:
+            print(line)
+            images.append(misc.imread(line[0], mode=mode))
+        print('Done preprocessing images ...\n')
+            
+        images = np.stack(images, axis=0)
+        return images
+    def get_labels(self):
+        lines = [line.strip().split(' ') for line in self.image_paths]
+        labels =[line[1] for line in lines] 
+        return labels
+    
+    def __init__(self, image_paths, config, dataset=None):
         self.image_paths = image_paths
         self.config = config
-        self.images, self.labels = self.parse()
+        #self.images = self.load_images()
+        #self.labels = self.get_labels()
+        self.images, self.labels = self.parseflag()
         self.features = None
+        
+    def parseflag(self):
+        lines = [line.strip().split(' ') for line in self.image_paths]
+        linecheck =[line[0] for line in lines] 
+        for val in linecheck:
+            print(len(val) > 2)
+        #lines = lines[1:] #start at index 1
+        return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
     def parse(self):
         lines = [line.strip().split(' ') for line in self.image_paths]
         #lines = lines[1:] #start at index 1
@@ -40,6 +69,20 @@ class ImageSet:
 
     def extract_features(self, model, batch_size):
         self.features = model.extract_feature(self.images, batch_size)
+# class ImageSet:
+# 
+#     def __init__(self, image_paths, config):
+#         self.image_paths = image_paths
+#         self.config = config
+#         self.images, self.labels = self.parse()
+#         self.features = None
+#     def parse(self):
+#         lines = [line.strip().split(' ') for line in self.image_paths]
+#         #lines = lines[1:] #start at index 1
+#         return utils.preprocess([line[0] for line in lines], self.config, False), [line[1] for line in lines]
+# 
+#     def extract_features(self, model, batch_size):
+#         self.features = model.extract_feature(self.images, batch_size)
 
 def identify(logdir, probe, gallery):
     uq = list(dict.fromkeys(gallery.labels))

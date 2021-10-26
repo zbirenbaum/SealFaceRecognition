@@ -25,9 +25,12 @@
 import pandas as pd
 import os
 import time
+from pandas.core.dtypes.common import validate_all_hashable
 import tensorflow as tf
 import numpy as np
 from argparse import ArgumentParser
+
+from tensorflow.python.framework import dtypes
 import utils
 from network import Network
 import evaluate
@@ -45,13 +48,18 @@ def gen_save_splits(builder, num_trainings):
         testset = builder.testsetbyfold[i]
         save_split(trainset, i, "train")
         save_split(testset, i, "test")
-        
+
 def save_split(dictionary, foldnum, filename):
     directory = "splitsave/" + str(foldnum+1) + "/"
     if not os.path.exists(directory):
         os.makedirs(directory)
     with open(directory + filename + ".json", "w") as outfile:
         json.dump(dictionary, outfile)
+
+def load_open_split(filename):
+    with open("./openset_splits/" + filename + ".json", "r") as infile:
+        js = json.load(infile)
+        return js
 
 def load_split(foldnum, filename):
     with open("splitsave/" + str(foldnum+1) + "/" + filename + ".json", "r") as infile:
@@ -65,10 +73,10 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
 
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
-    trainset.images = preprocess(trainset.images, config, True)
+    trainset.images = preprocess(trainset.images, config)
     gal = trainset.set_list
     gal_set = evaluate.ImageSet(gal, config)   
-    
+
     probeset = utils.Dataset(ddict=testset)
     probeset.images = preprocess(probeset.images, config)
     probes = probeset.set_list
@@ -83,6 +91,8 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
     summary_writer = tf.summary.FileWriter(log_dir, network.graph)
     if config.restore_model:
         network.restore_model(config.restore_model, config.restore_scopes)
+    else:
+        pass
 
     config.epoch_size = int(math.ceil(len(gal)/config.batch_size))
     trainset.start_batch_queue(config, True) 
@@ -114,40 +124,40 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
                 summary_writer.add_summary(sm, global_step=global_step)
 
         # Testing
-        print('Testing...')
-        probe_set.extract_features(network, len(probes))
-        gal_set.extract_features(network, len(gal))
+        # print('Testing...')
+        # probe_set.extract_features(network, len(probes))
+        # gal_set.extract_features(network, len(gal))
 
-        rank1, rank5, df, rankset = evaluate.identify(log_dir, probe_set, gal_set)
-        print(rankset)
-        print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
-        if (epoch == config.num_epochs - 1):
-            f = open(result_file, "a+")
-            f.write('Training Number #{}:\n'.format(counter))
-            for i in range(len(rankset)):
-                f.write('Rank-{}={:.3f} '.format(i+1, rankset[i]))
-            f.write('\n')
-            f.close()
+        # rank1, rank5, df, rankset = evaluate.identify(log_dir, probe_set, gal_set)
+        # print(rankset)
+        # print('rank-1: {:.3f}, rank-5: {:.3f}'.format(rank1[0], rank5[0]))
+        # if (epoch == config.num_epochs - 1):
+        #     f = open(result_file, "a+")
+        #     f.write('Training Number #{}:\n'.format(counter))
+        #     for i in range(len(rankset)):
+        #         f.write('Rank-{}={:.3f} '.format(i+1, rankset[i]))
+        #     f.write('\n')
+        #     f.close()
 
         # Output test result
-        summary = tf.Summary()
-        summary.value.add(tag='identification/rank1', simple_value=rank1[0])
-        summary.value.add(tag='identification/rank5', simple_value=rank5[0])
-        summary_writer.add_summary(summary, global_step)
+        # summary = tf.Summary()
+        # summary.value.add(tag='identification/rank1', simple_value=rank1[0])
+        # summary.value.add(tag='identification/rank5', simple_value=rank5[0])
+        # summary_writer.add_summary(summary, global_step)
 
         # Save the model
         network.save_model(log_dir, global_step)
 
     resultsdf_file = 'log/result_fold_{}.csv'.format(counter)
     df.to_csv(resultsdf_file, index=False)
-    
+
     results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
     shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
 
 def trainAllData(trainingDir, config, config_file):
     trainset = utils.Dataset(ddict=ttsplit.gen_full_dict(trainingDir))
     trainset.images = preprocess(trainset.images, config, True)
-    
+
     # Initialize the network
     network = Network()
     network.initialize(config, trainset.total_num_classes)
@@ -160,7 +170,7 @@ def trainAllData(trainingDir, config, config_file):
 
     config.epoch_size = int(math.ceil(len(trainset.set_list)/config.batch_size))
     trainset.start_batch_queue(config, True) 
-    
+
     ##############################################################################################################
     ############################################## MAIN LOOP #####################################################
     ##############################################################################################################
@@ -195,20 +205,22 @@ def trainAllData(trainingDir, config, config_file):
 def main():
     parser = ArgumentParser(description='Train SealNet', add_help=False)
     parser.add_argument('-c','--config_file', dest='config_file', action='store', 
-        type=str, required=True, help='Path to training configuration file', )
+            type=str, required=True, help='Path to training configuration file', )
     parser.add_argument('-d', '--directory', dest='directory', action='store',
-        type=str, required=True, help='Directory containing subdirectories that contain photos')
+            type=str, required=True, help='Directory containing subdirectories that contain photos')
     parser.add_argument('-s', '--splits', dest='splits', action='store', type=bool,
-        required=False, help='Flag to use existing splits for training and testing data')
+            required=False, help='Flag to use existing splits for training and testing data')
     parser.add_argument('-n', '--number', dest='number', action='store', type=int,
-        required=False, help='Number of times to run the training(default is 3)')
+            required=False, help='Number of times to run the training(default is 3)')
     parser.add_argument('-g', '--generate', dest='generate', action='store', type=bool,
-        required=False, help='generate splits file for later use (default: False)')
-    
+            required=False, help='generate splits file for later use (default: False)')
+    parser.add_argument('-o', '--open_set', dest='openset', action='store', type=bool,
+            required=False, help='load openset splits file (default: False)')
     settings = parser.parse_args()
     dir = settings.directory
     config_file = settings.config_file
     config = utils.import_file(config_file, 'config')
+    print(settings.openset)
     if (settings.number):
         num_trainings = settings.number
         print('Running training {} times'.format(num_trainings))
@@ -220,11 +232,13 @@ def main():
         if not settings.splits:
             if os.path.exists(os.path.expanduser('./splits')):
                 shutil.rmtree(os.path.expanduser('./splits')) 
-        else:
+        elif not settings.openset:
             for i in range(num_trainings):
                 builder.dsetbyfold[i] = load_split(i, "train")
                 builder.testsetbyfold[i] = load_split(i, "test")
-                
+        if settings.openset:
+            builder.dsetbyfold[0] = load_open_split("train")
+            builder.testsetbyfold[0] = load_open_split("validation")
 
         for i in range(num_trainings):
             print('Starting training #{}\n'.format(i+1))
