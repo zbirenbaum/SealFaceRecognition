@@ -17,4 +17,7 @@ result.*
 referencePhotos.txt
 probePhotos.txt
 trainedModel
-
+openset_testing/old
+openset_testing/final_dataset
+openset_testing/__pycache__
+openset_testing/models

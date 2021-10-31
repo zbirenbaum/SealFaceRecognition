@@ -49,23 +49,23 @@ def gen_openset():
     traindict = gen_dict_from_list(trainlist)
     testdict = gen_dict_from_list(testlist)
     valdict = gen_validation(traindict)
-    print(len(photodirs))
-    print(len(traindict.keys()))
-    print(len(testdict.keys()))
-
-    print("trainlist"+str(len(trainlist)))
-    print("testlist"+str(len(testlist)))
+#     print(len(photodirs))
+#     print(len(traindict.keys()))
+#     print(len(testdict.keys()))
+# 
+#     print("trainlist"+str(len(trainlist)))
+#     print("testlist"+str(len(testlist)))
 
     for key in valdict:
-        print(valdict[key])
-        print(traindict[key])
-    
+#        print(valdict[key])
+        if valdict[key][0] in traindict[key]:
+            print("error")
     dictdict = {
                 'train': traindict,
                 'validation': valdict,
                 'test': testdict,
                 }
-    #write_dicts(dictdict)
+    write_dicts(dictdict)
     print('done')
     
 
