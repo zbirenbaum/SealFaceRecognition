@@ -8,7 +8,7 @@ def get_photos_in_dir(path):
                     and not filename.startswith('.')]
     return photolist
 
-def get_photo_dirs(path, exclude):
+def get_photo_dirs(path, exclude=0):
     pathlist = []
     photos_in_dir = get_photos_in_dir(path)
     if len(photos_in_dir) >= exclude:

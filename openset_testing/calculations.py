@@ -1,86 +1,114 @@
-from pdb import set_trace as bp
-import numpy as np
+import pandas as pd
 # Accuracy: Overall, how often is the classifier correct?
 #     (TP+TN)/total = (100+50)/165 = 0.91
 
-class EvalList:
-    def __init__(self,evaldict):
-        self.evals = thresheval(evaldict)
-        self.best = self.get_best()
-        
-    def get_best(self):
-        prev = 0
-        best = None
-        
-        for eval in self.evals:
-            if eval.r1_acc > prev:
-                prev = eval.r1_acc
-                best = eval
-        return best
 
-    def print_best(self):
-        self.best.print() #type: ignore
             
 class Eval:
-    def __init__(self, evaldict, threshold):
+    def __init__(self, evaldict, threshold, rank):
         self.threshold = threshold
-        self.r1 = get_metrics(evaldict,threshold, 1)
-        self.r5 = get_metrics(evaldict,threshold, 5)
-        self.set_r1_metrics()
-        self.set_r5_metrics()
-        self.r1_acc = calc_accuracy(self.r1)
-        self.r5_acc = calc_accuracy(self.r5)
+        self.base_metrics = get_base_metrics(evaldict,threshold, rank)
+        self.set_metrics()
+        if rank == 1:
+            self.r5 = Eval(evaldict, threshold, 5)
+        self.calc_metrics()
+        self.metrics = self.to_dict()
+#        self.r5_metrics = self.r5.to_dict()
         
-    def set_r1_metrics(self):
-        self.r1tp = self.r1[0]
-        self.r1tn = self.r1[1]
-        self.r1fp = self.r1[2]
-        self.r1fn = self.r1[3]
+    def set_metrics(self):
+        self.tp = self.base_metrics[0]
+        self.tn = self.base_metrics[1]
+        self.fp = self.base_metrics[2]
+        self.fn = self.base_metrics[3]
         
-    def set_r5_metrics(self):
-        self.r5tp = self.r5[0]
-        self.r5tn = self.r5[1]
-        self.r5fp = self.r5[2]
-        self.r5fn = self.r5[3]
+    def calc_metrics(self):
+        self.tpr = self.calc_sensitivity() #sensitivity/recall
+        self.fpr = self.calc_false_positive_rate()
+        self.fnr = self.calc_false_negative_rate()
+        self.tnr = self.calc_specificity()
+        self.baseline_accuracy = self.calc_baseline_accuracy()
+        self.accuracy = self.calc_accuracy()
+        self.precision = self.calc_precision()
+        self.f_measure = self.calc_f_measure()
+        
+
+    def to_dict(self):
+        as_dict = {
+                    "TPR": self.tpr, 
+                    "FPR": self.fpr, 
+                    "FNR": self.fnr, 
+                    "TNR": self.tnr,
+                    "Baseline Accuracy": self.baseline_accuracy,
+                    "Accuracy": self.accuracy, 
+                    "Precision": self.precision,
+                    "F-Measure": self.f_measure
+                }
+        return as_dict
+    
+
+
+    def calc_false_positive_rate(self):
+        self.fpr = self.fp/(self.fp+self.tn)
+        return self.fpr
+        
+    def calc_false_negative_rate(self):
+        self.fnr = self.fn/(self.fn+self.tn)
+        return self.fnr
+
+    def calc_specificity(self):
+        #True Negative Rate
+        sensitivity = self.tn/(self.tn+self.fp)
+        return sensitivity
+
+    def calc_baseline_accuracy(self):
+        acc = (self.tn)/(self.tp + self.tn + self.fp + self.fn)
+        return acc
+
+    def calc_accuracy(self):
+        acc = (self.tp + self.tn)/(self.tp + self.tn + self.fp + self.fn)
+        return acc
+    
+    def calc_precision(self): 
+        try:
+            precision = self.tp/(self.tp + self.fp)
+        except:
+            precision = 0
+        return precision
+
+    def calc_sensitivity(self):
+        #true positive rate (self.tpr)
+        #also known as recall
+        sensitivity = self.tp/(self.tp+self.fn)
+        return sensitivity
+    
+    def calc_f_measure(self):
+        try:
+            f_measure = (2*self.tpr * self.precision)/(self.tpr + self.precision)
+        except:
+            return 0
+        return f_measure
+    
+    def to_df(self):
+        return pd.DataFrame(data=[self.to_dict(), self.r5.to_dict()], index=['R1', 'R5'])
         
     def print(self):
         print("THRESHOLD: " + str(self.threshold))
         print("R1 Metrics:")
-        print("True Positive: "  + str(self.r1tp))
-        print("False Positive: " + str(self.r1fp))
-        print("True Negative: "  + str(self.r1tn))
-        print("False Negative: " + str(self.r1fn))
-        print("Accuracy: " + str(self.r1_acc))
+        print("True Positive: "  + str(self.tp))
+        print("False Positive: " + str(self.fp))
+        print("True Negative: "  + str(self.tn))
+        print("False Negative: " + str(self.fn))
+        print("Accuracy: " + str(self.accuracy))
         print("\nR5 Metrics:")
-        print("True Positive: "  + str(self.r5tp))
-        print("False Positive: " + str(self.r5fp))
-        print("True Negative: "  + str(self.r5tn))
-        print("False Negative: " + str(self.r5fn))
-        print("Accuracy: " + str(self.r5_acc))
+        print("True Positive: "  + str(self.r5.tp))
+        print("False Positive: " + str(self.r5.fp))
+        print("True Negative: "  + str(self.r5.tn))
+        print("False Negative: " + str(self.r5.fn))
+        print("Accuracy: " + str(self.r5.accuracy))
         print("\n")
         
-def thresheval(evaldict):
-    eval_array = []
-    for t in np.arange(.0, 1, .02):
-        eval_array.append(Eval(evaldict,t))
-    return eval_array
-#        tup = variable_thresh(evaldict, t)
-#        tpr.append(tup[0])
-#        fpr.append(tup[1])
-#    return np.array(fpr),np.array(tpr)
-
-def get_rank(scores, probelabel, inset):
-    rank = 0
-    if (inset):
-        count = 1
-        while (scores[count - 1][0] != probelabel): 
-            count+=1
-        rank = count
-    else:
-        rank = -1
-    return rank
-
-def get_metrics(evaldict, threshold, rank_cutoff):
+ 
+def get_base_metrics(evaldict, threshold, rank_cutoff):
     tp = 0
     tn = 0
     fp = 0
@@ -103,45 +131,13 @@ def get_metrics(evaldict, threshold, rank_cutoff):
                 fn += 1
     return [tp,tn,fp,fn]
 
-def calc_sensitivity(metric_arr):
-    tp = metric_arr[0]
-    fn = metric_arr[3]
-    sensitivity = tp/(tp+fn)
-    return sensitivity
-    
-def calc_(metric_arr):
-    tp = metric_arr[0]
-    fn = metric_arr[3]
-    sensitivity = tp/(tp+fn)
-    return sensitivity
-
-def calc_baseline_accuracy(metric_arr):
-    tp = metric_arr[0]
-    tn = metric_arr[1]
-    fp = metric_arr[2]
-    fn = metric_arr[3]
-    acc = (tn)/(tp + tn + fp + fn)
-    return acc
-
-def calc_accuracy(metric_arr):
-    tp = metric_arr[0]
-    tn = metric_arr[1]
-    fp = metric_arr[2]
-    fn = metric_arr[3]
-    acc = (tp + tn)/(tp + tn + fp + fn)
-    return acc
-
-def eval_model(evaldict,threshold):
-    #[tp,tn,fp,fn]
-    r1 = get_metrics(evaldict,threshold, 1)
-    r5 = get_metrics(evaldict,threshold, 5) 
-    return r1,r5
-#    r1_acc = calc_accuracy(r1)
-#    r5_acc = calc_accuracy(r5) 
-
-    
-#if inset && > threshold true positive
-#if 
-    # Total TP = (7+2+1) = 10
-    # Total FP = (8+9)+(1+3)+(3+2) = 26
-    # Total FN = (1+3)+(8+2)+(9+3) = 26
+def get_rank(scores, probelabel, inset):
+    rank = 0
+    if (inset):
+        count = 1
+        while (scores[count - 1][0] != probelabel): 
+            count+=1
+        rank = count
+    else:
+        rank = -1
+    return rank

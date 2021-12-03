@@ -1,0 +1,16 @@
+No cached pickle, creating one
+no feature dict found, creating one
+THRESHOLD: 0.98
+R1 Metrics:
+True Positive: 10
+False Positive: 38
+True Negative: 331
+False Negative: 27
+Accuracy: 0.8399014778325123
+
+R5 Metrics:
+True Positive: 12
+False Positive: 38
+True Negative: 331
+False Negative: 25
+Accuracy: 0.8448275862068966

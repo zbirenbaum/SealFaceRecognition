@@ -9,6 +9,7 @@ import os
 # me of the current model for output
 
 fold_number = 1
+ModelName="PrimNet"
 
 name = 'prim_net_fold_' + str(fold_number)
 
@@ -74,13 +75,16 @@ embedding_size = 512
 optimizer = "RMSPROP"
 
 # Number of samples per batch
-batch_size = 64
+#batch_size = 64
+
+batch_size = 16
 
 # Number of batches per epoch
-epoch_size = 20
+#epoch_size = 20
 
 # Number of epochs
-num_epochs = 30
+#num_epochs = 30
+num_epochs = 100
 
 #learning rate strategy
 learning_rate_strategy = 'step'

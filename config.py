@@ -5,6 +5,7 @@ import os
 
 
 ####### INPUT OUTPUT #######
+ModelName="SealNet"
 
 # The folder to save log and model
 log_base_dir = './log/'

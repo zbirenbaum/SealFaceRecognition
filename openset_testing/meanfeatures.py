@@ -3,21 +3,24 @@ import sys
 import inspect
 import facepy
 import pickle
+
+from openset_testing.load_mean_features import load_identify
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir) 
 import pandas as pd
 import numpy as np
 import json
-from pdb import set_trace as bp
+#from pdb import set_trace as bp
 from scipy import spatial
 import operator
+from load_mean_features import load_mean_features load_identify
 
         
 def _find(l, a):
     return [i for (i, x) in enumerate(l) if x == a]
 
-def save_mean_features(set, label_list):
+def save_mean_features(model_name, set, label_list):
     setfeaturesdict = {} 
     uq = label_list 
     setFeaturesList = []
@@ -31,17 +34,12 @@ def save_mean_features(set, label_list):
         setfeaturesdict[i] = {'idx': idx, 'label': uq[i], 'features': individualFeatures}
 #    with open("test.txt", "w") as f:
     #json.dump("test.txt",setfeaturesdict)
-    pickle_obj = open("dicts.pickle","wb")
+    pickle_obj = open(model_name+"/cache/features.pickle","wb")
     pickle.dump(setfeaturesdict, pickle_obj)
     pickle_obj.close()
+    return setfeaturesdict
     #f.close()
     #return setFeaturesList, setfeaturesdict
-def load_mean_features():
-    pickle_obj = open("dicts.pickle", "rb")
-    dict = pickle.load(pickle_obj)
-    pickle_obj.close()
-    return dict
-   # print(setFeaturesList)
     
 def get_mean_features(set, label_list):
     setfeaturesdict = {} 
@@ -56,17 +54,21 @@ def get_mean_features(set, label_list):
         setFeaturesList.append(individualFeatures)
         setfeaturesdict[i] = {'idx': idx, 'label': uq[i], 'features': individualFeatures}
 
-    bp()
     return setFeaturesList, setfeaturesdict
 
-def save_identify(evaldict):
-    pickle_obj = open("identify.pickle","wb")
+def save_identify(model_name, evaldict):
+    pickle_obj = open(model_name+"/cache/id.pickle","wb")
     pickle.dump(evaldict, pickle_obj)
     pickle_obj.close()
     
-def identify(probe, gallery):
+def identify(model_name, probe, gallery):
     uq = list(dict.fromkeys(gallery.labels))
-    galfeaturesdict = load_mean_features()
+    try:
+        galfeaturesdict = load_mean_features(model_name)
+    except:
+        print("no feature dict found, creating one")
+        galfeaturesdict = save_mean_features(model_name, gallery, uq)
+        
     evaldict = {}
     for i in range(len(probe.labels)):
         probelabel = probe.labels[i]
@@ -80,13 +82,7 @@ def identify(probe, gallery):
             prediction[uq[j]] = 1-spatial.distance.cosine(probe.features[i], galfeaturesdict[j]['features'])
         
         evaldict[probelabel]['scores'] = sorted(prediction.items(), key=operator.itemgetter(1), reverse=True)
-    save_identify(evaldict)
+    save_identify(model_name, evaldict)
     return evaldict
-
-def load_identify():
-    pickle_obj = open("identify.pickle", "rb")
-    dict = pickle.load(pickle_obj)
-    pickle_obj.close()
-    return dict
 
 

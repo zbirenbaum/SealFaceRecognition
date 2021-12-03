@@ -66,6 +66,7 @@ def load_split(foldnum, filename):
         return json.load(infile)
 
 def trainKFold(config, config_file, counter, trainset, testset=None):
+    model_name = config.ModelName
     # Create a new result file
     if counter == 1:
         f = open(result_file, "w+")
@@ -87,7 +88,8 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
     network.initialize(config, trainset.total_num_classes)
 
     # Initalization log and summary for running
-    log_dir = utils.create_log_dir(config, config_file, 'SealNet_Fold{}'.format(counter))
+    log_dir = utils.create_log_dir(config, config_file, '{}{}'.format(model_name, counter))
+    log_dir = utils.create_log_dir(config, config_file, '{}{}'.format(model_name, counter))
     summary_writer = tf.summary.FileWriter(log_dir, network.graph)
     if config.restore_model:
         network.restore_model(config.restore_model, config.restore_scopes)
@@ -148,11 +150,11 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
         # Save the model
         network.save_model(log_dir, global_step)
 
-    resultsdf_file = 'log/result_fold_{}.csv'.format(counter)
-    df.to_csv(resultsdf_file, index=False)
+    #resultsdf_file = 'log/result_fold_{}.csv'.format(counter)
+    #df.to_csv(resultsdf_file, index=False)
 
-    results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
-    shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
+    #results_copy = os.path.join('log/result_{}_{}.txt'.format(config.model_version, counter))
+    #shutil.copyfile(os.path.join(log_dir,'result.txt'), results_copy)
 
 def trainAllData(trainingDir, config, config_file):
     trainset = utils.Dataset(ddict=ttsplit.gen_full_dict(trainingDir))

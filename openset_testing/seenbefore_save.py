@@ -2,20 +2,13 @@
 import os
 import sys
 import inspect
+import pandas as pd
 
-currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir) 
-from network import Network
-import utils
-import threshold_save as evaluateopen
-import threshold_save as vt
-import meanfeatures as mf
+import argparse
 import json
-from scipy.interpolate import make_interp_spline
 import matplotlib.pyplot as plt
-import numpy as np
-import calculations as calc
+import thresheval as t_eval
+from load_mean_features import load_identify, load_mean_features
 
 class ImageSet:
     def __init__(self, image_paths, config, probe=False):
@@ -61,33 +54,75 @@ def get_model_dirs(model_dir):
     return modelslist
 
 
-def main():
+def load_from_cache(model_name):
+        evaldict = load_identify(model_name)
+        return evaldict
 
-    model_dir = './models/'
+def create_and_cache(model_name):
+    currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    parentdir = os.path.dirname(currentdir)
+    sys.path.insert(0, parentdir) 
+    from network import Network
+    import meanfeatures as mf
+    import utils
+    
     network = Network()
     config_file = '../config.py'
     config = utils.import_file(config_file, 'config')
-    
-    modelslist = get_model_dirs(model_dir)  
-    model_name = modelslist[0]
-#    model_name = model_dir + 'graph.meta'
     network.load_model(model_name)
     
+    print("No cached pickle, creating one")
+
     gal = json_to_list('../openset_splits/train.json')
     probes = json_to_list('../openset_splits/validation.json')
-    # TODO Add in openset   
+# TODO Add in openset   
     probes.extend(json_to_list('../openset_splits/test.json'))
 
     gal_set = ImageSet(gal, config)
     probe_set = ImageSet(probes, config)
-    
+
     probe_set.extract_features(network, len(probes))
     gal_set.extract_features(network, len(gal))
+    evaldict = mf.identify(model_name,probe_set, gal_set)
+    return evaldict
     
-    #evaldict = mf.identify(probe_set, gal_set)
-    evaldict = mf.load_identify()
-    el = calc.EvalList(evaldict) 
-    el.print_best()
+def main():
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument("-d", "--dir", help="Model directory e.g. models/SealNet1")
+   # parser.add_argument("-n", "--name", help="Model name e.g. sealnet")
+    #args=parser.parse_args()
+    #model_dir = args.dir
+   # model_name = args.name
+#    model_name = model_dir + 'graph.meta'
+    
+
+    result_dict = {}
+    for model_dir in os.listdir('models/'):
+        modelslist = get_model_dirs('models/'+model_dir)  
+        #print(modelslist)
+        model_name = modelslist[0]
+        
+        cache = model_dir+"/"+model_name+"/"+"cache"
+        evaldict=None
+        
+        try:
+            evaldict = load_from_cache(model_name)
+        except:
+            evaldict = create_and_cache(model_name)
+            
+        el = t_eval.EvalList(evaldict) 
+        best = el.get_best()
+        print(model_name + ': ' + str(best.threshold)) #type: ignore
+        result_dict[model_dir] = best.to_df() #type: ignore
+    result_dict['Difference']=result_dict['SealNet']-result_dict['PrimNet']
+    comparison_df = pd.concat(result_dict.values(), axis=0, keys=result_dict.keys())
+    comparison_df = comparison_df.reindex(['SealNet', 'PrimNet', 'Difference'], level=0)
+    #comparison_df["Difference"] = comparison_df.SealNet.sub(comparison_df.PrimNet)
+    print(comparison_df)
+    print("Writing df to comparison.xlsx")
+    comparison_df.to_excel("comparison.xlsx")
+    print("Written")
+    
     
     
     
