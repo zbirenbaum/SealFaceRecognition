@@ -65,8 +65,11 @@ def gen_openset():
                 'validation': valdict,
                 'test': testdict,
                 }
-    write_dicts(dictdict)
-    print('done')
+    print(len(dictdict['train'].keys()))
+    print(len(dictdict['test'].keys()))
+    print(len(dictdict['validation'].keys()))
+    #write_dicts(dictdict)
+    #print('done')
     
 
 gen_openset() 

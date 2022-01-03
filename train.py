@@ -23,6 +23,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import pandas as pd
+import time
 import os
 import time
 from pandas.core.dtypes.common import validate_all_hashable
@@ -246,7 +247,13 @@ def main():
             print('Starting training #{}\n'.format(i+1))
             trainset = builder.dsetbyfold[i]
             testset = builder.testsetbyfold[i]
+            start = time.time()
             trainKFold(config, config_file, i+1, trainset, testset)
+            end = time.time()
+            with open("timerecord.txt", "a+") as f:
+                f.write("Run "+ str(i+1) + ": " + str(end-start))
+
+        
 
     else:
         trainAllData(dir, config, config_file)
