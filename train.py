@@ -72,7 +72,7 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
     if counter == 1:
         f = open(result_file, "w+")
         f.close()
-
+    
     # In training, we consider training set to be gallery and testing set to be probes (Closed Set Identification)
     trainset = utils.Dataset(ddict=trainset)
     trainset.images = preprocess(trainset.images, config)
