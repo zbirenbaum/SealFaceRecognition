@@ -24,27 +24,28 @@ If you are using the AWS cluster, it is already installed for you.
 ## Data
 
 SealNet is a face recognition software that is trained using photos.
-As of now, the software
-expects files of png, jpg and jpeg formats.
+As of now, the software expects files of png, jpg and jpeg formats.
 The directories must be structured as follows:
 ```
 .
 ├── SealFaceRecognition
- 		├───data
-    		├──processed
-    		├──unprocessed 
-					 ├──Your_Dataset
-					 │		├── seal_1
-					 │ 		│   ├── photo1.png
-					 │ 		│   └── photo2.png
-					 │ 		├── seal_2
-					 │ 		│   ├── photo1.jpg
-					 │ 		│   └── photo2.jpg
-					 │ 		└── seal_3
-					 │ 				├── photo1.png
-					 │ 				├── photo2.png
-				   │			  └── photo3.jpg
-					 ├──Your_Other_Dataset
+    ├───data
+        ├──processed
+    	├──unprocessed 
+	   ├──Your_Dataset
+	      ├── seal_1
+	      │   ├── photo1.png
+	      │   └── photo2.png
+	      ├── seal_2
+	      │   ├── photo1.jpg
+	      │   └── photo2.jpg
+	      └── seal_3
+		  ├── photo1.png
+		  ├── photo2.png
+		  └── photo3.jpg
+	   ├──Your_Other_Dataset
+
+
 ```
 In the ./data folder, there should be a processed and an unprocessed folder. All initial data should be placed in the unprocessed folder. From the SealFaceRecognition root directory run `python zprocess.py` which will create processed counterparts in 'data/processed' for each of the datasets contained in unprocessed. We have included our dataset as an example under 'final_dataset'. To run the model on this example, simply move final_dataset/Final_Data to data/unprocessed/
 We will show you how to upload your data to AWS in step 3 of setting up SEALNET
