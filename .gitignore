@@ -9,8 +9,7 @@ photos/*
 splits/
 unused/
 log/
-data*
-data
+data_metrics*
 modeltesting
 py3*
 result.*
@@ -21,3 +20,9 @@ openset_testing/old
 openset_testing/final_dataset
 openset_testing/__pycache__
 openset_testing/models
+timerecord.txt
+final_dataset
+final_dataset/*
+data/unprocessed/*
+data/processed/*
+timerecord.txt
