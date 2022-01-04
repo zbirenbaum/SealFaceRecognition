@@ -31,19 +31,19 @@ The directories must be structured as follows:
 ├── SealFaceRecognition
     ├───data
         ├──processed
-    	├──unprocessed 
-	   ├──Your_Dataset
-	      ├── seal_1
-	      │   ├── photo1.png
-	      │   └── photo2.png
-	      ├── seal_2
-	      │   ├── photo1.jpg
-	      │   └── photo2.jpg
-	      └── seal_3
-		  ├── photo1.png
-		  ├── photo2.png
-		  └── photo3.jpg
-	   ├──Your_Other_Dataset
+        ├──unprocessed 
+           ├──Your_Dataset
+              ├── seal_1
+              │   ├── photo1.png
+              │   └── photo2.png
+              ├── seal_2
+              │   ├── photo1.jpg
+              │   └── photo2.jpg
+              └── seal_3
+                  ├── photo1.png
+                  ├── photo2.png
+                  └── photo3.jpg
+            ├──Your_Other_Dataset
 
 
 ```
