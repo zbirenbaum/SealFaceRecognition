@@ -36,8 +36,8 @@ def gen_openset():
     photodirs_eligable = dh.get_photo_dirs('final_dataset/processed', exclude=5)
     trainlist= []
     testlist= []
-    print(len(photodirs_eligable))
-    print(len(photodirs))
+    # print(len(photodirs_eligable))
+    # print(len(photodirs))
     for photodir in photodirs:
         if photodir not in photodirs_eligable:
             testlist.append(photodir)

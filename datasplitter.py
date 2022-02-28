@@ -23,11 +23,6 @@ def calcindices(trainarr, testarr, counter, numlabels, kfold, maxnumlabels=None)
         trainarr, testarr = calcindices(trainarr, testarr, counter+1, numlabels, kfold, maxnumlabels)
     return trainarr, testarr
 
-
-
-
-
-
 def split_testset(settype, testingdict):
     if settype == 'closed':
         for label in testingdict.keys():

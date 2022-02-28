@@ -62,6 +62,11 @@ def load_open_split(filename):
         js = json.load(infile)
         return js
 
+def load_open_split_fold(i, filename):
+    with open("./openset_splits/" + str(i+1) + "/" + filename + ".json", "r") as infile:
+        js = json.load(infile)
+        return js
+
 def load_split(foldnum, filename):
     with open("splitsave/" + str(foldnum+1) + "/" + filename + ".json", "r") as infile:
         return json.load(infile)
@@ -77,7 +82,7 @@ def trainKFold(config, config_file, counter, trainset, testset=None):
     trainset = utils.Dataset(ddict=trainset)
     trainset.images = preprocess(trainset.images, config)
     gal = trainset.set_list
-    gal_set = evaluate.ImageSet(gal, config)   
+    gal_set = evaluate.ImageSet(gal, config)
 
     probeset = utils.Dataset(ddict=testset)
     probeset.images = preprocess(probeset.images, config)
@@ -239,11 +244,10 @@ def main():
             for i in range(num_trainings):
                 builder.dsetbyfold[i] = load_split(i, "train")
                 builder.testsetbyfold[i] = load_split(i, "test")
-        if settings.openset:
-            builder.dsetbyfold[0] = load_open_split("train")
-            builder.testsetbyfold[0] = load_open_split("validation")
-
-        for i in range(num_trainings):
+        for i in range(1, num_trainings):
+            if settings.openset:
+                builder.dsetbyfold[i] = load_open_split_fold(i, "train")
+                builder.testsetbyfold[i] = load_open_split_fold(i, "validation")
             print('Starting training #{}\n'.format(i+1))
             trainset = builder.dsetbyfold[i]
             testset = builder.testsetbyfold[i]

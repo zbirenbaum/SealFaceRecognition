@@ -3,7 +3,7 @@ import pandas as pd
 #     (TP+TN)/total = (100+50)/165 = 0.91
 
 
-            
+
 class Eval:
     def __init__(self, evaldict, threshold, rank):
         self.threshold = threshold
@@ -14,13 +14,13 @@ class Eval:
         self.calc_metrics()
         self.metrics = self.to_dict()
 #        self.r5_metrics = self.r5.to_dict()
-        
+
     def set_metrics(self):
         self.tp = self.base_metrics[0]
         self.tn = self.base_metrics[1]
         self.fp = self.base_metrics[2]
         self.fn = self.base_metrics[3]
-        
+
     def calc_metrics(self):
         self.tpr = self.calc_sensitivity() #sensitivity/recall
         self.fpr = self.calc_false_positive_rate()
@@ -30,27 +30,27 @@ class Eval:
         self.accuracy = self.calc_accuracy()
         self.precision = self.calc_precision()
         self.f_measure = self.calc_f_measure()
-        
+
 
     def to_dict(self):
         as_dict = {
-                    "TPR": self.tpr, 
-                    "FPR": self.fpr, 
-                    "FNR": self.fnr, 
-                    "TNR": self.tnr,
-                    "Baseline Accuracy": self.baseline_accuracy,
-                    "Accuracy": self.accuracy, 
-                    "Precision": self.precision,
-                    "F-Measure": self.f_measure
+                "TPR": self.tpr, 
+                "FPR": self.fpr, 
+                "FNR": self.fnr, 
+                "TNR": self.tnr,
+                "Baseline Accuracy": self.baseline_accuracy,
+                "Accuracy": self.accuracy, 
+                "Precision": self.precision,
+                "F-Measure": self.f_measure
                 }
         return as_dict
-    
+
 
 
     def calc_false_positive_rate(self):
         self.fpr = self.fp/(self.fp+self.tn)
         return self.fpr
-        
+
     def calc_false_negative_rate(self):
         self.fnr = self.fn/(self.fn+self.tn)
         return self.fnr
@@ -67,7 +67,7 @@ class Eval:
     def calc_accuracy(self):
         acc = (self.tp + self.tn)/(self.tp + self.tn + self.fp + self.fn)
         return acc
-    
+
     def calc_precision(self): 
         try:
             precision = self.tp/(self.tp + self.fp)
@@ -80,17 +80,17 @@ class Eval:
         #also known as recall
         sensitivity = self.tp/(self.tp+self.fn)
         return sensitivity
-    
+
     def calc_f_measure(self):
         try:
             f_measure = (2*self.tpr * self.precision)/(self.tpr + self.precision)
         except:
             return 0
         return f_measure
-    
+
     def to_df(self):
         return pd.DataFrame(data=[self.to_dict(), self.r5.to_dict()], index=['R1', 'R5'])
-        
+
     def print(self):
         print("THRESHOLD: " + str(self.threshold))
         print("R1 Metrics:")
@@ -106,8 +106,8 @@ class Eval:
         print("False Negative: " + str(self.r5.fn))
         print("Accuracy: " + str(self.r5.accuracy))
         print("\n")
-        
- 
+
+
 def get_base_metrics(evaldict, threshold, rank_cutoff):
     tp = 0
     tn = 0
@@ -117,7 +117,7 @@ def get_base_metrics(evaldict, threshold, rank_cutoff):
         inset = probeinfo['inset']    
         scores = probeinfo['scores']    
         highscore = float(scores[0][1])
-            
+
         if not inset:
             if highscore < threshold:
                 tn += 1
