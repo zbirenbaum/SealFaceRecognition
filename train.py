@@ -244,7 +244,7 @@ def main():
             for i in range(num_trainings):
                 builder.dsetbyfold[i] = load_split(i, "train")
                 builder.testsetbyfold[i] = load_split(i, "test")
-        for i in range(1, num_trainings):
+        for i in range(num_trainings):
             if settings.openset:
                 builder.dsetbyfold[i] = load_open_split_fold(i, "train")
                 builder.testsetbyfold[i] = load_open_split_fold(i, "validation")
