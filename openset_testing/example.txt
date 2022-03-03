@@ -1,0 +1,10 @@
+3 Seals
+3 Probes
+threshold of .66
+
+Probe 1: rank 1 predection of seal 1: Similarity score of >=.66- True Positive
+Probe 2: rank 5 predection of seal 2: Similarity score of >=.66 - True Positive at R5 and False Negative Rank 1
+Probe 3: rank 1 predection of seal 3: Similarity score of .5 - FN at Any ran
+
+TP + TN/TP+TN+FN+FP
+

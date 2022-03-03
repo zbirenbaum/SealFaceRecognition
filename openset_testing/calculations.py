@@ -13,7 +13,6 @@ class Eval:
             self.r5 = Eval(evaldict, threshold, 5)
         self.calc_metrics()
         self.metrics = self.to_dict()
-#        self.r5_metrics = self.r5.to_dict()
 
     def set_metrics(self):
         self.tp = self.base_metrics[0]
@@ -52,13 +51,13 @@ class Eval:
         return self.fpr
 
     def calc_false_negative_rate(self):
-        self.fnr = self.fn/(self.fn+self.tn)
+        self.fnr = 1-self.fpr
         return self.fnr
 
     def calc_specificity(self):
         #True Negative Rate
-        sensitivity = self.tn/(self.tn+self.fp)
-        return sensitivity
+        specificity = self.tn/(self.tn+self.fp)
+        return specificity
 
     def calc_baseline_accuracy(self):
         acc = (self.tn)/(self.tp + self.tn + self.fp + self.fn)
@@ -69,23 +68,24 @@ class Eval:
         return acc
 
     def calc_precision(self): 
-        try:
-            precision = self.tp/(self.tp + self.fp)
-        except:
-            precision = 0
+        if self.tp == 0:
+            return 0
+        precision = self.tp/(self.tp + self.fp)
         return precision
 
     def calc_sensitivity(self):
         #true positive rate (self.tpr)
         #also known as recall
+        if self.tp == 0:
+            return 0
         sensitivity = self.tp/(self.tp+self.fn)
+        #if this errors, threshold is too high
         return sensitivity
 
     def calc_f_measure(self):
-        try:
-            f_measure = (2*self.tpr * self.precision)/(self.tpr + self.precision)
-        except:
+        if self.tp == 0:
             return 0
+        f_measure = (2*self.tpr * self.precision)/(self.tpr + self.precision)
         return f_measure
 
     def to_df(self):
@@ -99,12 +99,16 @@ class Eval:
         print("True Negative: "  + str(self.tn))
         print("False Negative: " + str(self.fn))
         print("Accuracy: " + str(self.accuracy))
+        print("Precision:" + str(self.precision))
+        print("F1-Score: " + str(self.f_measure))
         print("\nR5 Metrics:")
         print("True Positive: "  + str(self.r5.tp))
         print("False Positive: " + str(self.r5.fp))
         print("True Negative: "  + str(self.r5.tn))
         print("False Negative: " + str(self.r5.fn))
         print("Accuracy: " + str(self.r5.accuracy))
+        print("Precision:" + str(self.r5.precision))
+        print("F1-Score: " + str(self.r5.f_measure))
         print("\n")
 
 
@@ -114,10 +118,10 @@ def get_base_metrics(evaldict, threshold, rank_cutoff):
     fp = 0
     fn = 0
     for probelabel, probeinfo in evaldict.items():
+        probelabel = probelabel[0:probelabel.index('+')]
         inset = probeinfo['inset']    
         scores = probeinfo['scores']    
         highscore = float(scores[0][1])
-
         if not inset:
             if highscore < threshold:
                 tn += 1
