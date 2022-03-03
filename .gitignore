@@ -20,6 +20,8 @@ openset_testing/old
 openset_testing/final_dataset
 openset_testing/__pycache__
 openset_testing/models
+openset_testing/models_backup
+openset_testing/models_by_fold
 timerecord.txt
 final_dataset
 final_dataset/*

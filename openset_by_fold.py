@@ -4,7 +4,7 @@ import json
 import os
 import random
 
-COMMON_THRESH = .5
+COMMON_THRESH = .6
 FOLDS = 5
 
 def write_dicts(splits, fold):
@@ -26,11 +26,14 @@ def gen_dict_from_list(lst):
         ddict[photodir] = dh.get_photos_in_dir(photodir)
     return ddict
 
-def gen_validation(src):
+def gen_validation(src, folds):
     valdict = {}
     for key in src: 
-        idx = random.randint(0, len(src[key])-1)
-        valdict[key] = [src[key].pop(idx)]
+        n_photos=len(src[key])
+        n_remove = n_photos//folds
+        for _ in range(n_remove):
+            idx = random.randint(0, len(src[key])-1)
+            valdict[key] = [src[key].pop(idx)]
     return valdict
 
 def get_random_dirs(photodirs, n_training_dirs):
@@ -40,7 +43,7 @@ def get_random_dirs(photodirs, n_training_dirs):
         rand_dirs.append(photodirs.pop(rand))
     return rand_dirs
 
-def gen_train_list(photodirs,divisor):
+def gen_train_list(photodirs, divisor):
     trainlist=[]
     n_training_dirs = len(photodirs)//divisor
     trainlist = get_random_dirs(photodirs, n_training_dirs)
@@ -54,18 +57,16 @@ def gen_train_test():
         if photodir not in photodirs_eligable:
             testlist.append(photodir)
     trainlist = gen_train_list(photodirs_eligable, 2)
-    testlist.extend(photodirs_eligable.copy())
+    testlist = [photodir for photodir in photodirs if photodir not in trainlist]
+    testlist.extend(photodirs_eligable)
     return gen_dict_from_list(trainlist), gen_dict_from_list(testlist)
+#    testprobe.extend(gen_validation(testgal))
+
 
 def validate_split(traindict, testdict, valdict):
     for key in valdict: #make sure no photos in val set still in training
         if valdict[key][0] in traindict[key]:
             print("Error: Photo in val set also in training")
-            exit(1)
-
-    for key in testdict.keys(): #make sure no seals in test set are in train
-        if key in traindict.keys():
-            print("Error: Seal in test set also in train")
             exit(1)
 
 def get_intersections(folds_list):
@@ -89,27 +90,35 @@ def validate_folds(folds_list):
         print("Fold-" + str(idx+1) + " max common train dirs with all folds: " + str(max(list)) + "/" + str(len(folds_list[idx]['train'])) + " = " + str(foldmax))
     return maximum
 
-def gen_openset(nfold):
+def gen_openset(nfold, method="kfold"):
     fold_list=[]
     for _ in range(nfold):
         traindict, testdict = gen_train_test()
-        valdict = gen_validation(traindict)
+        valdict = gen_validation(traindict, nfold)
         splits = {
                 'train': traindict,
                 'validation': valdict,
-                'test': testdict,
+                'test': testdict
                 }
         fold_list.append(splits.copy())
     return fold_list
 
-fold_list = gen_openset(FOLDS)
-maximum = validate_folds(fold_list)
-while(maximum > COMMON_THRESH):
-    print("Max: " + str(maximum) + " over alloted % " + str(COMMON_THRESH) + ", rerunning...")
+def gen_splits():
     fold_list = gen_openset(FOLDS)
     maximum = validate_folds(fold_list)
+    while(maximum > COMMON_THRESH):
+        print("Max: " + str(maximum) + " over alloted % " + str(COMMON_THRESH) + ", rerunning...")
+        fold_list = gen_openset(FOLDS)
+        maximum = validate_folds(fold_list)
+    fold_counter = 1
+    for splits in fold_list:
+        write_dicts(splits, fold_counter)
+        fold_counter = fold_counter+1
+def count_photos():
+    photodirs_eligable = dh.get_photo_dirs('final_dataset/processed', exclude=1)
+    sum = 0
+    for photodir in photodirs_eligable:
+        sum += len(dh.get_photos_in_dir(photodir))
+    print(sum)
 
-fold_counter = 1
-for splits in fold_list:
-    write_dicts(splits, fold_counter)
-    fold_counter = fold_counter+1
+gen_splits()

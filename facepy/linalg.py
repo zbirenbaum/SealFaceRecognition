@@ -27,18 +27,18 @@ import numpy as np
 
 # normalize one dimension of X as vectors.
 def normalize(x, ord=None, axis=None, epsilon=10e-12):
-	if axis is None:
-		axis = len(x.shape) - 1
-	norm = np.linalg.norm(x, ord=None, axis=axis, keepdims=True)
-	x = x / (norm + epsilon)
-	return x
+    if axis is None:
+        axis = len(x.shape) - 1
+    norm = np.linalg.norm(x, ord=None, axis=axis, keepdims=True)
+    x = x / (norm + epsilon)
+    return x
 
 def rc_indices(x, stack=True):
-	r,c = x.shape
-	# rows = np.repeat(np.arange(r)[:,None], c, axis=1)
-	# cols = np.repeat(np.arange(c)[None,:], r, axis=0)
-	rows, cols = np.meshgrid(np.arange(r), np.arange(c), indexing='ij')
-	if stack:
-		return np.stack([rows, cols], axis=2)
-	else:
-		return rows, cols
+    r,c = x.shape
+    # rows = np.repeat(np.arange(r)[:,None], c, axis=1)
+    # cols = np.repeat(np.arange(c)[None,:], r, axis=0)
+    rows, cols = np.meshgrid(np.arange(r), np.arange(c), indexing='ij')
+    if stack:
+        return np.stack([rows, cols], axis=2)
+    else:
+        return rows, cols
