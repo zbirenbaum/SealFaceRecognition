@@ -6,6 +6,7 @@ import pandas as pd
 
 class Eval:
     def __init__(self, evaldict, threshold, rank):
+        self.rank = rank
         self.threshold = threshold
         self.base_metrics = get_base_metrics(evaldict,threshold, rank)
         self.set_metrics()
@@ -31,7 +32,7 @@ class Eval:
         self.f_measure = self.calc_f_measure()
 
 
-    def to_dict(self):
+    def get_dict(self):
         as_dict = {
                 "TPR": self.tpr, 
                 "FPR": self.fpr, 
@@ -40,18 +41,20 @@ class Eval:
                 "Baseline Accuracy": self.baseline_accuracy,
                 "Accuracy": self.accuracy, 
                 "Precision": self.precision,
-                "F-Measure": self.f_measure
+                "F-Measure": self.f_measure,
+                "Threshold": self.threshold
                 }
         return as_dict
 
-
+    def to_dict(self):
+        return self.get_dict()
 
     def calc_false_positive_rate(self):
         self.fpr = self.fp/(self.fp+self.tn)
         return self.fpr
 
     def calc_false_negative_rate(self):
-        self.fnr = 1-self.fpr
+        self.fnr = 1-self.tpr
         return self.fnr
 
     def calc_specificity(self):

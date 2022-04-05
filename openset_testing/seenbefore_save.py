@@ -119,9 +119,9 @@ def main():
     comparison_df = comparison_df.reindex(['SealNet', 'PrimNet', 'Difference'], level=0)
     #comparison_df["Difference"] = comparison_df.SealNet.sub(comparison_df.PrimNet)
     print(comparison_df)
-    print("Writing df to comparison.xlsx")
-    comparison_df.to_excel("comparison.xlsx")
-    print("Written")
+    # print("Writing df to comparison.xlsx")
+    # comparison_df.to_excel("comparison.xlsx")
+    # print("Written")
     
     
     

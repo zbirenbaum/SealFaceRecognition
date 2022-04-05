@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+from six import iteritems
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import tensorflow as tf
 import sys
 import inspect
 import pandas as pd
@@ -10,6 +13,7 @@ import json
 import matplotlib.pyplot as plt
 import thresheval as t_eval
 from load_mean_features import load_identify, load_mean_features
+import copy
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -100,19 +104,22 @@ def get_best(model, fold, do_cache):
     el = t_eval.EvalList(evaldict)
     return el
 
-def main():
-    # for model_dir in os.listdir('models_by_fold/'): #PrimNet or SealNet
-    # models_folds = sorted(get_model_dirs('models_by_fold/'+model_dir))
-    models = []
-    for i in range(2,6):
-        prefix = 'models_by_fold/SealNet/SealNet' + str(i) + "/"
-        model=get_model_dirs(prefix)[0]
-        el = get_best(model,1,do_cache=True)
-        best = el.find_best()
-        best.print()
-    # models = sorted(models)
-    # for model in models:
-    #     get
-    #     el = 
-if __name__ == "__main__":
-    main()
+def run_eval(override=False):
+    best_by_fold_by_model= {}
+    if not override:
+        model_dirs = sorted(os.listdir('models_by_fold/'), reverse=True)
+    else:
+        model_dirs = override
+    for model_dir in model_dirs:
+        best_dict = {}
+        models_folds = sorted(get_model_dirs('models_by_fold/'+model_dir))
+        counter = 0
+        for fold in models_folds:
+            model=get_model_dirs(fold)[0]
+            el = get_best(model,1,do_cache=True)
+            best = el.find_best()
+            best_dict[counter+1] = best
+            counter += 1
+        best_by_fold_by_model[model_dir] = best_dict.copy()
+    return best_by_fold_by_model
+
