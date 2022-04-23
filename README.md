@@ -21,6 +21,9 @@ https://www.python.org/downloads/release/python-379/.
 
 If you are using the AWS cluster, it is already installed for you.
 
+You will also need to have Visual Studio Code installed. If you do not have VS Code, you can download it from here:
+https://code.visualstudio.com/download
+
 ## Data
 
 SealNet is a face recognition software that is trained using photos.
@@ -122,15 +125,28 @@ The AWS instance has python 3.7 as the global python3 version.
 run `./py37/bin/python3 -m pip install --upgrade pip` to update pip and run the previous command again.
 When you are done with the virtual environment, run `deactivate`
 
+## Setting up VS Code 
+1. Open Terminal in VS Code by clicking the Terminal button.
+2. Copy your rsa_file into .ssh folder:
+```
+cp ~/Downloads/kingram_id_rsa.txt ~/.ssh/
+```
+3. Install remote-ssh extension on VS Code: you can do so by clicking on the 4-square icon on the left sidebar and search for Remote - SSH. Then click install.
+4. Then Open the VS Code's command palette by doing Command-Shift-P and search for Remote - SSH: Open SSH Configuration File and paste the following into the config file:
+```
+Host gpu-1.colgate.edu
+    HostName gpu-1.colgate.edu
+    User kingram
+    IdentityFile ~/.ssh/kingram_id_rsa.txt
+    IdentitiesOnly yes
+```
+
 ## Accessing SEALNET for returning user
 
 1. Start the aws instance by visiting http://hpc-aws-launcher.colgate.edu/ and clicking start.
-2. Open a new terminal and connect to AWS by running `cd ~/Downloads/` 
-and  `ssh -i kingram_id_rsa.txt kingram@gpu-1.colgate.edu` and click yes if prompted.
-NOTE: If you try to log in to AWS and you encounter an error that says: WARNING: UNPROTECTED PRIVATE KEY FILE! then run this command `chmod 400 kingram_id_rsa.txt` in the Downloads folder to change permissions on your key.
-3. Go to your SealNet workspace by running
-`cd /data/kingram_workspace/SealFaceRecognition` 
-4. Checking for the latest version of the software by running `git pull` 
+2. Open VS Code, then open the Terminal on VS Code by clicking Terminal. Connect to the AWS server by clicking the icon >< in the bottom right of VS Code, then choose "Connect to Host", and click on "gpu-1.colgte.edu"
+3. Navigate to your SealNet workspace in the folder /data/kingram_workspace/SealFaceRecognition.
+4. On the terminal, checking for the latest version of the software by running `git pull` 
 5. **[ONLY DO THIS STEP IF YOU ARE TRAINING WITH NEW DATA]** Run `sh ./clean.sh` and then check step 3 of Setting up SEALNET for new user to upload new training and probe photos.
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
 7. Run `source ../cuda.sh`  
