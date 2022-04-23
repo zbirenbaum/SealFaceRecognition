@@ -147,7 +147,7 @@ Host gpu-1.colgate.edu
 2. Open VS Code, then open the Terminal on VS Code by clicking Terminal. Connect to the AWS server by clicking the icon >< in the bottom right of VS Code, then choose "Connect to Host", and click on "gpu-1.colgte.edu"
 3. Navigate to your SealNet workspace in the folder /data/kingram_workspace/SealFaceRecognition.
 4. On the terminal, checking for the latest version of the software by running `git pull` 
-5. **[ONLY DO THIS STEP IF YOU ARE TRAINING WITH NEW DATA]** Run `sh ./clean.sh` and then check step 3 of Setting up SEALNET for new user to upload new training and probe photos.
+5. **[ONLY DO THIS STEP IF YOU ARE TRAINING WITH NEW DATA]** Run `sh ./clean.sh`, this will delete all training and probe folders on the AWS cluster. Then you can drag your training folder from your local laptop into the data/unprocessed/train folder on the AWS cluster. Likewise, drag your probe folder from your local laptop into the data/unprocessed/probe folder on the AWS cluster.
 6. Activate your virtual environment by running `source ./py37/bin/activate`.
 7. Run `source ../cuda.sh`  
 
@@ -163,12 +163,7 @@ Alternatively, you can also run `sh ./train.sh 5`
 to run a 5 fold cross-validation on your data.
 
 ## Using SEALNET for prediction
-1. If you have uploaded the probe photos, you can ignore this step.
-Otherwise, open a SEPARATE terminal, make sure the probe photos are in the Download folder and run: 
-```
-cd ~/Downloads
-scp -i kingram_id_rsa.txt -r probe_folder_test kingram@gpu-1.colgate.edu:/data/kingram_workspace/SealFaceRecognition/data/unprocessed/probe
-```
+1. If you have uploaded the probe photos, you can ignore this step. Otherwise, drag your probe folder from your local laptop into the data/unprocessed/probe folder on the AWS cluster.
 2. On the terminal connected to AWS, run `sh ./generatePrediction.sh` to run the recognition model on your probe data. It will output a result.json file that you will use to open the GUI.
 3. Back on the Desktop terminal, run 
 ```
